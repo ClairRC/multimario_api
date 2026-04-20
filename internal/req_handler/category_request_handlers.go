@@ -2,6 +2,8 @@ package req_handler
 
 import (
 	"net/http"
+
+	"github.com/multimario_api/internal/db"
 )
 
 /*
@@ -12,9 +14,9 @@ import (
 * EXPECTED:
 * {
 *	category_name: string //REQUIRED -- New category name
-*	game_name: string //REUIRED -- Name of the game this category belongs to
-*	estimate: string //hh:mm:ss -- Default estimate for this game
-*	num_collectibles: int //Number of collectibles this category gets
+*	game_name: string //REQUIRED -- Name of the game this category belongs to
+*	estimate: string //REQUIRED hh:mm:ss -- Default estimate for this game
+*	num_collectibles: int //REQUIRED Number of collectibles this category gets
 * }
 *
 * RETURNS:
@@ -29,7 +31,83 @@ import (
 
 //Add new race category
 func (h *ReqHandler) AddGameCategory(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Input validation
+	req, err := parseReqJSON(r) //Parse request into map
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error parsing request") //Write error if unable to parse JSON for some reason
+		return
+	}
+
+	/*
+	* Verify category name
+	*/
+	var catName string
+	err = (&TextField{req["category_name"]}).Validate()
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "category name must be non-empty string")
+		return
+	} else {catName = req["category_name"].(string)}
+
+	//Check if category exists
+	if db.RecordExists(h.DataBase, db.TableGameCategories, db.ColGameCategoryName, catName) {
+		writeError(w, http.StatusBadRequest, "category already exists")
+		return
+	}
+
+	/*
+	* Verify game name
+	*/
+	var gameName string
+	err = (&TextField{req["game_name"]}).Validate()
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "game name must be a non-empty string")
+		return
+	} else {gameName = req["game_name"].(string)}
+
+	//Check if game already exists
+	if !db.RecordExists(h.DataBase, db.TableGames, db.ColGameName, gameName) {
+		writeError(w, http.StatusBadRequest, "game does not exist")
+		return
+	}
+
+	/*
+	* Verify Estimate
+	*/
+	var estimate string
+	err = (&TextField{req["estimate"]}).Validate()
+	if err != nil {
+		switch err {
+		case FieldIsWrongFormatErr:
+			writeError(w, http.StatusBadRequest, "time is formatted wrong. must be hh:mm:ss")
+			return
+		case FieldIsEmptyErr:
+			writeError(w, http.StatusBadRequest, "category estimate is required")
+			return
+		}
+	} else {estimate = req["estimate"].(string)}
+
+	/*
+	* Verify number of collectbiles
+	*/
+	var numCollectibles int64
+	err = (&IntField{req["num_collectibles"]}).Validate()
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "num_collectibles must be an int")
+		return
+	} else {numCollectibles =  req["num_collectibles"].(int64)}
+
+	//All fields validated
+	id, err := db.AddNewGameCategory(h.DataBase, catName, gameName, estimate, numCollectibles)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error adding game category")
+	}
+
+	//Write return values
+	res_map := map[string]any {
+		"success": true,
+		"id": id,
+	}
+	writeJSON(w, http.StatusCreated, res_map)
 }
 
 /*

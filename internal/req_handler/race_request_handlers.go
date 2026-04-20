@@ -42,7 +42,7 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 	* Check if category is valid
 	*/
 	var catName string
-	err = (&RaceCategoryField{req["category"]}).Validate()
+	err = (&TextField{req["category"]}).Validate()
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "category must be a non-empty string")
 		return
@@ -82,12 +82,9 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 	* Check if status is valid
 	*/
 	var status string
-	err = (&RaceStatusField{req["status"]}).Validate()
+	err = (&TextField{req["status"]}).Validate()
 	if err != nil {
 		switch err {
-		case FieldIsInvalidErr:
-			writeError(w, http.StatusBadRequest, "invalid status")
-			return
 		case FieldIsWrongFormatErr:
 			writeError(w, http.StatusBadRequest, "status must be a string")
 			return
@@ -99,6 +96,12 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		status = req["status"].(string)
+	}
+
+	//Make sure status is an acceptable input
+	if status != "upcoming" && status != "in_progress" && status != "completed" {
+		writeError(w, http.StatusBadRequest, "invalid status")
+		return
 	}
 
 	//Add to database

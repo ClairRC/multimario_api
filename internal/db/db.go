@@ -10,6 +10,14 @@ import (
 	_ "github.com/ncruces/go-sqlite3/driver"
 )
 
+//String literals for querying
+const (
+	TableGameCategories = "game_categories"
+	ColGameCategoryName = "game_category_name"
+	TableGames = "games"
+	ColGameName = "game_name"
+)
+
 // Table initializations
 var initStatements = []string {
 	//Create Players table
@@ -182,6 +190,29 @@ func AddNewRace(db *sql.DB, raceCatID int64, date string, status string) (int64,
 	return resultID, nil
 }
 
+//Adds game category to database
+func AddNewGameCategory(db *sql.DB, category_name string, game_name string, estimate string, num_collectibles int64) (int64, error) {
+	//Get GameID
+	stmt := "SELECT game_id FROM games WHERE game_name = ?"
+	var game_id int64
+	db.QueryRow(stmt, game_name).Scan(&game_id)
+
+	//Add game category
+	stmt = `INSERT INTO game_categories(game_id, game_category_name, estimate, num_collectibles)
+		VALUES (?, ?, ?, ?)`
+	result, err := db.Exec(stmt, game_id, category_name, estimate, num_collectibles)
+	if err != nil {
+		return -1, err
+	}
+
+	resultID, err := result.LastInsertId()
+	if err != nil {
+		return -1, err
+	}
+
+	return resultID, nil
+}
+
 //Returns Category ID given category name. Returns an error if category doesn't exist
 func GetRaceCategoryIDFromName(db *sql.DB, name string) (int64, error) {
 	var id int64
@@ -200,4 +231,13 @@ func GetRaceCategoryIDFromName(db *sql.DB, name string) (int64, error) {
 	}
 
 	return id, nil
+}
+
+//Function to check if record exists
+func RecordExists(db *sql.DB, table_name string, col_name string, value string) bool {
+	stmt := "SELECT EXISTS(SELECT 1 FROM ? WHERE ? = ?)"
+	var result int
+	db.QueryRow(stmt, col_name, table_name, value).Scan(&result)
+
+	if result == 1 {return true} else {return false}
 }
