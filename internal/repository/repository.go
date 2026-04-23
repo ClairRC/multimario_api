@@ -24,6 +24,7 @@ var NULLStr = NullableStr{"", false} //Default NULL string
 var NULLInt = NullableInt{-1, false} //Default NULL int
 
 var StringIsNullErr error = errors.New("string is null")
+var IntIsNullErr error = errors.New("int is null")
 
 //Get Nullable string with some value
 func MakeNullableStr(s string) NullableStr {

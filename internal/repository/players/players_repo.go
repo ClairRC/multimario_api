@@ -10,18 +10,19 @@ import (
 
 type Player struct {
 	Name repository.NullableStr
+	TwitchID repository.NullableInt
 }
 
 //Default instantialtion
 var PlayerDoesNotExistErr error = errors.New("player does not exist")
 
 // Create new player instance
-func NewPlayer(name repository.NullableStr, twitch_id repository.NullableInt) (*Player, error) {
-	if name.Valid == false {
+func NewPlayer(name repository.NullableStr, twitchID repository.NullableInt) (*Player, error) {
+	if !name.Valid {
 		return nil, repository.StringIsNullErr
 	}
 
-	return &Player{name}, nil
+	return &Player{Name: name, TwitchID: twitchID}, nil
 }
 
 //Gets player by name
@@ -54,13 +55,15 @@ func GetPlayerByName(database *sql.DB, name repository.NullableStr) (*Player, er
 		return nil, errors.New("unknown error")
 	}
 
-	return &Player{repository.MakeNullableStr(pName)}, nil
+	//TODO: Implement twtich ID stuff
+	return &Player{Name: repository.MakeNullableStr(pName), TwitchID: repository.NULLInt}, nil
 }
 
 //Add player
 func (p *Player) Add(database *sql.DB) error {
-	//Build SQL statement
+	//Build SQL statements
 	stmt := db.BuildInsertStatement([]string{db.ColPlayerName}, db.TablePlayers, []any{p.Name})
+	
 	return db.ExecuteStatements(database, []db.SQLStatement{stmt})
 }
 
@@ -75,22 +78,30 @@ func (p *Player) Update(database *sql.DB, newName repository.NullableStr, newTwi
 			return err
 		}
 
-		idStmt := db.BuildUpdateStatement(
+		idStmt, err := db.BuildUpdateStatement(
 			[]string{db.ColPlatformID}, 
 			[]any{newTwitchID.Value}, 
 			db.TableSocials, 
 			[]db.WhereCondition{{ColName: db.ColPlayerID, Op: db.Equals, Value: playerID}})
-		
+
+		if err != nil {
+			return err
+		}
+
 		stmts = append(stmts, idStmt)
 	}
 
 	//Get name update statement
 	if newName.Valid {
-		nameStmt := db.BuildUpdateStatement(
+		nameStmt, err := db.BuildUpdateStatement(
 			[]string{db.ColPlayerName}, 
 			[]any{newName.Value}, 
 			db.TablePlayers, 
 			[]db.WhereCondition{{ColName: db.ColPlayerName, Op: db.Equals, Value: p.Name.Value}})
+
+		if err != nil {
+			return err
+		}
 
 		stmts = append(stmts, nameStmt)
 	}
@@ -113,7 +124,29 @@ func PlayerExistsByName(database *sql.DB, name repository.NullableStr) (bool, er
 }
 
 //Helpers for querying DB
-func getPlayerIDFromName(database *sql.DB, name string) (int, error){
-	//TODO: Implement
-	return -1, nil
+func getPlayerIDFromName(database *sql.DB, name string) (int64, error){
+	//Build SQL query
+	stmt := db.BuildSelectStatement(
+		[]string{db.ColPlayerID}, 
+		db.TablePlayers, 
+		[]db.WhereCondition{{ColName: db.ColPlayerName, Op: db.Equals, Value: name}},
+	)
+
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return -1, err
+	}
+
+	//Get ID from result
+	if ids, exists := res[db.ColPlayerID]; exists {
+		//ID exists but isnt int for some reason (shouldnt happen lowkey), otherwise return id
+		if v, ok := ids[0].(int64); !ok {
+			return -1, errors.New("unexpected type for player id")
+		} else {
+			return v, nil
+		}
+	}
+
+	//ID doesn't exist
+	return -1, PlayerDoesNotExistErr
 }

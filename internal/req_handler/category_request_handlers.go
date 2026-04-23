@@ -94,9 +94,6 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 
 //Get game categories
 func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
-	//Get url parameters
-	u := r.URL
-	q := u.Query()
 
 }
 

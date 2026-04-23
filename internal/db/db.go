@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	_ "github.com/ncruces/go-sqlite3/driver"
@@ -159,6 +160,7 @@ var initStatements = []string {
 		handle TEXT NOT NULL,
 		last_updated TEXT NOT NULL,
 		FOREIGN KEY (player_id) REFERENCES players(player_id)
+			ON DELETE CASCADE
 	)
 	`,
 
@@ -340,8 +342,33 @@ func BuildInsertStatement(columns []string, table string, values []any) SQLState
     return SQLStatement{stmt, args}
 }
 
-func BuildUpdateStatement(columns[]string, newVals []any, table string, where []WhereCondition) SQLStatement {
-	//TODO: Implement
+func BuildUpdateStatement(columns[]string, newVals []any, table string, where []WhereCondition) (SQLStatement, error) {
+	if len(columns) != len(newVals) {
+		return SQLStatement{}, errors.New("Unknown error: columns and values length dont match in update statement")
+	}
+ 
+	args := make([]any, 0)
+	stmt := fmt.Sprintf("UPDATE %s", table)
+
+	stmt += " SET "
+	for i, v := range columns {
+		if i > 0 {
+			stmt += ","
+		}
+		stmt += fmt.Sprintf(" %s=?", v)
+		args = append(args, newVals[i])
+	}
+
+	for i, w := range where {
+		if i == 0 {
+			stmt += fmt.Sprintf(" WHERE %s %s ?", w.ColName, w.Op)
+		} else {
+			stmt += fmt.Sprintf(" AND %s %s ?", w.ColName, w.Op)
+		}
+		args = append(args, w.Value)
+	}
+
+	return SQLStatement{stmt, args}, nil
 }
 
 //Gets the ON clause to prevent very messy string stuff
