@@ -1,22 +1,63 @@
 package db
 
 /*
-* This package will handle database operations.
+* This file will handle general database operations.
  */
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/ncruces/go-sqlite3/driver"
 )
 
-//String literals for querying
+//Constants for table names and such
 const (
 	TableGameCategories = "game_categories"
+	ColGameCategoryID = "game_category_id"
+	ColGameCategoryGameID = "game_id"
 	ColGameCategoryName = "game_category_name"
+	ColGameCategoryEstimate = "estimate"
+	ColGameCategoryNumCollectibles = "num_collectibles"
+
 	TableGames = "games"
+	ColGameID = "game_id"
 	ColGameName = "game_name"
+
+	TableRaceCategories = "race_categories"
+	ColRaceCategoryID = "race_category_id"
+	ColRaceCategoryName = "race_category_name"
+
+	TablePlayers = "players"
+	ColPlayerName = "player_name"
+	ColPlayerID = "player_id"
+
+	TableSocials = "socials"
+	ColPlatformID = "platform_id"
 )
+
+//Operator type and default operators
+type Operator string
+
+const Equals Operator = "="
+const NotEquals Operator = "<>"
+const LessThan Operator = "<"
+const GreaterThan Operator = ">"
+const LessThanEqualTo Operator = "<="
+const GreaterThanEqualTo Operator = ">="
+
+//SQL statement
+type SQLStatement struct {
+	Stmt string
+	Args []any
+}
+
+//Struct for building the where clause
+type WhereCondition struct {
+	ColName string
+	Op Operator
+	Value any
+}
 
 // Table initializations
 var initStatements = []string {
@@ -24,7 +65,7 @@ var initStatements = []string {
 	`
 	CREATE TABLE IF NOT EXISTS players(
 		player_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-		player_name TEXT NOT NULL
+		player_name TEXT NOT NULL UNIQUE
 	)
 	`,
 	
@@ -168,76 +209,154 @@ func DatabaseInit(db *sql.DB) error {
 	}
 
 	return tx.Commit()
+} 
+
+//Execute SQL statements
+func ExecuteStatements(db *sql.DB, statements []SQLStatement) error {
+	//Start transaction
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback()
+
+	//Execute each statement
+	for _, v := range statements {
+		_, err := tx.Exec(v.Stmt, v.Args...)
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
 }
 
-//Adds race to database
-//Returns new race id on success, -1 on failure
-func AddNewRace(db *sql.DB, raceCatID int64, date string, status string) (int64, error) {
-	//Execute SQLite statement
-	result, err := db.Exec(`
-		INSERT INTO races(race_category_id, date, status)
-        VALUES (?, ?, ?)
-	`, raceCatID, date, status)
+//Execute SQL queries
+//Returns map of {column, []values}
+func ExecuteQueries(db *sql.DB, statements []SQLStatement) (map[string][]any, error) {
+	res := make(map[string][]any)
+
+	//Start transaction
+	tx, err := db.Begin()
 	if err != nil {
-		return -1, err
+		return nil, err
 	}
 
-	resultID, err := result.LastInsertId()
-	if err != nil {
-		return -1, err
+	defer tx.Rollback()
+
+	//Execute each statement
+	for _, v := range statements {
+		rows, err := tx.Query(v.Stmt, v.Args...)
+		if err != nil {
+			return nil, err
+		}
+		
+		//Get columns
+		cols, err := rows.Columns()
+		if err != nil {
+			return nil, err
+		}
+
+		//Add rows value to results
+		for rows.Next() {
+			//Make value slice and pointers to pass into scan
+			vals := make([]any, len(cols))
+			ptrs := make([]any, len(cols))
+			for i := range vals {
+				ptrs[i] = &vals[i] //Fill pointer slice with val locations
+			}
+
+			//Scan row into vals and add to res map
+			err = rows.Scan(ptrs...)
+			if err != nil {
+				return nil, err
+			}
+
+			for i, col := range cols {
+				res[col] = append(res[col], vals[i])
+			}
+		}
+		rows.Close() //Close rows
 	}
 
-	return resultID, nil
+	//Check for error in commit
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	//No error, return
+	return res, nil
 }
 
-//Adds game category to database
-func AddNewGameCategory(db *sql.DB, category_name string, game_name string, estimate string, num_collectibles int64) (int64, error) {
-	//Get GameID
-	stmt := "SELECT game_id FROM games WHERE game_name = ?"
-	var game_id int64
-	db.QueryRow(stmt, game_name).Scan(&game_id)
-
-	//Add game category
-	stmt = `INSERT INTO game_categories(game_id, game_category_name, estimate, num_collectibles)
-		VALUES (?, ?, ?, ?)`
-	result, err := db.Exec(stmt, game_id, category_name, estimate, num_collectibles)
-	if err != nil {
-		return -1, err
+//Builds SQL statement from certain parameters
+func BuildSelectStatement(columns []string, table string, where []WhereCondition) SQLStatement {
+	args := make([]any, 0)
+	stmt := "SELECT"
+	for i, v := range columns {
+		if i > 0 {
+			stmt += ","
+		}
+		stmt += fmt.Sprintf(" %s", v)
 	}
 
-	resultID, err := result.LastInsertId()
-	if err != nil {
-		return -1, err
+	stmt += fmt.Sprintf(" FROM %s", table)
+
+	for i, w := range where {
+		if i == 0 {
+			stmt += fmt.Sprintf(" WHERE %s %s ?", w.ColName, w.Op)
+		} else {
+			stmt += fmt.Sprintf(" AND %s %s ?", w.ColName, w.Op)
+		}
+		args = append(args, w.Value)
 	}
 
-	return resultID, nil
+	return SQLStatement{stmt, args}
 }
 
-//Returns Category ID given category name. Returns an error if category doesn't exist
-func GetRaceCategoryIDFromName(db *sql.DB, name string) (int64, error) {
-	var id int64
-
-	//Query db for the id
-	//This will take the first category that matches the name
-	//There shouldn't be duplicates, but even if there is this should be okay 
-	//as long as the duplicates are right
-	err := db.QueryRow(`
-		SELECT race_category_id FROM race_categories
-		WHERE race_category_name = ?
-	`, name).Scan(&id)
-
-	if err != nil {
-		return -1, err
-	}
-
-	return id, nil
+func BuildInsertStatement(columns []string, table string, values []any) SQLStatement{
+	args := make([]any, 0)
+    
+    // Column names
+    stmt := fmt.Sprintf("INSERT INTO %s (", table)
+    for i, col := range columns {
+        if i > 0 {
+            stmt += ", "
+        }
+        stmt += col
+    }
+    stmt += ") VALUES ("
+    
+    // Placeholders + args
+    for i, val := range values {
+        if i > 0 {
+            stmt += ", "
+        }
+        stmt += "?"
+        args = append(args, val)
+    }
+    stmt += ")"
+    
+    return SQLStatement{stmt, args}
 }
 
-//Function to check if record exists
-func RecordExists(db *sql.DB, table_name string, col_name string, value string) bool {
-	stmt := "SELECT EXISTS(SELECT 1 FROM ? WHERE ? = ?)"
-	var result int
-	db.QueryRow(stmt, col_name, table_name, value).Scan(&result)
+func BuildUpdateStatement(columns[]string, newVals []any, table string, where []WhereCondition) SQLStatement {
+	//TODO: Implement
+}
 
-	if result == 1 {return true} else {return false}
+//Gets the ON clause to prevent very messy string stuff
+func GetOnClause(table1 string, table2 string, joinVal string) string {
+	return fmt.Sprintf("%s.%s = %s.%s", table1, joinVal, table2, joinVal)
+}
+
+//Checks if record exists
+func RecordExists(db *sql.DB, tableName string, columnName string, value string) (bool, error){
+	stmt := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE %s = ?)", tableName, columnName)
+	var exists int
+	err := db.QueryRow(stmt, value).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+
+	return exists == 1, nil
 }

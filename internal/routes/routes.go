@@ -41,7 +41,7 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 
 	//Game Categories Handlers
 	m.HandleFunc("POST /gamecategories", h.AddGameCategory)
-	m.HandleFunc("PATCH /gamecategories/{game_category_id}", h.EditGameCategory)
+	m.HandleFunc("PATCH /gamecategories/{game_category_name}", h.EditGameCategory)
 	m.HandleFunc("GET /gamecategories", h.GetGameCategories)
 
 	//Race Categories Handlers
@@ -56,7 +56,7 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 
 	//Players Handlers
 	m.HandleFunc("POST /players", h.AddPlayer)
-	m.HandleFunc("PATCH /players/{player_identifier}", h.EditPlayer)
+	m.HandleFunc("PATCH /players/{player_name}", h.EditPlayer)
 	m.HandleFunc("GET /players", h.GetPlayers)
 
 	//Counters Handlers

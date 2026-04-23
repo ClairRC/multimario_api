@@ -8,18 +8,20 @@ import (
 /*
 * This file holds types and methods for Validation purposes
  */
+
+//Field types
 type DateField struct { Value any }
 type TextField struct { Value any }
 type TimeField struct { Value any }
 type IntField struct { Value any }
 
+//Errors
 type FieldEmptyError struct { }
 type FieldWrongFormatError struct { }
 
 //Default instantiation of errora
 var FieldIsEmptyErr error = FieldEmptyError{}
 var FieldIsWrongFormatErr error = FieldWrongFormatError{}
-
 
 /*
 * Errors
