@@ -21,8 +21,6 @@ import (
 * RETURNS:
 * {
 *	success: boolean //True on successful creation
-*	id: int //Run ID
-		or
 	error: string //Error (only if success is false)
 * }
 *
@@ -87,8 +85,6 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 * RETURNS:
 * {
 *	success: boolean //True on successful creation
-*	id: int //Run ID
-		or
 	error: string //Error (only if success is false)
 * }
 *
@@ -159,7 +155,7 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 * OPTIONAL PARAMETERS:
 *	player_id: int //Returns player with this ID
 *	player_name: string //Returns player(s?) with this name
-*	twitch_name: string //Returns palyer with this name on twitch
+*	twitch_name: string //Returns player with this name on twitch
 *
 * RETURNS:
 * {
@@ -171,6 +167,8 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 *			twitch_name: string //Twitch name. NULL if player doesn't have associated Twitch
 *		}
 *	]
+*	success: boolean
+*	error: string //Only if success is false
 * }
 *
 */
