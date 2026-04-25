@@ -58,14 +58,59 @@ func (h *ReqHandler) AddGame(w http.ResponseWriter, r *http.Request) {
 *
 * RETURNS:
 * {
-*	success: boolean //True on successful creation
+*	success: boolean //True on successful update
 	error: string //Error (only if success is false)
 * }
 *
 */
 
 func (h *ReqHandler) ChangeGameName(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get path value
+	gameName := repository.MakeNullableStr(r.PathValue("game_name"))
+
+	//Get game
+	game, err := games.GetGameByName(h.DataBase, gameName)
+	if err != nil {
+		switch err {
+		case games.GameDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "requested game does not exist")
+		case repository.StringIsNullErr:
+			writeError(w, http.StatusBadRequest, "game must be non-null")
+		default:
+			writeError(w, http.StatusInternalServerError, "unknown error finding game")
+		return
+		}
+	}
+
+	//Get request
+	req, err := parseReqJSON(r)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "unknown error parsing request")
+		return
+	}
+
+	//Validate new game name
+	newName, err := validateGameName(w, req, "name", true)
+	if err != nil { return }
+
+	//Check whether new name is already being used
+	exists, err := games.GameExistsByName(h.DataBase, newName)
+	if err != nil { 
+		writeError(w, http.StatusInternalServerError, "unknown error parsing new game name")
+		return 
+	}
+	if exists {
+		writeError(w, http.StatusBadRequest, "game name already exists")
+		return
+	}
+
+	//Fields are all verified
+	err = game.Update(h.DataBase, newName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "uknown error updating game name")
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{"success": true})
 }
 
 /*
