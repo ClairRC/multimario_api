@@ -129,3 +129,31 @@ func GetGameIDFromName(database *sql.DB, name string) (int64, error){
 	//ID doesn't exist
 	return -1, GameDoesNotExistErr
 }
+
+//Gets game name from ID
+func GetGameNameFromID(database *sql.DB, id int64) (string, error) {
+	//Build SQL query
+	stmt := db.BuildSelectStatement(
+		[]string{db.ColGameName}, 
+		db.TableGames, 
+		[]db.WhereCondition{{ColName: db.ColGameID, Op: db.Equals, Value: id}},
+	)
+
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return "", err
+	}
+
+	//Get name from result
+	if name, exists := res[db.ColGameName]; exists {
+		//name exists but isnt string for some reason (shouldnt happen lowkey), otherwise return id
+		if v, ok := name[0].(string); !ok {
+			return "", errors.New("unexpected type for game name")
+		} else {
+			return v, nil
+		}
+	}
+
+	//game doesn't exist
+	return "", GameDoesNotExistErr
+}

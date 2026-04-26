@@ -3,6 +3,7 @@ package req_handler
 import (
 	"net/http"
 
+	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/gamecategories"
 	"github.com/multimario_api/internal/repository/games"
 )
@@ -114,7 +115,72 @@ func (h *ReqHandler) AddGameCategory(w http.ResponseWriter, r *http.Request) {
 
 //Edit game category
 func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
+	//Get path value
+	origCatName := repository.MakeNullableStr(r.PathValue("game_category_name"))
 
+	//Get category
+	category, err := gamecategories.GetGameCategoryByName(h.DataBase, origCatName)
+	if err != nil {
+		if err == gamecategories.GameCategoryDoesNotExistErr {
+			writeError(w, http.StatusBadRequest, "game category does not exist")
+			return
+		} else {
+			writeError(w, http.StatusInternalServerError, "unknown error finding game category")
+		}
+	}
+
+	//Get request
+	req, err := parseReqJSON(r) //Parse request into map
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error parsing request") //Write error if unable to parse JSON for some reason
+		return
+	}
+
+	//Check for new category name and whether it already exists
+	newCatName, err := validateText(w, req, "category_name", false)
+	if err != nil { return }
+
+	exists, err := gamecategories.GameCategoryExistsByName(h.DataBase, newCatName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error parsing new category name")
+		return
+	}
+	if exists {
+		writeError(w, http.StatusBadRequest, "new game category already exists")
+		return
+	}
+
+	//Check for new game name and whether game exists
+	newGameName, err := validateText(w, req, "game_name", false)
+	if err != nil { return }
+
+	exists, err = games.GameExistsByName(h.DataBase, newGameName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error parsing game name")
+		return
+	}
+	if !exists {
+		writeError(w, http.StatusBadRequest, "game does not exist")
+		return
+	}
+
+	//Check for new estimate
+	newEstimate, err := validateTime(w, req, "estimate", false)
+	if err != nil { return }
+
+	//Check for num collectibles
+	newNumCollectibles, err := validateNumber(w, req, "num_collectibles", false)
+	if err != nil { return }
+
+	//All values validated, update category
+	err = category.Update(h.DataBase, newCatName, newEstimate, newNumCollectibles, newGameName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error updating game category")
+		return
+	}
+
+	//Category updated
+	writeJSON(w, http.StatusOK, map[string]any{"success": true})
 }
 
 /*
