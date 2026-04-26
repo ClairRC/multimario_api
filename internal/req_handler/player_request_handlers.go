@@ -35,7 +35,7 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate name. If there's an error, return
-	name, err := validateName(w, req, "player_name", true)
+	name, err := validateText(w, req, "player_name", true)
 	if err != nil { return }
 
 	//Check that player isn't already in database
@@ -116,10 +116,10 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate player name and ID
-	name, err := validateName(w, req, "player_name", false)
+	name, err := validateText(w, req, "player_name", false)
 	if err != nil { return }
 
-	id, err := validateID(w, req, "player_twitch_id", false)
+	id, err := validateNumber(w, req, "player_twitch_id", false)
 	if err != nil { return }
 
 	//Make sure player doesn't exist
@@ -175,57 +175,4 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 
 func (h *ReqHandler) GetPlayers(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
-}
-
-/*
-* Helper functions for input validation
-*/
-
-//Validate's name and returns it as nullable string. Returns an error if fatal error occurs
-func validateName(w http.ResponseWriter, req map[string]any, key string, required bool) (repository.NullableStr, error) {
-	err := (&TextField{req[key]}).Validate()
-
-	//Depending on error, do something different
-	if err != nil {
-		switch err {
-		case FieldIsEmptyErr:
-			//If this is required, return an error. Otherwise, return NULLstr
-			if required {
-				writeError(w, http.StatusBadRequest, "name is required")
-				return repository.NULLStr, err
-			} else { 
-				return repository.NULLStr, nil 
-			}
-		
-		case FieldIsWrongFormatErr:
-			writeError(w, http.StatusBadRequest, "name must be string")
-			return repository.NULLStr, err
-		}
-	}
-
-	return repository.MakeNullableStr(req[key].(string)), nil
-}
-
-//Validate player ID
-func validateID(w http.ResponseWriter, req map[string]any, key string, required bool) (repository.NullableInt, error) {
-	err := (&IntField{req[key]}).Validate()
-
-	if err != nil {
-		switch err {
-		//If this value is required, throw an error, otherwise return null string
-		case FieldIsEmptyErr:
-			if required {
-				writeError(w, http.StatusBadRequest, "player id cannot be empty")
-				return repository.NULLInt, err
-			} else {
-				return repository.NULLInt, nil
-			}
-
-		case FieldIsWrongFormatErr:
-			writeError(w, http.StatusBadRequest, "ID must be an int")
-			return repository.NULLInt, nil
-		}
-	}
-
-	return repository.MakeNullableInt(req[key].(int)), nil
 }

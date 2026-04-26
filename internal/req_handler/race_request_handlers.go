@@ -2,9 +2,6 @@ package req_handler
 
 import (
 	"net/http"
-	"time"
-
-	"github.com/multimario_api/internal/db"
 )
 
 /*
@@ -38,86 +35,6 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	/*
-	* Check if category is valid
-	*/
-	var catName string
-	err = (&TextField{req["category"]}).Validate()
-	if err != nil {
-		writeError(w, http.StatusBadRequest, "category must be a non-empty string")
-		return
-	} else {
-		catName = req["category"].(string)
-	}
-
-	//Get category ID
-	catID, err := db.GetRaceCategoryIDFromName(h.DataBase, catName)
-	if err != nil{
-		writeError(w, http.StatusBadRequest, "race category does not exist")
-		return
-	}
-
-	/*
-	* Validate Date field
-	*/
-	var date string
-	err = (&DateField{req["date"]}).Validate()
-	if err != nil {
-		//If date is in wrong format, send an error, if it's just empty, set it to default valud
-		switch err { 
-		case FieldIsWrongFormatErr: //Return and write error if field is in wrong formate
-			writeError(w, http.StatusBadRequest, "error parsing date. make sure date is in YYYY-MM-DD format")
-			return
-		case FieldIsEmptyErr:
-			date = time.Now().Local().Format(time.DateOnly) //Set date to current date
-		default:
-			writeError(w, http.StatusInternalServerError, "unknown error parsing date field")
-			return
-		}
-	} else {
-		date = req["date"].(string)
-	}
-
-	/*
-	* Check if status is valid
-	*/
-	var status string
-	err = (&TextField{req["status"]}).Validate()
-	if err != nil {
-		switch err {
-		case FieldIsWrongFormatErr:
-			writeError(w, http.StatusBadRequest, "status must be a string")
-			return
-		case FieldIsEmptyErr:
-			status = "upcoming"
-		default:
-			writeError(w, http.StatusInternalServerError, "unknown error parsing race status")
-			return
-		}
-	} else {
-		status = req["status"].(string)
-	}
-
-	//Make sure status is an acceptable input
-	if status != "upcoming" && status != "in_progress" && status != "completed" {
-		writeError(w, http.StatusBadRequest, "invalid status")
-		return
-	}
-
-	//Add to database
-	raceID, err := db.AddNewRace(h.DataBase, catID, date, status)
-	if err != nil {
-		writeError(w, http.StatusInternalServerError, "error adding race to database")
-		return
-	}
-
-	//Write return value
-	res := map[string]any {
-		"success": true,
-		"id": raceID,
-	}
-
-	writeJSON(w, http.StatusCreated, res)
 }
 
 /*

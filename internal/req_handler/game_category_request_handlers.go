@@ -3,7 +3,8 @@ package req_handler
 import (
 	"net/http"
 
-	"github.com/multimario_api/internal/repository"
+	"github.com/multimario_api/internal/repository/gamecategories"
+	"github.com/multimario_api/internal/repository/games"
 )
 
 /*
@@ -37,10 +38,57 @@ func (h *ReqHandler) AddGameCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate category name
-	catName, err := validateCategoryName(w, req, "game_category", true)
+	catName, err := validateText(w, req, "game_category", true)
 	if err != nil { return }
 
+	//Validate game name
+	gameName, err := validateText(w, req, "game_name", true)
+	if err != nil { return }
+
+	//Validate estimate
+	estimate, err := validateTime(w, req, "estimate", true)
+	if err != nil { return }
+
+	//Validate collectibles
+	numCollectibles, err := validateNumber(w, req, "num_collectibles", true)
+
+	//Check that category doesn't already exist
+	catExists, err := gamecategories.GameCategoryExistsByName(h.DataBase, catName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error parsing game category name")
+		return
+	}
+	if catExists {
+		writeError(w, http.StatusBadRequest, "category already exists")
+		return
+	}
+
+	//Check to make sure that game does exist
+	gameExists, err := games.GameExistsByName(h.DataBase, gameName)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "unknown error parsing game name")
+		return
+	}
+	if !gameExists {
+		writeError(w, http.StatusBadRequest, "game does not exist")
+		return
+	}
+
+	//All fields verified
+	newCat, err := gamecategories.NewGameCategory(catName, estimate, numCollectibles, gameName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error creating category")
+		return
+	}
 	
+	err = newCat.Add(h.DataBase)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error adding category")
+		return
+	}
+
+	//Return success
+	writeJSON(w, http.StatusOK, map[string]any{"success": true})
 }
 
 /*
@@ -98,29 +146,4 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 //Get game categories
 func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
 	//TODO Implement
-}
-
-/*
-* Validation Helper Functions
-*/
-func validateCategoryName(w http.ResponseWriter, req map[string]any, key string, required bool) (repository.NullableStr, error) {
-	err := (&TextField{req[key]}).Validate()
-
-	//Check error
-	if err != nil {
-		switch err{
-		case FieldIsEmptyErr:
-			if required {
-				writeError(w, http.StatusBadRequest, "category game cannot be empty")
-				return repository.NULLStr, err
-			} else {
-				return repository.NULLStr, nil
-			}
-		case FieldIsWrongFormatErr:
-			writeError(w, http.StatusBadRequest, "category name must be string")
-			return repository.NULLStr, err
-		} 
-	}
-
-	return repository.MakeNullableStr(req[key].(string)), nil
 }

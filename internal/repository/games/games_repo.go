@@ -103,7 +103,7 @@ func GameExistsByName(database *sql.DB, name repository.NullableStr) (bool, erro
 }
 
 //Helpers for querying DB
-func getGameIDFromName(database *sql.DB, name string) (int64, error){
+func GetGameIDFromName(database *sql.DB, name string) (int64, error){
 	//Build SQL query
 	stmt := db.BuildSelectStatement(
 		[]string{db.ColGameID}, 

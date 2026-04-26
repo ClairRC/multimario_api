@@ -35,7 +35,7 @@ func (h *ReqHandler) AddGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate game name
-	gameName, err := validateGameName(w, req, "name", true)
+	gameName, err := validateText(w, req, "name", true)
 	if err != nil { return }
 
 	//Get game and add it
@@ -90,7 +90,7 @@ func (h *ReqHandler) ChangeGameName(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate new game name
-	newName, err := validateGameName(w, req, "name", true)
+	newName, err := validateText(w, req, "name", true)
 	if err != nil { return }
 
 	//Check whether new name is already being used
@@ -136,32 +136,4 @@ func (h *ReqHandler) ChangeGameName(w http.ResponseWriter, r *http.Request) {
 
 func (h *ReqHandler) GetGames(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
-}
-
-/*
-* Validation Helper functions
-*/
-//Validate's name and returns it as nullable string. Returns an error if fatal error occurs
-func validateGameName(w http.ResponseWriter, req map[string]any, key string, required bool) (repository.NullableStr, error) {
-	err := (&TextField{req[key]}).Validate()
-
-	//Depending on error, do something different
-	if err != nil {
-		switch err {
-		case FieldIsEmptyErr:
-			//If this is required, return an error. Otherwise, return NULLstr
-			if required {
-				writeError(w, http.StatusBadRequest, "game name is required")
-				return repository.NULLStr, err
-			} else { 
-				return repository.NULLStr, nil 
-			}
-		
-		case FieldIsWrongFormatErr:
-			writeError(w, http.StatusBadRequest, "game name must be string")
-			return repository.NULLStr, err
-		}
-	}
-
-	return repository.MakeNullableStr(req[key].(string)), nil
 }
