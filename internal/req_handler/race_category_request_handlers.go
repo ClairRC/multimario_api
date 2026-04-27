@@ -27,8 +27,6 @@ import (
 * RETURNS:
 * {
 *	success: boolean //True on successful creation
-*	id: int //Race category ID
-		or
 	error: string //Error (only if success is false)
 * }
 *
@@ -58,7 +56,7 @@ func (h *ReqHandler) AddRaceCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate game categories
-	gameCats, err := validateGameCategories(h, w, req, "game_categories")
+	gameCats, err := validateGameCategories(h, w, req, "game_categories", true)
 	if err != nil { return }
 
 	//Create race category from input
@@ -81,12 +79,13 @@ func (h *ReqHandler) AddRaceCategory(w http.ResponseWriter, r *http.Request) {
 /*
 * Edit race category
 *
-* ENDPOINT: PUT /racecategories/{race_category_id}
+* ENDPOINT: PATCH /racecategories/{race_category_id}
+* Note: Game categories get replaced by request, not appended, so be sure to include all of the new categories
 *
 * EXPECTED:
 * {
-*	name: string //REQUIRED -- New Category Name
-*	game_categories: //REQUIRED -- Array of game categories that are apart of this race category
+*	name: string //OPTIONAL -- New Category Name
+*	game_categories: //OPTIONAL -- Array of game categories that are apart of this race category
 *	[
 *		game_category_id: int //REQUIRED
 *	]
@@ -95,8 +94,6 @@ func (h *ReqHandler) AddRaceCategory(w http.ResponseWriter, r *http.Request) {
 * RETURNS:
 * {
 *	success: boolean //True on successful creation
-*	id: int //Race category ID
-		or
 	error: string //Error (only if success is false)
 * }
 *
@@ -143,9 +140,9 @@ func (h *ReqHandler) GetRaceCategories(w http.ResponseWriter, r *http.Request) {
 }
 
 //Helper function for parsing array of game categories
-func validateGameCategories(h *ReqHandler, w http.ResponseWriter, req map[string]any, arrayKey string) ([]*gamecategories.GameCategory, error) {
+func validateGameCategories(h *ReqHandler, w http.ResponseWriter, req map[string]any, arrayKey string, required bool) ([]*gamecategories.GameCategory, error) {
 	//Validate game category array
-	gameCatNames, err := validateArray(w, req, arrayKey, true)
+	gameCatNames, err := validateArray(w, req, arrayKey, required)
 	if err != nil { return nil, err }
 	
 	//Validate each game category inside the array
@@ -163,6 +160,7 @@ func validateGameCategories(h *ReqHandler, w http.ResponseWriter, req map[string
 		if err != nil { return nil, err }
 
 		//Get game category from the name
+		//This performs a different SELECT query for each name, so it's kinda inefficient, but trivial for these use cases
 		gameCat, err := gamecategories.GetGameCategoryByName(h.DataBase, gameCatName)
 		if err != nil {
 			if err == gamecategories.GameCategoryDoesNotExistErr {

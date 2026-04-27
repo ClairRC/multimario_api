@@ -35,6 +35,10 @@ const (
 
 	TableSocials = "socials"
 	ColPlatformID = "platform_id"
+
+	TableRaceCatGameCat = "race_cat_game_cat"
+	ColRaceCatGameCatRaceCategoryID = "race_category_id"
+	ColRaceCatGameCatGameCatgeoryID = "game_category_id"
 )
 
 //Operator type and default operators
@@ -371,13 +375,29 @@ func BuildUpdateStatement(columns[]string, newVals []any, table string, where []
 	return SQLStatement{stmt, args}, nil
 }
 
+func BuildDeleteStatement(table string, where []WhereCondition) SQLStatement {
+	args := make([]any, 0)
+	stmt := fmt.Sprintf("DELETE FROM %s", table)
+
+	for i, w := range where {
+		if i == 0 {
+			stmt += fmt.Sprintf(" WHERE %s %s ?", w.ColName, w.Op)
+		} else {
+			stmt += fmt.Sprintf(" AND %s %s ?", w.ColName, w.Op)
+		}
+		args = append(args, w.Value)
+	}
+
+	return SQLStatement{stmt, args}
+}
+
 //Gets the ON clause to prevent very messy string stuff
 func getOnClause(table1 string, table2 string, joinCol1 string, joinCol2 string) string {
 	return fmt.Sprintf("%s.%s = %s.%s", table1, joinCol1, table2, joinCol2)
 }
 
 //Gets linking table
-func GetLinkingTable(table1 string, table2 string, joinCol1 string, joinCol2 string) string {
+func JoinTables(table1 string, table2 string, joinCol1 string, joinCol2 string) string {
 	on := getOnClause(table1, table2, joinCol1, joinCol2)
 	return fmt.Sprintf("%s JOIN %s ON %s", table1, table2, on)
 }

@@ -69,55 +69,46 @@ func GetGameCategoryByName(database *sql.DB, name repository.NullableStr) (*Game
 	}
 
 	stmt := db.BuildSelectStatement(cols, table, where)
-	category, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, err
 	}
 
 	//Get game category from the query. If there's none or this column doesn't exist, there's an error
-	names, exists := category[db.ColGameCategoryName]
-
-	//Check if category exists
-	if !exists || len(names) == 0 {
-		return nil, GameCategoryDoesNotExistErr
-	}
-	
-	//Get fields from query results
-	//Error handling could be a bit better here probably
-	cName, ok := category[db.ColGameCategoryName][0].(string)
-	if !ok {
-		return nil, errors.New("unknown error")
-	}
-
-	cEstimate, ok := category[db.ColGameCategoryEstimate][0].(string)
-	if !ok {
-		return nil, errors.New("unknown error")
-	}
-
-	cGameID, ok := category[db.ColGameCategoryGameID][0].(int64)
-	if !ok {
-		return nil, errors.New("unknown error")
-	}
-
-	cNumCollectibles, ok := category[db.ColGameCategoryNumCollectibles][0].(int64)
-	if !ok {
-		return nil, errors.New("unknown error")
-	}
-
-	//Get game name from ID
-	cGameName, err := games.GetGameNameFromID(database, cGameID)
+	category, err := extractGameCategoriesFromQueryResult(database, res)
 	if err != nil {
-		return nil, errors.New("unknown error")
+		return nil, err
 	}
 
-	out := &GameCategory {
-		Name: repository.MakeNullableStr(cName),
-		Estimate: repository.MakeNullableStr(cEstimate),
-		GameName: repository.MakeNullableStr(cGameName),
-		NumCollectibles: repository.MakeNullableInt(int(cNumCollectibles)),
+	//Category is first from slice returned by extractGameCategoriesFromQueryResults
+	return category[0], nil
+}
+
+//Get game category from ID
+func GetGameCategoryByID(database *sql.DB, id int64) (*GameCategory, error) {
+	//Query database for this game category
+	cols := []string {
+		db.ColGameCategoryName,
+		db.ColGameCategoryEstimate,
+		db.ColGameCategoryGameID,
+		db.ColGameCategoryNumCollectibles,
+	}
+	table := db.TableGameCategories
+	where := []db.WhereCondition{
+		{ColName: db.ColGameCategoryID, Op: db.Equals, Value: id},
 	}
 
-	return out, nil
+	//Build and execute statement
+	stmt := db.BuildSelectStatement(cols, table, where)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil { return nil, err }
+
+	//Get actual categories from the results map
+	category, err := extractGameCategoriesFromQueryResult(database, res)
+	if err != nil { return nil, err}
+
+	//Category is first element in the slice returned by extractGameCategoriesFromQueryResults
+	return category[0], nil
 }
 
 //Add game category
@@ -208,3 +199,76 @@ func GameCategoryExistsByName(database *sql.DB, name repository.NullableStr) (bo
 	return exists, nil
 }
 
+//Helper to get GameCategory ID from name
+func GetGameCategoryIDFromName(database *sql.DB, name string) (int64, error) {
+	whereCon := []db.WhereCondition {{
+		ColName: db.ColGameCategoryName,
+		Op: db.Equals,
+		Value: name,
+	}}
+
+	stmt := db.BuildSelectStatement([]string{db.ColGameCategoryID}, db.TableGameCategories, whereCon)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return -1, err
+	}
+
+	id, ok := res[db.ColGameCategoryID][0].(int64)
+	if !ok {
+		return -1, errors.New("unknown error: game category id isn't an int")
+	}
+
+	return id, nil
+}
+
+//Helper function for extracing game categories from SQL results
+func extractGameCategoriesFromQueryResult(database *sql.DB, results map[string][]any) ([]*GameCategory, error) {
+	//Get game category from the query. If there's none or this column doesn't exist, there's an error
+	names, exists := results[db.ColGameCategoryName]
+
+	//Check if category exists
+	if !exists || len(names) == 0 {
+		return nil, GameCategoryDoesNotExistErr
+	}
+	
+	//Get fields from query results
+	//Error handling could be a bit better here probably
+	out := make([]*GameCategory, 0)
+	for i := range names {
+		cName, ok := results[db.ColGameCategoryName][i].(string)
+		if !ok {
+			return nil, errors.New("unknown error")
+		}
+
+		cEstimate, ok := results[db.ColGameCategoryEstimate][i].(string)
+		if !ok {
+			return nil, errors.New("unknown error")
+		}
+
+		cGameID, ok := results[db.ColGameCategoryGameID][i].(int64)
+		if !ok {
+			return nil, errors.New("unknown error")
+		}
+
+		cNumCollectibles, ok := results[db.ColGameCategoryNumCollectibles][i].(int64)
+		if !ok {
+			return nil, errors.New("unknown error")
+		}
+
+		//Get game name from ID
+		cGameName, err := games.GetGameNameFromID(database, cGameID)
+		if err != nil {
+			return nil, errors.New("unknown error")
+		}
+
+		//Add game category to output
+		out = append(out, &GameCategory {
+			Name: repository.MakeNullableStr(cName),
+			Estimate: repository.MakeNullableStr(cEstimate),
+			GameName: repository.MakeNullableStr(cGameName),
+			NumCollectibles: repository.MakeNullableInt(int(cNumCollectibles)),
+		})
+	}
+
+	return out, nil
+}
