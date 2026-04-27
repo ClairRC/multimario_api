@@ -14,6 +14,7 @@ type DateField struct { Value any }
 type TextField struct { Value any }
 type TimeField struct { Value any }
 type IntField struct { Value any }
+type ArrayField struct { Value any }
 
 //Errors
 type FieldEmptyError struct { }
@@ -109,6 +110,23 @@ func (f *IntField) Validate() error {
 	_, ok := f.Value.(int64)
 	if !ok {
 		return FieldIsWrongFormatErr
+	}
+
+	return nil
+}
+
+func (f *ArrayField) Validate() error {
+	if f.Value == nil {
+		return FieldIsEmptyErr
+	} //Field is empty
+
+	arr, ok := f.Value.([]any)
+	if !ok {
+		return FieldIsWrongFormatErr
+	}
+
+	if len(arr) == 0 {
+		return FieldIsEmptyErr
 	}
 
 	return nil

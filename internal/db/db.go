@@ -12,7 +12,7 @@ import (
 	_ "github.com/ncruces/go-sqlite3/driver"
 )
 
-//Constants for table names and such
+//Constants for table and column names
 const (
 	TableGameCategories = "game_categories"
 	ColGameCategoryID = "game_category_id"
@@ -372,8 +372,14 @@ func BuildUpdateStatement(columns[]string, newVals []any, table string, where []
 }
 
 //Gets the ON clause to prevent very messy string stuff
-func GetOnClause(table1 string, table2 string, joinVal string) string {
-	return fmt.Sprintf("%s.%s = %s.%s", table1, joinVal, table2, joinVal)
+func getOnClause(table1 string, table2 string, joinCol1 string, joinCol2 string) string {
+	return fmt.Sprintf("%s.%s = %s.%s", table1, joinCol1, table2, joinCol2)
+}
+
+//Gets linking table
+func GetLinkingTable(table1 string, table2 string, joinCol1 string, joinCol2 string) string {
+	on := getOnClause(table1, table2, joinCol1, joinCol2)
+	return fmt.Sprintf("%s JOIN %s ON %s", table1, table2, on)
 }
 
 //Checks if record exists

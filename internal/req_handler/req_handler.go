@@ -117,3 +117,26 @@ func validateNumber(w http.ResponseWriter, req map[string]any, key string, requi
 
 	return repository.MakeNullableInt(req[key].(int)), nil
 }
+
+//Validates array field
+func validateArray(w http.ResponseWriter, req map[string]any, key string, required bool) ([]any, error) {
+	err := (&ArrayField{req[key]}).Validate()
+
+	//Check error
+	if err != nil {
+		switch err{
+		case FieldIsEmptyErr:
+			if required {
+				writeError(w, http.StatusBadRequest, key + " cannot be empty")
+				return nil, err
+			} else {
+				return make([]any, 0), nil
+			}
+		case FieldIsWrongFormatErr:
+			writeError(w, http.StatusBadRequest, key + " must be an array")
+			return nil, err
+		}
+	}
+
+	return req[key].([]any), nil
+}

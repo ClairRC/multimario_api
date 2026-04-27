@@ -8,14 +8,21 @@ import (
 )
 
 /*
+* TODO: Currently these handlers expect a twitch ID, but this should be a name, not an ID
+*	    I will change this once I implement twitch integration
+ */
+
+/*
 * Add new Player
 *
 * ENDPOINT: POST /players
 *
 * EXPECTED:
 * {
-*	player_name: string //REQUIRED -- Player's name
-*	twitch_id: int //REQUIRED-- Player's twitch ID. Required for race participation. Just set to 0 if its like a banned player or something
+*	display_name: string //OPTIONAL -- Player's name as saved in the DB and displayed on stream
+*	twitch_name: string //REQUIRED-- Player's twitch name. Will also be set to the display name if display name is empty
+*									 Set to "DNE" if twitch no longer exists or player is banned or something.
+*									 Primarily for preserving historical data, as it is preferred to include a twitch even if the player is banned
 * }
 *
 * RETURNS:
@@ -78,8 +85,9 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 *
 * EXPECTED:
 * {
-*	player_name: string //OPTIONAL: Update player's name
-*	player_twitch_id: int //OPTIONAL: Update player's twitch ID
+*	display_name: string //OPTIONAL: Update player's display name
+*	twitch_name: string //OPTIONAL: Update player's twitch ID. This is ONLY necessary if the user is using a new twitch account
+*									The DB stores the twitch ID rather than the name, so this isnt necessary for account name changes.
 * }
 *
 * RETURNS:
