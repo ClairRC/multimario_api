@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/gamecategories"
 	"github.com/multimario_api/internal/repository/racecategories"
 )
@@ -32,7 +33,7 @@ import (
 *
 */
 
-//Add new race category
+// Add new race category
 func (h *ReqHandler) AddRaceCategory(w http.ResponseWriter, r *http.Request) {
 	//Get request
 	req, err := parseReqJSON(r) //Parse request into map
@@ -43,8 +44,10 @@ func (h *ReqHandler) AddRaceCategory(w http.ResponseWriter, r *http.Request) {
 
 	//Verify race category name and make sure it doesn't alraedy exist
 	name, err := validateText(w, req, "name", true)
-	if err != nil { return }
-	
+	if err != nil {
+		return
+	}
+
 	exists, err := racecategories.RaceCategoryExistsByName(h.DataBase, name)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error parsing name")
@@ -57,7 +60,9 @@ func (h *ReqHandler) AddRaceCategory(w http.ResponseWriter, r *http.Request) {
 
 	//Validate game categories
 	gameCats, err := validateGameCategories(h, w, req, "game_categories", true)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	//Create race category from input
 	raceCat, err := racecategories.NewRaceCategory(h.DataBase, name, gameCats)
@@ -79,7 +84,7 @@ func (h *ReqHandler) AddRaceCategory(w http.ResponseWriter, r *http.Request) {
 /*
 * Edit race category
 *
-* ENDPOINT: PATCH /racecategories/{race_category_id}
+* ENDPOINT: PATCH /racecategories/{race_category_name}
 * Note: Game categories get replaced by request, not appended, so be sure to include all of the new categories
 *
 * EXPECTED:
@@ -99,9 +104,55 @@ func (h *ReqHandler) AddRaceCategory(w http.ResponseWriter, r *http.Request) {
 *
 */
 
-//Edit race category
+// Edit race category
 func (h *ReqHandler) EditRaceCategory(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get path parameter and make sure it exists
+	origCatName := repository.MakeNullableStr(r.PathValue("race_category_name"))
+	exists, err := racecategories.RaceCategoryExistsByName(h.DataBase, origCatName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error parsing requested category")
+		return
+	}
+	if !exists {
+		writeError(w, http.StatusBadRequest, "race category does not exist")
+		return
+	}
+
+	//Get request
+	req, err := parseReqJSON(r) //Parse request into map
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error parsing request") //Write error if unable to parse JSON for some reason
+		return
+	}
+
+	//Validate name
+	newCatName, err := validateText(w, req, "race_category_name", false)
+	if err != nil {
+		return
+	}
+
+	//Validate game categories
+	gameCats, err := validateGameCategories(h, w, req, "game_categories", false)
+	if err != nil {
+		return
+	}
+
+	//Get race category
+	raceCat, err := racecategories.GetRaceCategoryByName(h.DataBase, origCatName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown request accessing race category resource")
+		return
+	}
+
+	//Update Race Category
+	err = raceCat.Update(h.DataBase, newCatName, gameCats)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error updating game category")
+		return
+	}
+
+	//We're updated, write success
+	writeJSON(w, http.StatusOK, map[string]any{"success": true})
 }
 
 /*
@@ -132,19 +183,21 @@ func (h *ReqHandler) EditRaceCategory(w http.ResponseWriter, r *http.Request) {
 *	]
 * }
 *
-*/
+ */
 
-//Edit race category
+// Edit race category
 func (h *ReqHandler) GetRaceCategories(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
 }
 
-//Helper function for parsing array of game categories
+// Helper function for parsing array of game categories
 func validateGameCategories(h *ReqHandler, w http.ResponseWriter, req map[string]any, arrayKey string, required bool) ([]*gamecategories.GameCategory, error) {
 	//Validate game category array
 	gameCatNames, err := validateArray(w, req, arrayKey, required)
-	if err != nil { return nil, err }
-	
+	if err != nil {
+		return nil, err
+	}
+
 	//Validate each game category inside the array
 	gameCats := make([]*gamecategories.GameCategory, 0) //Array for game categories
 	for _, v := range gameCatNames {
@@ -157,7 +210,9 @@ func validateGameCategories(h *ReqHandler, w http.ResponseWriter, req map[string
 
 		//Get game category name
 		gameCatName, err := validateText(w, arrayObj, "game_category_name", true)
-		if err != nil { return nil, err }
+		if err != nil {
+			return nil, err
+		}
 
 		//Get game category from the name
 		//This performs a different SELECT query for each name, so it's kinda inefficient, but trivial for these use cases
@@ -174,6 +229,6 @@ func validateGameCategories(h *ReqHandler, w http.ResponseWriter, req map[string
 		//Add to map of game categories
 		gameCats = append(gameCats, gameCat)
 	}
-	
+
 	return gameCats, nil
 }

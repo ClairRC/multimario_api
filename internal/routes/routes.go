@@ -11,7 +11,6 @@ import (
 	"github.com/multimario_api/internal/req_handler"
 )
 
-
 func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 	//Races Handlers
 	m.HandleFunc("POST /races", h.CreateRace)
@@ -19,14 +18,14 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 	m.HandleFunc("GET /races/{id}", h.GetRaceFromID)
 	m.HandleFunc("GET /races", h.GetRaces)
 	m.HandleFunc("DELETE /races/{id}", h.DeleteRace)
-	
+
 	//Special handlers for the race that is currently happening
 	//Specifically meant to expose useful behavior during races
 	m.HandleFunc("PATCH /currentrace/{player_id}/{game_id}", h.UpdatePlayerGameTime)
 	m.HandleFunc("PATCH /currentrace/{player_id}", h.SetPlayerCollectibleCount)
 	m.HandleFunc("GET /currentrace/{player_id}", h.GetPlayerProgress)
 	m.HandleFunc("GET /currentrace", h.GetCurrentRaceStandings)
-	
+
 	//Race Records Handlers
 	m.HandleFunc("POST /records", h.CreateRecord)
 	m.HandleFunc("PATCH /records", h.UpdateRecord)
@@ -46,7 +45,7 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 
 	//Race Categories Handlers
 	m.HandleFunc("POST /racecategories", h.AddRaceCategory)
-	m.HandleFunc("PUT /racecategories/{race_category_id}", h.EditRaceCategory)
+	m.HandleFunc("PATCH /racecategories/{race_category_name}", h.EditRaceCategory)
 	m.HandleFunc("GET /racecategories", h.GetRaceCategories)
 
 	//Runs Handlers

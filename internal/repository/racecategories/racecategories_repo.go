@@ -53,6 +53,7 @@ func GetRaceCategoryByName(database *sql.DB, name repository.NullableStr) (*Race
 	}
 
 	//Get game categories that are part of this race category
+	//These two steps can be turned into 1 with JOINs, but it doesnt matter a ton
 	selectLinkingStmt := db.BuildSelectStatement(
 		[]string{db.ColRaceCatGameCatGameCatgeoryID},
 		db.TableRaceCatGameCat,
