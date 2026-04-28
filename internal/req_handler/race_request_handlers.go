@@ -132,7 +132,39 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//Get request
+	req, err := parseReqJSON(r) //Parse request into map
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error parsing request") //Write error if unable to parse JSON for some reason
+		return
+	}
+
 	//Validate request parameters
+	newCat, err := validateText(w, req, "category", false)
+	if err != nil { return }
+
+	newDate, err := validateDate(w, req, "date", false)
+	if err != nil { return }
+
+	newStatus, err := validateText(w, req, "date", false)
+	if err != nil { return }
+
+	newStart, err := validateTime(w, req, "start_time", false)
+	if err != nil { return }
+
+	//Update
+	err = race.Update(h.DataBase, int64(raceID), newDate, newStart, newStatus, newCat)
+	if err != nil {
+		switch err {
+		case racecategories.RaceCategoryDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "new category does not exist")
+		default:
+			writeError(w, http.StatusInternalServerError, "unknown error updating race info")
+		}
+	}
+
+	//Updated, write success
+	writeJSON(w, http.StatusOK, map[string]any{"success": true})
 }
 
 /*
