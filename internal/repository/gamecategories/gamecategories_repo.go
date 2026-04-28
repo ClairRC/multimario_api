@@ -134,7 +134,8 @@ func (c *GameCategory) Add(database *sql.DB) error {
 		[]any{c.Name.Value, c.Estimate.Value, c.NumCollectibles.Value, gameID},
 	)
 
-	return db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	_, err = db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	return err
 }
 
 // Update game category
@@ -192,7 +193,8 @@ func (c *GameCategory) Update(
 		return err
 	} //Return error if can't build statement
 
-	return db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	_, err = db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	return err
 }
 
 // Checks if gamecategory exists

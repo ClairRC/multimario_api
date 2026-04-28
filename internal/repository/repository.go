@@ -6,7 +6,7 @@ import (
 
 //Nullable interface
 type Nullable interface {
-	IsNull() bool
+	NullableValue() any
 }
 
 //Nullable Values
@@ -27,27 +27,47 @@ var StringIsNullErr error = errors.New("string is null")
 var IntIsNullErr error = errors.New("int is null")
 
 //Get Nullable string with some value
-func MakeNullableStr(s string) NullableStr {
-	valid := true
-
-	//If s is empty, string is NULL
-	if s == "" {
-		valid = false
+func MakeNullableStr(s any) NullableStr {
+	//Make sure s is a string
+	str, ok := s.(string)
+	if !ok {
+		return NULLStr
 	}
 
-	return NullableStr{s, valid}
+	//If str is empty, string is NULL
+	if str == "" {
+		return NULLStr
+	}
+
+	return NullableStr{str, true}
 }
 
 //Get Nullable int with some value
-func MakeNullableInt(i int) NullableInt {
-	return NullableInt{i, true}
+func MakeNullableInt(i any) NullableInt {
+	//Make sure i is int
+	switch v := i.(type) {
+	case int:
+		return NullableInt{v, true}
+	case int64:
+		return NullableInt{int(v), true}
+	default:
+		return NULLInt
+	}
 }
 
-//Checks if nullable is null
-func (s NullableStr) IsNull() bool {
-	return s.Valid
+//Gets value. Can be NULL or nullable.Value
+func (s NullableStr) NullableValue() any {
+	if s.Valid {
+		return s.Value
+	} else {
+		return nil
+	}
 }
 
-func (i NullableInt) IsNull() bool {
-	return i.Valid
+func (i NullableInt) NullableValue() any {
+	if i.Valid {
+		return i.Value
+	} else {
+		return nil
+	}
 }

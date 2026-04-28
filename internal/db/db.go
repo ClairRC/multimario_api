@@ -39,6 +39,13 @@ const (
 	TableRaceCatGameCat = "race_cat_game_cat"
 	ColRaceCatGameCatRaceCategoryID = "race_category_id"
 	ColRaceCatGameCatGameCatgeoryID = "game_category_id"
+
+	TableRaces = "races"
+	ColRaceRaceCategoryID = "race_category_id"
+	ColRaceID = "race_id"
+	ColRaceDate = "date"
+	ColRaceStartTime = "start_time"
+	ColRaceStatus = "status"
 )
 
 //Operator type and default operators
@@ -51,10 +58,19 @@ const GreaterThan Operator = ">"
 const LessThanEqualTo Operator = "<="
 const GreaterThanEqualTo Operator = ">="
 
+//Statement types
+type StatementType string
+
+const Insert StatementType = "INSERT"
+const Update StatementType = "UPDATE"
+const Delete StatementType = "DELETE"
+const Select StatementType = "SELECT"
+
 //SQL statement
 type SQLStatement struct {
 	Stmt string
 	Args []any
+	Type StatementType
 }
 
 //Struct for building the where clause
@@ -218,24 +234,43 @@ func DatabaseInit(db *sql.DB) error {
 } 
 
 //Execute SQL statements
-func ExecuteStatements(db *sql.DB, statements []SQLStatement) error {
+//Returns a slice of insert IDs for any insert statements that exist
+func ExecuteStatements(db *sql.DB, statements []SQLStatement) ([]int64, error) {
+	insertIDs := make([]int64, 0)
+
 	//Start transaction
 	tx, err := db.Begin()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer tx.Rollback()
 
 	//Execute each statement
 	for _, v := range statements {
-		_, err := tx.Exec(v.Stmt, v.Args...)
+		res, err := tx.Exec(v.Stmt, v.Args...)
 		if err != nil {
-			return err
+			return nil, err
+		}
+
+		//Add ID to return slice if statement is an insert
+		if v.Type == Insert {
+			id, err := res.LastInsertId()
+			if err != nil { 
+				return nil, err 
+			}
+
+			insertIDs = append(insertIDs, id)
 		}
 	}
 
-	return tx.Commit()
+	//Commit changes
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	} else {
+		return insertIDs, err
+	}
 }
 
 //Execute SQL queries
@@ -317,7 +352,7 @@ func BuildSelectStatement(columns []string, table string, where []WhereCondition
 		args = append(args, w.Value)
 	}
 
-	return SQLStatement{stmt, args}
+	return SQLStatement{stmt, args, Select}
 }
 
 func BuildInsertStatement(columns []string, table string, values []any) SQLStatement{
@@ -343,7 +378,7 @@ func BuildInsertStatement(columns []string, table string, values []any) SQLState
     }
     stmt += ")"
     
-    return SQLStatement{stmt, args}
+    return SQLStatement{stmt, args, Insert}
 }
 
 func BuildUpdateStatement(columns[]string, newVals []any, table string, where []WhereCondition) (SQLStatement, error) {
@@ -372,7 +407,7 @@ func BuildUpdateStatement(columns[]string, newVals []any, table string, where []
 		args = append(args, w.Value)
 	}
 
-	return SQLStatement{stmt, args}, nil
+	return SQLStatement{stmt, args, Update}, nil
 }
 
 func BuildDeleteStatement(table string, where []WhereCondition) SQLStatement {
@@ -388,7 +423,7 @@ func BuildDeleteStatement(table string, where []WhereCondition) SQLStatement {
 		args = append(args, w.Value)
 	}
 
-	return SQLStatement{stmt, args}
+	return SQLStatement{stmt, args, Delete}
 }
 
 //Gets the ON clause to prevent very messy string stuff

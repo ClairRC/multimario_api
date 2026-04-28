@@ -72,6 +72,29 @@ func validateText(w http.ResponseWriter, req map[string]any, key string, require
 	return repository.MakeNullableStr(req[key].(string)), nil
 }
 
+//Validate duration field
+func validateDuration(w http.ResponseWriter, req map[string]any, key string, required bool) (repository.NullableStr, error) {
+	err := (&DurationField{req[key]}).Validate()
+
+	//Check error
+	if err != nil {
+		switch err{
+		case FieldIsEmptyErr:
+			if required {
+				writeError(w, http.StatusBadRequest, key + " cannot be empty")
+				return repository.NULLStr, err
+			} else {
+				return repository.NULLStr, nil
+			}
+		case FieldIsWrongFormatErr:
+			writeError(w, http.StatusBadRequest, key + " must be valid duration in hh:mm:ss format")
+			return repository.NULLStr, err
+		} 
+	}
+
+	return repository.MakeNullableStr(req[key].(string)), nil
+}
+
 //Validate time field
 func validateTime(w http.ResponseWriter, req map[string]any, key string, required bool) (repository.NullableStr, error) {
 	err := (&TimeField{req[key]}).Validate()
@@ -87,7 +110,30 @@ func validateTime(w http.ResponseWriter, req map[string]any, key string, require
 				return repository.NULLStr, nil
 			}
 		case FieldIsWrongFormatErr:
-			writeError(w, http.StatusBadRequest, key + " must be in hh:mm:ss format")
+			writeError(w, http.StatusBadRequest, key + " must be valid time in hh:mm:ss format")
+			return repository.NULLStr, err
+		} 
+	}
+
+	return repository.MakeNullableStr(req[key].(string)), nil
+}
+
+//Validate date field
+func validateDate(w http.ResponseWriter, req map[string]any, key string, required bool) (repository.NullableStr, error) {
+	err := (&DateField{req[key]}).Validate()
+
+	//Check error
+	if err != nil {
+		switch err{
+		case FieldIsEmptyErr:
+			if required {
+				writeError(w, http.StatusBadRequest, key + " cannot be empty")
+				return repository.NULLStr, err
+			} else {
+				return repository.NULLStr, nil
+			}
+		case FieldIsWrongFormatErr:
+			writeError(w, http.StatusBadRequest, key + " must be in YYYY-MM-DD format")
 			return repository.NULLStr, err
 		} 
 	}

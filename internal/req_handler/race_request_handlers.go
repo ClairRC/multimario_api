@@ -2,6 +2,10 @@ package req_handler
 
 import (
 	"net/http"
+
+	"github.com/multimario_api/internal/repository"
+	"github.com/multimario_api/internal/repository/racecategories"
+	"github.com/multimario_api/internal/repository/races"
 )
 
 /*
@@ -14,6 +18,7 @@ import (
 *	category: string, //REQUIRED - The category of the race
 *	date: string, //OPTIONAL - YYYY-MM-DD format
 *	status: string //OPTIONAL - Defaults to "upcoming"
+*	start_time: string //OPTIONAL - Must be hh:mm:ss field
 * }
 *
 * RETURNS:
@@ -35,6 +40,44 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//Validate values
+	raceCatName, err := validateText(w, req, "category", true)
+	if err != nil { return }
+
+	raceDate, err := validateDate(w, req, "date", false)
+	if err != nil { return }
+
+	raceStatus, err := validateText(w, req, "status", false)
+	if err != nil { return }
+
+	if !raceStatus.Valid {
+		raceStatus = repository.MakeNullableStr("upcoming")
+	} //If status is NULL, give it a default value
+
+	raceStartTime, err := validateTime(w, req, "start_time", false)
+	if err != nil { return }
+
+	//Get race and ID
+	race, err := races.NewRace(h.DataBase, raceDate, raceStartTime, raceStatus, raceCatName)
+	if err != nil {
+		switch err {
+		case racecategories.RaceCategoryDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "race category does not exist")
+		default: 
+			writeError(w, http.StatusInternalServerError, "unknown error making race")
+		}
+		return
+	}
+
+	//Add the race
+	id, err := race.Add(h.DataBase)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error adding new race")
+		return
+	}
+
+	//All fields validated
+	writeJSON(w, http.StatusOK, map[string]any{"success": true, "id": id})
 }
 
 /*
@@ -50,6 +93,11 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 *	start_time: string -- OPTIONAL //Update the start time
 * }
 *
+* RETURNS:
+* {
+*	success: boolean //True on successful creation
+*	error: string //Error (only if success is false)
+* }
 */
 
 func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {

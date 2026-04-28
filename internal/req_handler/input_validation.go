@@ -2,6 +2,8 @@ package req_handler
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -13,6 +15,7 @@ import (
 type DateField struct { Value any }
 type TextField struct { Value any }
 type TimeField struct { Value any }
+type DurationField struct { Value any }
 type IntField struct { Value any }
 type ArrayField struct { Value any }
 
@@ -100,6 +103,41 @@ func (f *TimeField) Validate() error {
 	} //If unable to parse data, this means data is wrong format
 
 	return nil //Field is valid Time
+}
+
+func (f *DurationField) Validate() error {
+	if f.Value == nil {
+		return FieldIsEmptyErr
+	} //If field is nil, return FieldEmptyError
+
+	fStr, ok := f.Value.(string)
+	if !ok {
+		return FieldIsWrongFormatErr
+	} //If field is not nil, but is the wrong datatype, return WrongFormatError
+
+	if fStr == "" {
+		return FieldIsEmptyErr
+	} //Field is the right datatype, but the field is empty
+
+	//Parse duration string
+	parts := strings.Split(fStr, ":")
+	if len(parts) != 3 {
+		return FieldIsWrongFormatErr
+	}
+	for i, p := range parts {
+		val, err := strconv.Atoi(p)
+		if err != nil {
+			return FieldIsWrongFormatErr
+		}
+
+		if i == 0 && val < 0 {
+			return FieldIsWrongFormatErr
+		} else if i > 0 && (val < 0 || val > 59) {
+			return FieldIsWrongFormatErr
+		}
+	}
+
+	return nil //Field is valid Duration
 }
 
 func (f *IntField) Validate() error {

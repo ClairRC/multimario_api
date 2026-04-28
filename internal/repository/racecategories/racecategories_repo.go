@@ -46,14 +46,16 @@ func GetRaceCategoryByName(database *sql.DB, name repository.NullableStr) (*Race
 	}
 
 	//Get race category ID
-	//This having a nil error implies that this category exists. Maybe bad?
+	
+	//TODO:The big issue here is that if this succeeds and the queries below fail there will be an orphaned race category
+	//Not ideal, but okay for now
 	raceCatID, err := GetRaceCategoryIDFromName(database, name.Value)
 	if err != nil {
 		return nil, err
 	}
 
 	//Get game categories that are part of this race category
-	//These two steps can be turned into 1 with JOINs, but it doesnt matter a ton
+	//These two steps can be turned into 1 with JOINs
 	selectLinkingStmt := db.BuildSelectStatement(
 		[]string{db.ColRaceCatGameCatGameCatgeoryID},
 		db.TableRaceCatGameCat,
@@ -74,7 +76,7 @@ func GetRaceCategoryByName(database *sql.DB, name repository.NullableStr) (*Race
 		//Get game category ID from result map
 		gameCatID, ok := v.(int64)
 		if !ok {
-			return nil, err
+			return nil, errors.New("unexpected type for game category id")
 		}
 
 		//Get the game category and add it to slice
@@ -91,15 +93,24 @@ func GetRaceCategoryByName(database *sql.DB, name repository.NullableStr) (*Race
 
 // Add race category
 func (c *RaceCategory) Add(database *sql.DB) error {
-	//First, get statements for adding each linking table entry
-	stmts := make([]db.SQLStatement, 0)
+	//Add race category to DB
+	add := db.BuildInsertStatement([]string{db.ColRaceCategoryName}, db.TableRaceCategories, []any{c.Name.Value})
+	_, err := db.ExecuteStatements(database, []db.SQLStatement{add})
+	if err != nil {
+		return err
+	}
 
-	//For each game category, make a statement for adding the linking entry
+	//Get race category ID
+	//NOTE This call isn't necessary. Execute statements should probably return the ID
 	raceCatID, err := GetRaceCategoryIDFromName(database, c.Name.Value)
 	if err != nil {
 		return err
 	}
 
+	//Get statements for adding each linking table entry
+	stmts := make([]db.SQLStatement, 0)
+
+	//For each game category, make a statement for adding the linking entry
 	for _, v := range c.GameCategories {
 		gameCatID, err := gamecategories.GetGameCategoryIDFromName(database, v.Name.Value)
 		if err != nil {
@@ -114,7 +125,7 @@ func (c *RaceCategory) Add(database *sql.DB) error {
 	}
 
 	//Execute statements atomically
-	err = db.ExecuteStatements(database, stmts)
+	_, err = db.ExecuteStatements(database, stmts)
 	if err != nil {
 		return err
 	}
@@ -145,7 +156,7 @@ func (c *RaceCategory) Update(database *sql.DB, newName repository.NullableStr, 
 		stmts = append(stmts, deleteCatsStmt)
 
 		//Get statements for adding new categories to linking table
-		for _, v := range c.GameCategories {
+		for _, v := range newGameCategories {
 			gameCatID, err := gamecategories.GetGameCategoryIDFromName(database, v.Name.Value)
 			if err != nil {
 				return err
@@ -178,7 +189,7 @@ func (c *RaceCategory) Update(database *sql.DB, newName repository.NullableStr, 
 	}
 
 	//Atomically execute statements
-	err = db.ExecuteStatements(database, stmts)
+	_, err = db.ExecuteStatements(database, stmts)
 	if err != nil {
 		return err
 	}

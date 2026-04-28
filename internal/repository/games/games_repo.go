@@ -63,7 +63,8 @@ func (g *Game) Add(database *sql.DB) error {
 	//Build SQL statements
 	stmt := db.BuildInsertStatement([]string{db.ColGameName}, db.TableGames, []any{g.Name})
 	
-	return db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	_, err := db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	return err
 }
 
 //Update game
@@ -85,7 +86,8 @@ func (g *Game) Update(database *sql.DB, newName repository.NullableStr) error {
 		stmts = append(stmts, nameStmt)
 	}
 
-	return db.ExecuteStatements(database, stmts)
+	_, err := db.ExecuteStatements(database, stmts)
+	return err
 }
 
 //Checks if game already exists

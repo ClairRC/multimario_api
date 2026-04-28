@@ -47,7 +47,7 @@ func (h *ReqHandler) AddGameCategory(w http.ResponseWriter, r *http.Request) {
 	if err != nil { return }
 
 	//Validate estimate
-	estimate, err := validateTime(w, req, "estimate", true)
+	estimate, err := validateDuration(w, req, "estimate", true)
 	if err != nil { return }
 
 	//Validate collectibles
@@ -165,7 +165,7 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Check for new estimate
-	newEstimate, err := validateTime(w, req, "estimate", false)
+	newEstimate, err := validateDuration(w, req, "estimate", false)
 	if err != nil { return }
 
 	//Check for num collectibles
