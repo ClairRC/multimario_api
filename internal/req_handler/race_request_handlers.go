@@ -2,6 +2,7 @@ package req_handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/racecategories"
@@ -31,7 +32,7 @@ import (
 *
 */
 
-//Create race
+// Create race
 func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 	//Input validation
 	req, err := parseReqJSON(r) //Parse request into map
@@ -42,20 +43,28 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 
 	//Validate values
 	raceCatName, err := validateText(w, req, "category", true)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	raceDate, err := validateDate(w, req, "date", false)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	raceStatus, err := validateText(w, req, "status", false)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	if !raceStatus.Valid {
 		raceStatus = repository.MakeNullableStr("upcoming")
 	} //If status is NULL, give it a default value
 
 	raceStartTime, err := validateTime(w, req, "start_time", false)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	//Get race and ID
 	race, err := races.NewRace(h.DataBase, raceDate, raceStartTime, raceStatus, raceCatName)
@@ -63,7 +72,7 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 		switch err {
 		case racecategories.RaceCategoryDoesNotExistErr:
 			writeError(w, http.StatusBadRequest, "race category does not exist")
-		default: 
+		default:
 			writeError(w, http.StatusInternalServerError, "unknown error making race")
 		}
 		return
@@ -98,10 +107,32 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 *	success: boolean //True on successful creation
 *	error: string //Error (only if success is false)
 * }
-*/
+ */
 
 func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get path value
+	raceIDPathVal := r.PathValue("race_id")
+
+	//Convert ID to int
+	raceID, err := strconv.Atoi(raceIDPathVal)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "race id cannot be parsed as int")
+		return
+	}
+
+	//Get race from ID
+	race, err := races.GetRaceByID(h.DataBase, int64(raceID))
+	if err != nil {
+		switch err {
+		case races.RaceDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "race does not exist")
+		default:
+			writeError(w, http.StatusInternalServerError, "unknown error getting race")
+		}
+		return
+	}
+
+	//Validate request parameters
 }
 
 /*
@@ -117,7 +148,7 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 *	status: String
 *	start_time: string -- UTC
 * }
-*/
+ */
 
 func (h *ReqHandler) GetRaceFromID(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
@@ -146,7 +177,7 @@ func (h *ReqHandler) GetRaceFromID(w http.ResponseWriter, r *http.Request) {
 *		}
 *	]
 * }
-*/
+ */
 
 func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
@@ -158,11 +189,11 @@ func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 *
 * ENDPOINT: DELETE /races/{id}
 *
-* EXPECTED: 
+* EXPECTED:
 * {
 * 	id: int //REQUIRED -- Race ID to delete
 * }
-*/
+ */
 
 func (h *ReqHandler) DeleteRace(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
