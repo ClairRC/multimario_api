@@ -96,7 +96,6 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 *
 * EXPECTED:
 * {
-*	category: string -- OPTIONAL //Update the category being run
 *	date: string -- OPTIONAL //Update the date of the race
 *	status: string -- OPTIONAL //Update the status of the race
 *	start_time: string -- OPTIONAL //Update the start time
@@ -140,9 +139,6 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate request parameters
-	newCat, err := validateText(w, req, "category", false)
-	if err != nil { return }
-
 	newDate, err := validateDate(w, req, "date", false)
 	if err != nil { return }
 
@@ -153,7 +149,7 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 	if err != nil { return }
 
 	//Update
-	err = race.Update(h.DataBase, int64(raceID), newDate, newStart, newStatus, newCat)
+	err = race.Update(h.DataBase, int64(raceID), newDate, newStart, newStatus)
 	if err != nil {
 		switch err {
 		case racecategories.RaceCategoryDoesNotExistErr:

@@ -13,6 +13,9 @@ import (
 *
 * ENDPOINT: POST /gamecategories
 *
+* Note: Despite needing a game name and category name, category names should be prepended with their game name.
+* For instance, sms_any% differentiates it from smo_any%. smo_all_moons. etc.
+*
 * EXPECTED:
 * {
 *	category_name: string //REQUIRED -- New category name

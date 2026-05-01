@@ -148,9 +148,7 @@ func (r *Race) Add(database *sql.DB) (int64, error) {
 
 // Update race
 func (r *Race) Update(database *sql.DB, raceID int64, newDate repository.NullableStr, 
-	newStartTime repository.NullableStr, newStatus repository.NullableStr, 
-	newCategoryName repository.NullableStr) error {
-
+	newStartTime repository.NullableStr, newStatus repository.NullableStr) error {
 		//TODO: Currently, this doesn't let you update a value to NULL. Not sure if that should be changed.
 
 		//Build Update statement parameters
@@ -173,13 +171,6 @@ func (r *Race) Update(database *sql.DB, raceID int64, newDate repository.Nullabl
 		if newStatus.Valid {
 			cols = append(cols, db.ColRaceStatus)
 			vals = append(vals, newStatus.Value)
-		}
-		if newCategoryName.Valid {
-			newCatID, err := racecategories.GetRaceCategoryIDFromName(database, newCategoryName.Value)
-			if err != nil { return err }
-
-			cols = append(cols, db.ColRaceRaceCategoryID)
-			vals = append(vals, newCatID)
 		}
 
 		update, err := db.BuildUpdateStatement(cols, vals, db.TableRaces, whereCon)

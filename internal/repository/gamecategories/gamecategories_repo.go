@@ -11,10 +11,10 @@ import (
 
 // Game category struct
 type GameCategory struct {
-	Name            repository.NullableStr
-	Estimate        repository.NullableStr
+	Name repository.NullableStr
+	Estimate repository.NullableStr
 	NumCollectibles repository.NullableInt
-	GameName        repository.NullableStr
+	GameName repository.NullableStr
 }
 
 // Errors

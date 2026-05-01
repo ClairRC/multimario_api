@@ -20,7 +20,7 @@ import (
 *	game_categories: //REQUIRED -- Array of game categories that are apart of this race category
 *	[
 *		{
-*			game_category_name: int //REQUIRED
+*			game_category_name: string //REQUIRED
 *		}
 *	]
 * }
