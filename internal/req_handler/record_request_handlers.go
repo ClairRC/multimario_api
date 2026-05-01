@@ -3,11 +3,11 @@ package req_handler
 import (
 	"errors"
 	"net/http"
-	"slices"
 
 	"github.com/multimario_api/internal/repository"
-	"github.com/multimario_api/internal/repository/gamecategories"
+	"github.com/multimario_api/internal/repository/players"
 	"github.com/multimario_api/internal/repository/races"
+	"github.com/multimario_api/internal/repository/records"
 	"github.com/multimario_api/internal/repository/records/runs"
 )
 
@@ -51,20 +51,31 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 
 	//Validate body values
 	raceID, err := validateNumber(w, req, "race_id", true)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	playerName, err := validateText(w, req, "player_name", true)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	finishTime, err := validateDuration(w, req, "finish_time", false)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	numCollected, err := validateNumber(w, req, "num_collected", false)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
+	if !numCollected.Valid {
+		numCollected = repository.MakeNullableInt(0) //Set default value to 0
+	}
 
-	//Get race and categories
+	//Get race from ID
 	race, err := races.GetRaceByID(h.DataBase, int64(raceID.Value))
-	if err != nil { 
+	if err != nil {
 		switch err {
 		case races.RaceDoesNotExistErr:
 			writeError(w, http.StatusBadRequest, "requested race id is invalid")
@@ -74,9 +85,31 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO: finish
+	//Get run values
+	recordRuns, err := validateRuns(h, w, req, "runs", race)
+	if err != nil {
+		return
+	}
 
-	//Thingy is added, return success
+	//Create new record and add it
+	record, err := records.NewRecord(h.DataBase, raceID, playerName, finishTime, numCollected, recordRuns)
+	if err != nil {
+		switch err {
+		case players.PlayerDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "player does not exist")
+		default:
+			writeError(w, http.StatusInternalServerError, "unknown error creating record")
+		}
+		return
+	}
+
+	err = record.Add(h.DataBase)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "uknown error adding record")
+		return
+	}
+
+	//Record is added, return success
 	writeJSON(w, http.StatusOK, map[string]any{"success": true})
 }
 
@@ -94,7 +127,7 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 *	num_collected: int //OPTIONAL -- Updates the number of collectibles for this record
 * }
 *
-*/
+ */
 
 func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
@@ -102,7 +135,7 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 
 /*
 * Gets race records
-* 
+*
 * OPTIONAL PARAMETERS:
 *	player_id: int -- Returns records just from specific players. Can be multiple.
 *	category: string -- Returns records just of a specific race category
@@ -127,7 +160,7 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 *	]
 * }
 *
-*/
+ */
 
 func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement
@@ -135,7 +168,7 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 
 /*
 * Gets race records of a specific race
-* 
+*
 * ENDPOINT: GET /records/{race_id}
 *
 * OPTIONAL PARAMETERS:
@@ -154,7 +187,7 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 *	]
 * }
 *
-*/
+ */
 
 func (h *ReqHandler) GetRaceRecordsFromRace(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
@@ -163,7 +196,7 @@ func (h *ReqHandler) GetRaceRecordsFromRace(w http.ResponseWriter, r *http.Reque
 /*
 * Deletes a race record. Really should only be used if a player like cheated or something
 * Note this also deletes all the runs from this record.
-* 
+*
 * ENDPOINT: DELETE /records
 *
 * EXPECTS
@@ -172,109 +205,82 @@ func (h *ReqHandler) GetRaceRecordsFromRace(w http.ResponseWriter, r *http.Reque
 *	race_id: int //REQUIRED -- ID of the race this record belongs to
 * }
 *
-*/
+ */
 
 func (h *ReqHandler) DeleteRaceRecord(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
 }
 
-/*
-* TODO: Refactor these and fix the bugs that i know are there
-*/
-
-//Helper function to get runs list
-//Takes slice of items from request, returns slice of Runs or error
-func getRuns(h *ReqHandler, w http.ResponseWriter, items []map[string]any, categories []*gamecategories.GameCategory, 
-	catNameKey string, catTimeKey string, catEstimateKey string) ([]*runs.Run, error) {
-		//Output
-		out := make([]*runs.Run, 0)
-
-		//If items is empty, create default runs for each category
-		if len(items) == 0 {
-			for _, cat := range categories {
-				newRun, err := runs.NewDefaultRun(h.DataBase, cat.Name)
-				if err != nil { return nil, err }
-				out = append(out, newRun)
-			}
-			return out, nil
+// Helper function to get runs list
+// Returns slice of Runs or error
+func validateRuns(h *ReqHandler, w http.ResponseWriter, req map[string]any, arrayKey string, race *races.Race) ([]*runs.Run, error) {
+	//Run map to store {cat_name : run}
+	runMap := make(map[string]*runs.Run)
+	for _, cat := range race.RaceCategory.GameCategories {
+		run, err := runs.NewDefaultRun(h.DataBase, cat.Name)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "unknown error getting default runs")
+			return nil, err
 		}
+		runMap[cat.Name.Value] = run
+	} //Fill run map with default runs
 
-		//Get runs from categories
-		runs, err := validateRuns(h, w, items, categories, catNameKey, catTimeKey, catEstimateKey)
-		if err != nil { return nil, err }
-
-		return runs, nil
+	//Validate runs from request
+	reqRuns, err := validateArray(w, req, arrayKey, false)
+	if err != nil {
+		return nil, err
 	}
 
-//Takes a list of items from request, returns the of the categories included in the request or an error
-func validateRuns(h *ReqHandler, w http.ResponseWriter, items []map[string]any, categories []*gamecategories.GameCategory,
-	catNameKey string, catTimeKey string, catEstimateKey string) ([]*runs.Run, error) {
-		//TODO: Fix error handling. Decide where errors get handled and where they don't.
-		
-		//Gets expected category names for validation
-		expectedCatNames := make([]string, 0)
-		for _, category := range categories {
-			expectedCatNames = append(expectedCatNames, category.Name.Value)
+	//If runs is empty, return default runs
+	if len(reqRuns) == 0 {
+		return getRunSliceFromMap(runMap), nil
+	}
+
+	//Validate request run fields
+	for _, run := range reqRuns {
+		//Make sure it is correct format
+		_, ok := run.(map[string]any)
+		if !ok {
+			writeError(w, http.StatusBadRequest, "at least 1 run in array is formatted wrong")
+			return nil, errors.New("runs formatted incorrectly")
 		}
 
-		//Get names of categories from request and validates their values
-		catNames := make([]string, 0)//Slice to save included category names
-		for _, item := range items {
-			itemCatName, err := validateText(w, item, catNameKey, true)
-			if err != nil { return nil, err}
-
-			_, err = validateDuration(w, item, catTimeKey, true)
-			if err != nil { return nil, err }
-
-			_, err = validateDuration(w, item, catEstimateKey, true)
-			if err != nil { return nil, err }
-
-			catNames = append(catNames, itemCatName.Value)
-		}
-
-		//Validate that each category is part of the race
-		err := validateCategoryNames(catNames, expectedCatNames)
+		//Validate fields
+		catName, err := validateText(w, run.(map[string]any), "category_name", true)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, "category is not in this race")
 			return nil, err
 		}
 
-		//For each expected category, if that category wasn't passed in, make a default run
-		out := make([]*runs.Run, len(expectedCatNames))
-		for _, catName := range expectedCatNames {
-			if !slices.Contains(catNames, catName) {
-				newRun, err := runs.NewDefaultRun(h.DataBase, repository.MakeNullableStr(catName))
-				if err != nil {
-					return nil, err
-				}
-				out = append(out, newRun)
-			}
+		catTime, err := validateDuration(w, run.(map[string]any), "time", true)
+		if err != nil {
+			return nil, err
 		}
 
-		//For each category that IS inluded in items, make new run
-		for _, item := range items {
-			catName := repository.MakeNullableStr(item[catNameKey])
-			catTime := repository.MakeNullableStr(item[catTimeKey])
-			catEstimate := repository.MakeNullableStr(item[catEstimateKey])
+		catEstimate, err := validateDuration(w, run.(map[string]any), "estimate", true)
 
-			newRun, err := runs.NewRun(h.DataBase, catName, catTime, catEstimate)
-			if err != nil {
-				return nil, err
-			}
-			out = append(out, newRun)
-		}  
-
-		return out, nil
-	}
-
-//Takes slice of category names from request and slice of expected category names and returns an error
-//if categories don't match
-func validateCategoryNames(catNames []string, expectedNames []string) error {
-	for _, catName := range catNames {
-		if !slices.Contains(expectedNames, catName) {
-			return errors.New("category not in race")
+		//Check that run is valid run in map, and if so overwrite the default run with this one
+		if _, exists := runMap[catName.Value]; !exists {
+			writeError(w, http.StatusBadRequest, catName.Value+" is not apart of race")
+			return nil, errors.New("game category not in race")
 		}
+
+		newRun, err := runs.NewRun(h.DataBase, catName, catTime, catEstimate)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "uknown error adding "+catName.Value)
+			return nil, err
+		}
+		runMap[catName.Value] = newRun
 	}
 
-	return nil
+	//All runs added to map, return slice
+	return getRunSliceFromMap(runMap), nil
+}
+
+// Helper to get run slice from map
+func getRunSliceFromMap(runMap map[string]*runs.Run) []*runs.Run {
+	out := make([]*runs.Run, 0)
+	for _, v := range runMap {
+		out = append(out, v)
+	}
+	return out
 }
