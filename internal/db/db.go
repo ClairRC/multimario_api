@@ -283,9 +283,9 @@ func ExecuteStatements(db *sql.DB, statements []SQLStatement) ([]int64, error) {
 	err = tx.Commit()
 	if err != nil {
 		return nil, err
-	} else {
-		return insertIDs, err
 	}
+		
+	return insertIDs, nil
 }
 
 //Execute SQL queries
@@ -398,7 +398,7 @@ func BuildInsertStatement(columns []string, table string, values []any) SQLState
 
 func BuildUpdateStatement(columns[]string, newVals []any, table string, where []WhereCondition) (SQLStatement, error) {
 	if len(columns) != len(newVals) {
-		return SQLStatement{}, errors.New("Unknown error: columns and values length dont match in update statement")
+		return SQLStatement{}, errors.New("unknown error: columns and values length dont match in update statement")
 	}
  
 	args := make([]any, 0)

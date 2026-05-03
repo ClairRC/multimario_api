@@ -107,8 +107,43 @@ func (r *Record) Add(database *sql.DB) error {
 
 //Updates record
 func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, newNumCollected repository.NullableInt) error {
-	//TODO: Implement
-	return nil
+	//Make sure record exists
+	if r.RecordID == 0 {
+		return RecordDoesNotExistErr
+	}
+
+	//Get update statement
+	cols := make([]string, 0)
+	vals := make([]any, 0)
+
+	whereCon := []db.WhereCondition{{
+		ColName: db.ColRecordID,
+		Op: db.Equals,
+		Value: r.RecordID,
+	}}
+
+	if newFinishTime.Valid {
+		cols = append(cols, db.ColRecordsFinishTime)
+		vals = append(vals, newFinishTime.Value)
+	}
+
+	if newNumCollected.Valid {
+		cols = append(cols, db.ColRecordsNumCollected)
+		vals = append(vals, newNumCollected.Value)
+	}
+
+	//If cols/vals is empty, no updates necessary
+	if len(cols) == 0 {
+		return nil
+	}
+
+	//Get statement and execute it
+	updateStmt, err := db.BuildUpdateStatement(cols, vals, db.TableRecords, whereCon)
+	if err != nil { return err }
+
+	_, err = db.ExecuteStatements(database, []db.SQLStatement{updateStmt})
+
+	return err
 }
 
 /*
@@ -117,8 +152,117 @@ func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, 
 
 //Gets record from race ID and player name
 func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repository.NullableStr) (*Record, error) {
-	//TODO: Implement
-	return nil, nil
+	//Make sure input values are valid
+	if !raceID.Valid || raceID.Value == 0 {
+		return nil, races.RaceDoesNotExistErr
+	}
+	if !playerName.Valid {
+		return nil, players.PlayerDoesNotExistErr
+	}
+
+	//Get player and race
+	race, err := races.GetRaceByID(database, int64(raceID.Value))
+	if err != nil { return nil, err }
+	
+	player, err := players.GetPlayerByName(database, playerName)
+	if err != nil { return nil, err }
+
+	//Get race values from DB
+	cols := []string {
+		db.ColRecordsFinishTime,
+		db.ColRecordsNumCollected,
+		db.ColRecordID,
+	}
+	whereCons := []db.WhereCondition{{
+		ColName: db.ColRecordsPlayerID,
+		Op: db.Equals,
+		Value: player.PlayerID,
+	},
+	{
+		ColName: db.ColRecordsRaceID,
+		Op: db.Equals,
+		Value: race.RaceID,
+	}}
+
+	//Get record
+	stmt := db.BuildSelectStatement(cols, db.TableRecords, whereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil { return nil, err }
+
+	//Make sure record exists and its values be parsed as int
+	if len(res[db.ColRecordID]) == 0 {
+		return nil, RecordDoesNotExistErr
+	}
+
+	recordID, ok := res[db.ColRecordID][0].(int64)
+	if !ok {
+		return nil, errors.New("unknown error: record id can't be parsed as int")
+	}
+
+	finishTimeStr, ok := res[db.ColRecordsFinishTime][0].(string)
+	var recordFinishTime repository.NullableStr
+	if !ok {
+		recordFinishTime = repository.NULLStr
+	} else {
+		recordFinishTime = repository.MakeNullableStr(finishTimeStr)
+	}
+
+	numCollected, ok := res[db.ColRecordsNumCollected][0].(int64)
+	if !ok {
+		return nil, errors.New("unknown error: number collected in record can't be parsed as int")
+	}
+
+	//Get runs that are part of this record
+	recordRuns, err := getRunsFromRecordID(database, recordID)
+	if err != nil { return nil, err }
+
+	//Make record and return it
+	out := &Record {
+		Player: player,
+		Race: race,
+		FinishTime: recordFinishTime,
+		NumCollected: repository.MakeNullableInt(numCollected),
+		Runs: recordRuns,
+		RecordID: recordID,
+	}
+
+	return out, nil
+}
+
+func getRunsFromRecordID(database *sql.DB, recordID int64) ([]*runs.Run, error) {
+	//Build select statement
+	cols := []string {db.ColRunID}
+	whereCon := []db.WhereCondition{{
+		ColName: db.ColRunRaceRecordID,
+		Op: db.Equals, 
+		Value: recordID,
+	}}
+
+	stmt := db.BuildSelectStatement(cols, db.TableRuns, whereCon)
+	runsRes, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil { return nil, err }
+
+	//Make sure there are runs
+	if len(runsRes[db.ColRunID]) == 0 {
+		return nil, RecordDoesNotExistErr
+	}
+
+	//For each run, get the run and add it to the slice
+	out := make([]*runs.Run, 0)
+	for _, v := range runsRes[db.ColRunID] {
+		//Make sure ID is int
+		id, ok := v.(int64)
+		if !ok {
+			return nil, errors.New("unknown error: run id can't be parsed as int")
+		}
+
+		run, err := runs.GetRunFromID(database, id)
+		if err != nil { return nil, err }
+
+		out = append(out, run)
+	}
+
+	return out, nil
 }
 
 func executeRecordInsertStatement(database *sql.DB, record *Record, runs []*runs.Run) error {

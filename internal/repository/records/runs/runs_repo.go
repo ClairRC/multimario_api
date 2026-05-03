@@ -18,6 +18,10 @@ type Run struct {
 //Default Errors
 var RunDoesNotExistErr error = errors.New("run does not exist")
 
+/*
+* Run Constructors
+*/
+
 //Returns run pointer and error
 func NewRun(database *sql.DB, catName repository.NullableStr, 
 	time repository.NullableStr, estimate repository.NullableStr) (*Run, error) {
@@ -31,8 +35,20 @@ func NewDefaultRun(database *sql.DB, catName repository.NullableStr) (*Run, erro
 	return nil, nil
 }
 
+/*
+* Run Methods
+*/
+
 //Adds run to DB with specific record ID since runs must have a record ID to exist
 func (r *Run) Add(database *sql.DB, recordID int64) error {
 	//TODO: Implement
 	return nil
+}
+
+/*
+* Run Helpers
+*/
+func GetRunFromID(database *sql.DB, runID int64) (*Run, error) {
+	//TODO: Implement
+	return nil, nil
 }
