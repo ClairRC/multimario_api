@@ -2,6 +2,7 @@ package records
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/players"
@@ -17,6 +18,9 @@ type Record struct {
 	Runs []*runs.Run
 }
 
+//Default errors
+var RecordDoesNotExistErr error = errors.New("race record does not exist")
+
 //Creates new Record and returns a pointer to it
 func NewRecord(database *sql.DB, raceID repository.NullableInt, 
 	playerName repository.NullableStr, finishTime repository.NullableStr, numCollected repository.NullableInt, 
@@ -25,8 +29,20 @@ func NewRecord(database *sql.DB, raceID repository.NullableInt,
 		return nil, nil
 	}
 
+//Gets record from race ID and player name
+func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repository.NullableStr) (*Record, error) {
+	//TODO: Implement
+	return nil, nil
+}
+
 //Adds race to DB
 func (r *Record) Add(database *sql.DB) error {
+	//TODO: Implement
+	return nil
+}
+
+//Updates record
+func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, newNumCollected repository.NullableInt) error {
 	//TODO: Implement
 	return nil
 }

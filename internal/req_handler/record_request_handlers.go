@@ -3,6 +3,7 @@ package req_handler
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/players"
@@ -130,7 +131,56 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
  */
 
 func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get path values
+	playerName := repository.MakeNullableStr(r.PathValue("player_name"))
+	raceIDStr := r.PathValue("race_id")
+
+	//Convert race ID to int
+	raceID, err := strconv.Atoi(raceIDStr)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "race ID can't be parsed as int")
+		return
+	}
+
+	//Get request
+	req, err := parseReqJSON(r) //Parse request into map
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error parsing request") //Write error if unable to parse JSON for some reason
+		return
+	}
+
+	//Get record for race/player pair
+	record, err := records.GetRecord(h.DataBase, repository.MakeNullableInt(raceID), playerName)
+	if err != nil {
+		switch err {
+		case players.PlayerDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "player does not exist")
+		case races.RaceDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "race does not exist")
+		case records.RecordDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "race record does not exist")
+		default:
+			writeError(w, http.StatusInternalServerError, "unknown error getting race record")
+		}
+		return
+	}
+	
+	//Validate new values
+	newFinishTime, err := validateDuration(w, req, "finish_time", false)
+	if err != nil { return }
+
+	newNumCollected, err := validateNumber(w, req, "num_collected", false)
+	if err != nil { return }
+
+	//Update record with new values
+	err = record.Update(h.DataBase, newFinishTime, newNumCollected)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error updating record")
+		return
+	}
+
+	//Updated, return success
+	writeJSON(w, http.StatusOK, map[string]any{"success": true})
 }
 
 /*
@@ -251,12 +301,15 @@ func validateRuns(h *ReqHandler, w http.ResponseWriter, req map[string]any, arra
 			return nil, err
 		}
 
-		catTime, err := validateDuration(w, run.(map[string]any), "time", true)
+		catTime, err := validateDuration(w, run.(map[string]any), "time", false)
 		if err != nil {
 			return nil, err
 		}
 
-		catEstimate, err := validateDuration(w, run.(map[string]any), "estimate", true)
+		catEstimate, err := validateDuration(w, run.(map[string]any), "estimate", false)
+		if err != nil {
+			return nil, err
+		}
 
 		//Check that run is valid run in map, and if so overwrite the default run with this one
 		if _, exists := runMap[catName.Value]; !exists {
@@ -266,7 +319,7 @@ func validateRuns(h *ReqHandler, w http.ResponseWriter, req map[string]any, arra
 
 		newRun, err := runs.NewRun(h.DataBase, catName, catTime, catEstimate)
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, "uknown error adding "+catName.Value)
+			writeError(w, http.StatusInternalServerError, "unknown error adding "+catName.Value)
 			return nil, err
 		}
 		runMap[catName.Value] = newRun
