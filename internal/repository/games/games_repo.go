@@ -10,11 +10,16 @@ import (
 
 type Game struct {
 	Name repository.NullableStr
+	GameID int64
 }
 
 
 //Default error instantialtion
 var GameDoesNotExistErr error = errors.New("game does not exist")
+
+/*
+* Game Constructor
+*/
 
 // Create new game instance
 func NewGame(name repository.NullableStr) (*Game, error) {
@@ -25,6 +30,61 @@ func NewGame(name repository.NullableStr) (*Game, error) {
 	return &Game{Name: name}, nil
 }
 
+/*
+* Game Methods
+*/
+
+//Add game
+func (g *Game) Add(database *sql.DB) error {
+	//Build SQL statements
+	stmt := db.BuildInsertStatement([]string{db.ColGameName}, db.TableGames, []any{g.Name.Value})
+	
+	ids, err := db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return err
+	}
+	g.GameID = ids[0]
+
+	return nil
+}
+
+//Update game
+func (g *Game) Update(database *sql.DB, newName repository.NullableStr) error {
+	//If game ID is 0, game doesn't exist
+	if g.GameID == 0 {
+		return GameDoesNotExistErr
+	}
+
+	stmts := make([]db.SQLStatement, 0, 1)
+
+	//Get name update statement
+	if newName.Valid {
+		nameStmt, err := db.BuildUpdateStatement(
+			[]string{db.ColGameName}, 
+			[]any{newName.Value}, 
+			db.TableGames, 
+			[]db.WhereCondition{{ColName: db.ColGameID, Op: db.Equals, Value: g.GameID}})
+
+		if err != nil {
+			return err
+		}
+
+		stmts = append(stmts, nameStmt)
+	}
+
+	//No new updates, return nil
+	if len(stmts) == 0 {
+		return nil
+	}
+
+	_, err := db.ExecuteStatements(database, stmts)
+	return err
+}
+
+/*
+* Game Helpers
+*/
+
 //Gets game by name
 func GetGameByName(database *sql.DB, name repository.NullableStr) (*Game, error) {
 	if !name.Valid {
@@ -32,7 +92,7 @@ func GetGameByName(database *sql.DB, name repository.NullableStr) (*Game, error)
 	}
 
 	//Query database for this game
-	col := []string {db.ColGameName}
+	col := []string {db.ColGameName, db.ColGameID}
 	table := db.TableGames
 	where := []db.WhereCondition{
 		{ColName: db.ColGameName, Op: db.Equals, Value: name.Value},
@@ -49,45 +109,62 @@ func GetGameByName(database *sql.DB, name repository.NullableStr) (*Game, error)
 	if !exists || len(names) == 0 {
 		return nil, GameDoesNotExistErr
 	}
+	ids, exists := game[db.ColGameID]
+	if !exists || len(ids) == 0 {
+		return nil, GameDoesNotExistErr
+	}
 
-	gName, ok := game[db.ColGameName][0].(string)
+	gName, ok := names[0].(string)
 	if !ok {
-		return nil, errors.New("unknown error")
+		return nil, errors.New("unknown error: unable to parse game name")
+	}
+	gID, ok := ids[0].(int64)
+	if !ok {
+		return nil, errors.New("unknown error: unable to parse game id")
 	}
 
-	return &Game{Name: repository.MakeNullableStr(gName)}, nil
+	return &Game{Name: repository.MakeNullableStr(gName), GameID: gID}, nil
 }
 
-//Add game
-func (g *Game) Add(database *sql.DB) error {
-	//Build SQL statements
-	stmt := db.BuildInsertStatement([]string{db.ColGameName}, db.TableGames, []any{g.Name})
-	
-	_, err := db.ExecuteStatements(database, []db.SQLStatement{stmt})
-	return err
-}
-
-//Update game
-func (g *Game) Update(database *sql.DB, newName repository.NullableStr) error {
-	stmts := make([]db.SQLStatement, 0, 2)
-
-	//Get name update statement
-	if newName.Valid {
-		nameStmt, err := db.BuildUpdateStatement(
-			[]string{db.ColGameName}, 
-			[]any{newName.Value}, 
-			db.TableGames, 
-			[]db.WhereCondition{{ColName: db.ColGameName, Op: db.Equals, Value: g.Name.Value}})
-
-		if err != nil {
-			return err
-		}
-
-		stmts = append(stmts, nameStmt)
+//Gets game by id
+func GetGameByID(database *sql.DB, id int64) (*Game, error) {
+	if id == 0 {
+		return nil, GameDoesNotExistErr
 	}
 
-	_, err := db.ExecuteStatements(database, stmts)
-	return err
+	//Query database for this game
+	col := []string {db.ColGameName, db.ColGameID}
+	table := db.TableGames
+	where := []db.WhereCondition{
+		{ColName: db.ColGameID, Op: db.Equals, Value: id},
+	}
+
+	stmt := db.BuildSelectStatement(col, table, where)
+	game, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	//Get games from the query. If there's none or this column doesn't exist, there's an error
+	names, exists := game[db.ColGameName]
+	if !exists || len(names) == 0 {
+		return nil, GameDoesNotExistErr
+	}
+	ids, exists := game[db.ColGameID]
+	if !exists || len(ids) == 0 {
+		return nil, GameDoesNotExistErr
+	}
+
+	gName, ok := names[0].(string)
+	if !ok {
+		return nil, errors.New("unknown error: unable to parse game name")
+	}
+	gID, ok := ids[0].(int64)
+	if !ok {
+		return nil, errors.New("unknown error: unable to parse game id")
+	}
+
+	return &Game{Name: repository.MakeNullableStr(gName), GameID: gID}, nil
 }
 
 //Checks if game already exists
@@ -104,7 +181,8 @@ func GameExistsByName(database *sql.DB, name repository.NullableStr) (bool, erro
 	return exists, nil
 }
 
-//Helpers for querying DB
+//Gets game ID from the name
+/*
 func GetGameIDFromName(database *sql.DB, name string) (int64, error){
 	//Build SQL query
 	stmt := db.BuildSelectStatement(
@@ -159,3 +237,4 @@ func GetGameNameFromID(database *sql.DB, id int64) (string, error) {
 	//game doesn't exist
 	return "", GameDoesNotExistErr
 }
+	*/

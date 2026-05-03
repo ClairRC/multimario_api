@@ -2,6 +2,7 @@ package runs
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/gamecategories"
@@ -9,9 +10,13 @@ import (
 
 type Run struct {
 	Category *gamecategories.GameCategory
-	Time *repository.NullableStr
-	Estimate *repository.NullableStr
+	Time repository.NullableStr
+	Estimate repository.NullableStr
+	RunID int64 //Run ID. Defaults to 0
 }
+
+//Default Errors
+var RunDoesNotExistErr error = errors.New("run does not exist")
 
 //Returns run pointer and error
 func NewRun(database *sql.DB, catName repository.NullableStr, 
@@ -24,4 +29,10 @@ func NewRun(database *sql.DB, catName repository.NullableStr,
 func NewDefaultRun(database *sql.DB, catName repository.NullableStr) (*Run, error) {
 	//TODO: Implement
 	return nil, nil
+}
+
+//Adds run to DB with specific record ID since runs must have a record ID to exist
+func (r *Run) Add(database *sql.DB, recordID int64) error {
+	//TODO: Implement
+	return nil
 }

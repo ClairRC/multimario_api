@@ -14,14 +14,19 @@ type GameCategory struct {
 	Name repository.NullableStr
 	Estimate repository.NullableStr
 	NumCollectibles repository.NullableInt
-	GameName repository.NullableStr
+	Game *games.Game
+	CategoryID int64 //0 if category hasn't been added to database yet
 }
 
 // Errors
 var GameCategoryDoesNotExistErr error = errors.New("game category does not exist")
 
-// Create new game catgegory instance
-func NewGameCategory(name repository.NullableStr,
+/*
+* GameCategory Constructor
+*/
+
+// Create new game category instance
+func NewGameCategory(database *sql.DB, name repository.NullableStr,
 	estimate repository.NullableStr,
 	numCollectibles repository.NullableInt,
 	gameName repository.NullableStr) (*GameCategory, error) {
@@ -42,13 +47,129 @@ func NewGameCategory(name repository.NullableStr,
 		return nil, repository.StringIsNullErr
 	}
 
+	//Get Game from the name
+	game, err := games.GetGameByName(database, gameName)
+	if err != nil {
+		return nil, err
+	}
+
 	return &GameCategory{
 		Name:            name,
 		Estimate:        estimate,
 		NumCollectibles: numCollectibles,
-		GameName:        gameName,
+		Game:        game,
 	}, nil
 }
+
+/*
+* GameCategory Methods
+*/
+
+// Add game category
+func (c *GameCategory) Add(database *sql.DB) error {
+	//Get game FK
+	gameID := c.Game.GameID
+	if gameID == 0 {
+		return games.GameDoesNotExistErr
+	}
+
+	//Build SQL statements
+	stmt := db.BuildInsertStatement(
+		[]string{
+			db.ColGameCategoryName, db.ColGameCategoryEstimate,
+			db.ColGameCategoryNumCollectibles, db.ColGameCategoryGameID},
+
+		db.TableGameCategories,
+
+		[]any{c.Name.Value, c.Estimate.Value, c.NumCollectibles.Value, gameID},
+	)
+
+	ids, err := db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return err
+	}
+
+	c.CategoryID = ids[0]
+	return nil
+}
+
+// Update game category
+func (c *GameCategory) Update(
+	database *sql.DB, newName repository.NullableStr,
+	newEstimate repository.NullableStr, newNumCollectibles repository.NullableInt,
+	newGameName repository.NullableStr,
+) error {
+	//Check that game category is in DB
+	if c.CategoryID == 0 {
+		return GameCategoryDoesNotExistErr
+	}
+
+	//Cols to update
+	cols := make([]string, 0)
+	newVals := make([]any, 0)
+
+	//Check each field
+	if newName.Valid {
+		cols = append(cols, db.ColGameCategoryName)
+		newVals = append(newVals, newName.Value)
+	}
+
+	if newEstimate.Valid {
+		cols = append(cols, db.ColGameCategoryEstimate)
+		newVals = append(newVals, newEstimate.Value)
+	}
+
+	if newNumCollectibles.Valid {
+		cols = append(cols, db.ColGameCategoryNumCollectibles)
+		newVals = append(newVals, newNumCollectibles.Value)
+	}
+
+	var newGame *games.Game = nil //New game to update passed in struct
+	if newGameName.Valid {
+		//Get game ID from name
+		game, err := games.GetGameByName(database, newGameName)
+		if err != nil {
+			return err
+		} //Return if there's an error getting game
+
+		newGame = game
+		cols = append(cols, db.ColGameCategoryGameID)
+		newVals = append(newVals, game.GameID)
+	}
+
+	//If there's nothing new to update, just return
+	if len(cols) == 0 {
+		return nil
+	}
+
+	//Otherwise, build and execute statement
+	whereCon := db.WhereCondition{
+		ColName: db.ColGameCategoryID,
+		Op:      db.Equals,
+		Value:   c.CategoryID,
+	}
+
+	stmt, err := db.BuildUpdateStatement(cols, newVals, db.TableGameCategories, []db.WhereCondition{whereCon})
+	if err != nil {
+		return err
+	} //Return error if can't build statement
+
+	_, err = db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return err
+	}
+
+	//No errors, make sure c.Game is updated
+	if newGame != nil {
+		c.Game = newGame
+	}
+	
+	return nil
+}
+
+/*
+* Helpers
+*/
 
 // Get game category
 func GetGameCategoryByName(database *sql.DB, name repository.NullableStr) (*GameCategory, error) {
@@ -62,6 +183,7 @@ func GetGameCategoryByName(database *sql.DB, name repository.NullableStr) (*Game
 		db.ColGameCategoryEstimate,
 		db.ColGameCategoryGameID,
 		db.ColGameCategoryNumCollectibles,
+		db.ColGameCategoryID,
 	}
 	table := db.TableGameCategories
 	where := []db.WhereCondition{
@@ -92,6 +214,7 @@ func GetGameCategoryByID(database *sql.DB, id int64) (*GameCategory, error) {
 		db.ColGameCategoryEstimate,
 		db.ColGameCategoryGameID,
 		db.ColGameCategoryNumCollectibles,
+		db.ColGameCategoryID,
 	}
 	table := db.TableGameCategories
 	where := []db.WhereCondition{
@@ -115,88 +238,6 @@ func GetGameCategoryByID(database *sql.DB, id int64) (*GameCategory, error) {
 	return category[0], nil
 }
 
-// Add game category
-func (c *GameCategory) Add(database *sql.DB) error {
-	//Get game FK
-	gameID, err := games.GetGameIDFromName(database, c.GameName.Value)
-	if err != nil {
-		return err
-	}
-
-	//Build SQL statements
-	stmt := db.BuildInsertStatement(
-		[]string{
-			db.ColGameCategoryName, db.ColGameCategoryEstimate,
-			db.ColGameCategoryNumCollectibles, db.ColGameCategoryGameID},
-
-		db.TableGameCategories,
-
-		[]any{c.Name.Value, c.Estimate.Value, c.NumCollectibles.Value, gameID},
-	)
-
-	_, err = db.ExecuteStatements(database, []db.SQLStatement{stmt})
-	return err
-}
-
-// Update game category
-func (c *GameCategory) Update(
-	database *sql.DB, newName repository.NullableStr,
-	newEstimate repository.NullableStr, newNumCollectibles repository.NullableInt,
-	newGameName repository.NullableStr,
-) error {
-
-	//Cols to update
-	cols := make([]string, 0)
-	newVals := make([]any, 0)
-
-	//Check each field
-	if newName.Valid {
-		cols = append(cols, db.ColGameCategoryName)
-		newVals = append(newVals, newName.Value)
-	}
-
-	if newEstimate.Valid {
-		cols = append(cols, db.ColGameCategoryEstimate)
-		newVals = append(newVals, newEstimate.Value)
-	}
-
-	if newNumCollectibles.Valid {
-		cols = append(cols, db.ColGameCategoryNumCollectibles)
-		newVals = append(newVals, newNumCollectibles.Value)
-	}
-
-	if newGameName.Valid {
-		//Get game ID from name
-		gameID, err := games.GetGameIDFromName(database, newGameName.Value)
-		if err != nil {
-			return err
-		} //Return if there's an error getting game ID
-
-		cols = append(cols, db.ColGameCategoryGameID)
-		newVals = append(newVals, gameID)
-	}
-
-	//If there's nothing new to update, just return
-	if len(cols) == 0 {
-		return nil
-	}
-
-	//Otherwise, build and execute statement
-	whereCon := db.WhereCondition{
-		ColName: db.ColGameCategoryName,
-		Op:      db.Equals,
-		Value:   c.Name.Value,
-	}
-
-	stmt, err := db.BuildUpdateStatement(cols, newVals, db.TableGameCategories, []db.WhereCondition{whereCon})
-	if err != nil {
-		return err
-	} //Return error if can't build statement
-
-	_, err = db.ExecuteStatements(database, []db.SQLStatement{stmt})
-	return err
-}
-
 // Checks if gamecategory exists
 func GameCategoryExistsByName(database *sql.DB, name repository.NullableStr) (bool, error) {
 	if !name.Valid {
@@ -209,32 +250,6 @@ func GameCategoryExistsByName(database *sql.DB, name repository.NullableStr) (bo
 	}
 
 	return exists, nil
-}
-
-// Helper to get GameCategory ID from name
-func GetGameCategoryIDFromName(database *sql.DB, name string) (int64, error) {
-	whereCon := []db.WhereCondition{{
-		ColName: db.ColGameCategoryName,
-		Op:      db.Equals,
-		Value:   name,
-	}}
-
-	stmt := db.BuildSelectStatement([]string{db.ColGameCategoryID}, db.TableGameCategories, whereCon)
-	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
-	if err != nil {
-		return -1, err
-	}
-
-	if len(res[db.ColGameCategoryID]) == 0 {
-		return -1, GameCategoryDoesNotExistErr
-	}
-
-	id, ok := res[db.ColGameCategoryID][0].(int64)
-	if !ok {
-		return -1, errors.New("unknown error: game category id isn't an int")
-	}
-
-	return id, nil
 }
 
 // Helper function for extracing game categories from SQL results
@@ -271,18 +286,24 @@ func extractGameCategoriesFromQueryResult(database *sql.DB, results map[string][
 			return nil, errors.New("unknown error")
 		}
 
-		//Get game name from ID
-		cGameName, err := games.GetGameNameFromID(database, cGameID)
-		if err != nil {
+		cID, ok := results[db.ColGameCategoryID][i].(int64)
+		if !ok {
 			return nil, errors.New("unknown error")
+		}
+
+		//Get game from ID
+		cGame, err := games.GetGameByID(database, cGameID)
+		if err != nil {
+			return nil, errors.New("unknown error: can't get category game")
 		}
 
 		//Add game category to output
 		out = append(out, &GameCategory{
 			Name:            repository.MakeNullableStr(cName),
 			Estimate:        repository.MakeNullableStr(cEstimate),
-			GameName:        repository.MakeNullableStr(cGameName),
+			Game:            cGame,
 			NumCollectibles: repository.MakeNullableInt(int(cNumCollectibles)),
+			CategoryID:      cID,
 		})
 	}
 

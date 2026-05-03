@@ -41,8 +41,11 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Validate name. If there's an error, return
-	name, err := validateText(w, req, "player_name", true)
+	//Validate inputs
+	name, err := validateText(w, req, "display_name", true)
+	if err != nil { return }
+
+	twitchName, err := validateText(w, req, "twitch_name", true)
 	if err != nil { return }
 
 	//Check that player isn't already in database
@@ -58,11 +61,8 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO: For now I'll just make twitch ID 0
-	twitchID := repository.MakeNullableInt(0)
-
 	//Create player
-	p, err := players.NewPlayer(name, twitchID)
+	p, err := players.NewPlayer(name, twitchName)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error parsing name")
 		return
@@ -86,7 +86,7 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 * EXPECTED:
 * {
 *	display_name: string //OPTIONAL: Update player's display name
-*	twitch_name: string //OPTIONAL: Update player's twitch ID. This is ONLY necessary if the user is using a new twitch account
+*	twitch_name: string //OPTIONAL: Update player's twitch name. This is ONLY necessary if the user is using a new twitch account
 *									The DB stores the twitch ID rather than the name, so this isnt necessary for account name changes.
 * }
 *
@@ -124,10 +124,10 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate player name and ID
-	name, err := validateText(w, req, "player_name", false)
+	name, err := validateText(w, req, "display_name", false)
 	if err != nil { return }
 
-	id, err := validateNumber(w, req, "player_twitch_id", false)
+	twitchName, err := validateText(w, req, "twitch_name", false)
 	if err != nil { return }
 
 	//Make sure player doesn't exist
@@ -145,7 +145,7 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Update player
-	err = player.Update(h.DataBase, name, id)
+	err = player.Update(h.DataBase, name, twitchName)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error updating player")
 		return

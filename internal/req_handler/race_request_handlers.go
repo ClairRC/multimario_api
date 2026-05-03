@@ -79,14 +79,14 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Add the race
-	id, err := race.Add(h.DataBase)
+	err = race.Add(h.DataBase)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "error adding new race")
 		return
 	}
 
-	//All fields validated
-	writeJSON(w, http.StatusOK, map[string]any{"success": true, "id": id})
+	//All fields validated and race added
+	writeJSON(w, http.StatusOK, map[string]any{"success": true, "id": race.RaceID})
 }
 
 /*
@@ -149,7 +149,7 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 	if err != nil { return }
 
 	//Update
-	err = race.Update(h.DataBase, int64(raceID), newDate, newStart, newStatus)
+	err = race.Update(h.DataBase, newDate, newStart, newStatus)
 	if err != nil {
 		switch err {
 		case racecategories.RaceCategoryDoesNotExistErr:

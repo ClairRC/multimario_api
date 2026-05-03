@@ -18,6 +18,10 @@ import (
 *
 * This is essentially the "signup" for a race. It binds the player to the race
 *
+* Note: For future reference, while we don't currently allow runs to be done in a different order,
+*		run numbers will be in the order of the runs passed into the request. Currently, this
+*		value only exists for potential future use, but if this changes, that's worth noting.
+*
 * ENDPOINT: POST /records
 *
 * EXPECTS:
@@ -43,6 +47,17 @@ import (
  */
 
 func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
+	/*
+	* As a note for this handler: Unlike the RaceCategory handler where the GameCategories
+	* must already exist, since Runs can only exist if a corresponding Record exists,
+	* the Record.Add method is responsible for actually calling Run.Add. It's different from
+	* before, but it's more consistent and also guarantees atomicity so that Runs don't get
+	* added without a Record.
+	*
+	* As a separate-ish note, in this case the handler is validating each Run AND generating default Runs
+	* if there isn't a corresponding run in the request. This is fine, but it might be better to put in the Record.Add function.
+	*/
+
 	//Input validation
 	req, err := parseReqJSON(r) //Parse request into map
 	if err != nil {
@@ -166,6 +181,8 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	//Validate new values
+	//TODO: Currently this means there's no way to "unfinish" a race because a NULL input
+	//will just do nothing. Will have to fix this ideally
 	newFinishTime, err := validateDuration(w, req, "finish_time", false)
 	if err != nil { return }
 

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/multimario_api/internal/db"
 	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/players"
 	"github.com/multimario_api/internal/repository/races"
@@ -16,18 +17,103 @@ type Record struct {
 	FinishTime repository.NullableStr
 	NumCollected repository.NullableInt
 	Runs []*runs.Run
+	RecordID int64 //Record ID. Defaults to 0
 }
 
 //Default errors
 var RecordDoesNotExistErr error = errors.New("race record does not exist")
 
+/*
+* Record Constructor
+*/
+
 //Creates new Record and returns a pointer to it
 func NewRecord(database *sql.DB, raceID repository.NullableInt, 
 	playerName repository.NullableStr, finishTime repository.NullableStr, numCollected repository.NullableInt, 
 	runs []*runs.Run) (*Record, error) {
-		//TODO: Implement
-		return nil, nil
+		//Note this function assumes runs are valid runs. The handler should validate them before passing them in
+
+		//Make sure required fields exist
+		if !raceID.Valid {
+			return nil, errors.New("race is invalid")
+		}
+		if !playerName.Valid {
+			return nil, errors.New("player name is invalid")
+		}
+
+		//Default numCollected is 0. Should be handled by the handler, but I'll put it here for now too
+		if !numCollected.Valid {
+			numCollected = repository.MakeNullableInt(0)
+		}
+
+		//Get race and player
+		player, err := players.GetPlayerByName(database, playerName)
+		if err != nil {
+			return nil, err
+		}
+
+		race, err := races.GetRaceByID(database, int64(raceID.Value))
+		if err != nil {
+			return nil, err
+		}
+
+		//Created, return new record
+		return &Record{Race: race, Player: player, FinishTime: finishTime, NumCollected: numCollected, Runs: runs}, nil
 	}
+
+/*
+* Records Methods
+*/
+
+//Adds race to DB
+func (r *Record) Add(database *sql.DB) error {
+	/*
+	* This function, unlike all my other repository layer functions, handles raw SQL.
+	* This is intentional because the current database abstraction won't let me add a new Record
+	* AND add each of the individual runs atomically. For this in particular, it is important
+	* that these happen atomically. Since the Record is essentially a race signup, if a record
+	* exists but not any runs, then it could cause complications with updating during the race.
+	* The safest and easiest way to handle this is to guarantee atomicity in this function. 
+	*/
+	
+	//Get player ID
+	playerID := r.Player.PlayerID
+	if playerID == 0 {
+		return players.PlayerDoesNotExistErr
+	}
+
+	//Get race ID
+	raceID := r.Race.RaceID
+	if raceID == 0 {
+		return races.RaceDoesNotExistErr
+	}
+
+	//Make sure record doesn't exist to avoid duplicates
+	if r.RecordID != 0 {
+		return errors.New("record already exists")
+	}
+
+	//Check that each run is not already part of a different record
+	for _, run := range r.Runs {
+		if run.RunID != 0 {
+			return errors.New("run is already in database")
+		}
+	}
+
+	err := executeRecordInsertStatement(database, r, r.Runs)
+
+	return err
+}
+
+//Updates record
+func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, newNumCollected repository.NullableInt) error {
+	//TODO: Implement
+	return nil
+}
+
+/*
+* Records Helpers
+*/
 
 //Gets record from race ID and player name
 func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repository.NullableStr) (*Record, error) {
@@ -35,14 +121,64 @@ func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repos
 	return nil, nil
 }
 
-//Adds race to DB
-func (r *Record) Add(database *sql.DB) error {
-	//TODO: Implement
-	return nil
-}
+func executeRecordInsertStatement(database *sql.DB, record *Record, runs []*runs.Run) error {
+	//Get values for adding new Record
+	cols := []string {
+		db.ColRecordsRaceID,
+		db.ColRecordsPlayerID,
+		db.ColRecordsNumCollected,
+	}
+	vals := []any {record.Race.RaceID, record.Player.PlayerID, record.NumCollected.Value}
 
-//Updates record
-func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, newNumCollected repository.NullableInt) error {
-	//TODO: Implement
+	//Also add finish time if that is a valid value
+	if record.FinishTime.Valid {
+		cols = append(cols, db.ColRecordsFinishTime)
+		vals = append(vals, record.FinishTime.Value)
+	}
+	
+	recordStmt := db.BuildInsertStatement(cols, db.TableRecords, vals)
+
+	//Begin transaction
+
+	//Add record
+	tx, err := database.Begin()
+	if err != nil { return err }
+
+	defer tx.Rollback()
+
+	res, err := tx.Exec(recordStmt.Stmt, recordStmt.Args...)
+	if err != nil { return err }
+
+	recordID, err := res.LastInsertId()
+	if err != nil { return err }
+
+	//Add runs
+	for i, run := range runs {
+		cols = []string {
+			db.ColRunRaceRecordID,
+			db.ColRunGameCategoryID,
+			db.ColRunEstimate,
+			db.ColRunNum,
+		}
+		vals = []any{recordID, run.Category.CategoryID, run.Estimate.Value, i+1}
+
+		//If time is not NULL, pass in time as well
+		if run.Time.Valid {
+			cols = append(cols, db.ColRunTime)
+			vals = append(vals, run.Time.Value)
+		}
+
+		//Get and exectute statement
+		runStmt := db.BuildInsertStatement(cols, db.TableRuns, vals)
+		_, err := tx.Exec(runStmt.Stmt, runStmt.Args...)
+		if err != nil { return err }
+	} 
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	record.RecordID = recordID
 	return nil
 }

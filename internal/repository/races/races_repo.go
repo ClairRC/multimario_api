@@ -14,10 +14,15 @@ type Race struct {
 	StartTime repository.NullableStr
 	Status repository.NullableStr
 	RaceCategory *racecategories.RaceCategory
+	RaceID int64 //DB ID for race. Defaults to 0
 }
 
 //Errors
 var RaceDoesNotExistErr error = errors.New("race does not exist")
+
+/*
+* Race Constructor
+*/
 
 // Create new race catgegory instance
 func NewRace(database *sql.DB, date repository.NullableStr, startTime repository.NullableStr, status repository.NullableStr, categoryName repository.NullableStr) (*Race, error) {
@@ -45,15 +50,103 @@ func NewRace(database *sql.DB, date repository.NullableStr, startTime repository
 	}, nil
 }
 
+/*
+* Race Methods
+*/
+
+// Add race. Returns race ID
+func (r *Race) Add(database *sql.DB) error {
+	//Get race category ID
+	raceCatID := r.RaceCategory.CategoryID
+
+	//If this is 0, the race category is invalid
+	if raceCatID == 0 {
+		return racecategories.RaceCategoryDoesNotExistErr
+	}
+	
+	//Add race
+	cols := []string {
+		db.ColRaceRaceCategoryID,
+		db.ColRaceDate,
+		db.ColRaceStartTime,
+		db.ColRaceStatus,
+	}
+	vals := []any {
+		raceCatID,
+		r.Date.NullableValue(),
+		r.StartTime.NullableValue(),
+		r.Status.Value,
+	}
+
+	add := db.BuildInsertStatement(cols, db.TableRaces, vals)
+	
+	//Execute insert and get id
+	ids, err := db.ExecuteStatements(database, []db.SQLStatement{add})
+	if err != nil {
+		return err
+	}
+
+	//Make sure IDs isnt empty to avoid a panic
+	if len(ids) == 0 {
+		return errors.New("unknown error: no race id found")
+	}
+
+	//Get race ID and return
+	r.RaceID = ids[0]
+	return nil
+}
+
+// Update race
+func (r *Race) Update(database *sql.DB, newDate repository.NullableStr, 
+	newStartTime repository.NullableStr, newStatus repository.NullableStr) error {
+		//TODO: Currently, this doesn't let you update a value to NULL
+
+		//Check if race ID exists
+		if r.RaceID == 0 {
+			return RaceDoesNotExistErr
+		}
+
+		//Build Update statement parameters
+		cols := make([]string, 0)
+		vals := make([]any, 0)
+		whereCon := []db.WhereCondition {{
+			ColName: db.ColRaceID,
+			Op: db.Equals,
+			Value: r.RaceID,
+		}}
+
+		if newDate.Valid {
+			cols = append(cols, db.ColRaceDate)
+			vals = append(vals, newDate.Value)
+		}
+		if newStartTime.Valid {
+			cols = append(cols, db.ColRaceStartTime)
+			vals = append(vals, newStartTime.Value)
+		}
+		if newStatus.Valid {
+			cols = append(cols, db.ColRaceStatus)
+			vals = append(vals, newStatus.Value)
+		}
+
+		//If Cols/Vals is empty, no updates needed
+		if len(cols) == 0 {
+			return nil
+		}
+
+		update, err := db.BuildUpdateStatement(cols, vals, db.TableRaces, whereCon)
+		if err != nil { return err }
+
+		//Execute update
+		_, err = db.ExecuteStatements(database, []db.SQLStatement{update})
+		return err
+}
+
+/*
+* Race Helpers
+*/
+
 // Get race
 func GetRaceByID(database *sql.DB, id int64) (*Race, error) {
-	/*
-	 * TODO: As with a lot of these repository files,
-	 * this function is doing a lot of round trips to the DB. There's a lot of
-	 * DB executions that can be cut out with cleaner handling of SQL statements.
-	 * For now, I am choosing to leave it in, but it's worth noting somewhere if it becomes a bottleneck. 
-	 */
-
 	//Get select statement and execute it
 	cols := []string{
 		db.ColRaceDate,
@@ -103,80 +196,6 @@ func GetRaceByID(database *sql.DB, id int64) (*Race, error) {
 		StartTime: repository.MakeNullableStr(raceRes[db.ColRaceStartTime][0]),
 		Status: repository.MakeNullableStr(raceRes[db.ColRaceStatus][0]),
 		RaceCategory: raceCat,
+		RaceID: id,
 	}, nil
-}
-
-// Add race. Returns race ID
-func (r *Race) Add(database *sql.DB) (int64, error) {
-	//Get race category ID
-	raceCatID, err := racecategories.GetRaceCategoryIDFromName(database, r.RaceCategory.Name.Value)
-	if err != nil {
-		return -1, err
-	}
-	
-	//Add race
-	cols := []string {
-		db.ColRaceRaceCategoryID,
-		db.ColRaceDate,
-		db.ColRaceStartTime,
-		db.ColRaceStatus,
-	}
-	vals := []any {
-		raceCatID,
-		r.Date.NullableValue(),
-		r.StartTime.NullableValue(),
-		r.Status.Value,
-	}
-
-	add := db.BuildInsertStatement(cols, db.TableRaces, vals)
-	
-	//Execute insert and get id
-	ids, err := db.ExecuteStatements(database, []db.SQLStatement{add})
-	if err != nil {
-		return -1, err
-	}
-
-	//Make sure IDs isnt empty to avoid a panic
-	if len(ids) == 0 {
-		return -1, errors.New("unknown error: no race id found")
-	}
-
-	//Get race ID and return
-	raceID := ids[0]
-	return raceID, nil
-}
-
-// Update race
-func (r *Race) Update(database *sql.DB, raceID int64, newDate repository.NullableStr, 
-	newStartTime repository.NullableStr, newStatus repository.NullableStr) error {
-		//TODO: Currently, this doesn't let you update a value to NULL. Not sure if that should be changed.
-
-		//Build Update statement parameters
-		cols := make([]string, 0)
-		vals := make([]any, 0)
-		whereCon := []db.WhereCondition {{
-			ColName: db.ColRaceID,
-			Op: db.Equals,
-			Value: raceID,
-		}}
-
-		if newDate.Valid {
-			cols = append(cols, db.ColRaceDate)
-			vals = append(vals, newDate.Value)
-		}
-		if newStartTime.Valid {
-			cols = append(cols, db.ColRaceStartTime)
-			vals = append(vals, newStartTime.Value)
-		}
-		if newStatus.Valid {
-			cols = append(cols, db.ColRaceStatus)
-			vals = append(vals, newStatus.Value)
-		}
-
-		update, err := db.BuildUpdateStatement(cols, vals, db.TableRaces, whereCon)
-		if err != nil { return err }
-
-		//Execute update
-		_, err = db.ExecuteStatements(database, []db.SQLStatement{update})
-		return err
 }

@@ -79,7 +79,7 @@ func (h *ReqHandler) AddGameCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//All fields verified
-	newCat, err := gamecategories.NewGameCategory(catName, estimate, numCollectibles, gameName)
+	newCat, err := gamecategories.NewGameCategory(h.DataBase, catName, estimate, numCollectibles, gameName)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error creating category")
 		return

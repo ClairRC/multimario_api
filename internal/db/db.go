@@ -46,6 +46,21 @@ const (
 	ColRaceDate = "date"
 	ColRaceStartTime = "start_time"
 	ColRaceStatus = "status"
+
+	TableRecords = "race_records"
+	ColRecordID = "race_record_id"
+	ColRecordsRaceID = "race_id"
+	ColRecordsPlayerID = "player_id"
+	ColRecordsFinishTime = "finish_time"
+	ColRecordsNumCollected = "num_collected"
+
+	TableRuns = "runs"
+	ColRunID = "run_id"
+	ColRunRaceRecordID = "race_record_id"
+	ColRunGameCategoryID = "game_category_id"
+	ColRunTime = "time"
+	ColRunEstimate = "estimate"
+	ColRunNum = "run_num"
 )
 
 //Operator type and default operators
@@ -148,7 +163,7 @@ var initStatements = []string {
 		race_id INTEGER NOT NULL,
 		player_id INTEGER NOT NULL,
 		finish_time TEXT,
-		num_collectibles INTEGER NOT NULL,
+		num_collected INTEGER NOT NULL,
 		FOREIGN KEY (race_id) REFERENCES races(race_id)
 			ON DELETE CASCADE,
 		FOREIGN KEY (player_id) REFERENCES players(player_id)
@@ -162,7 +177,7 @@ var initStatements = []string {
 		race_record_id INTEGER NOT NULL,
 		game_category_id INTEGER NOT NULL,
 		time TEXT,
-		estimate TEXT,
+		estimate TEXT NOT NULL,
 		run_num INTEGER NOT NULL,
 		FOREIGN KEY (race_record_id) REFERENCES race_records(race_record_id)
 			ON DELETE CASCADE,
@@ -438,7 +453,7 @@ func JoinTables(table1 string, table2 string, joinCol1 string, joinCol2 string) 
 }
 
 //Checks if record exists
-func RecordExists(db *sql.DB, tableName string, columnName string, value string) (bool, error){
+func RecordExists(db *sql.DB, tableName string, columnName string, value any) (bool, error){
 	stmt := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE %s = ?)", tableName, columnName)
 	var exists int
 	err := db.QueryRow(stmt, value).Scan(&exists)
