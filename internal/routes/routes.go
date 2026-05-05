@@ -49,7 +49,6 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 	m.HandleFunc("GET /racecategories", h.GetRaceCategories)
 
 	//Runs Handlers
-	m.HandleFunc("POST /runs", h.AddRun)
 	m.HandleFunc("PATCH /runs/{run_id}", h.EditRun)
 	m.HandleFunc("GET /runs", h.GetRuns)
 

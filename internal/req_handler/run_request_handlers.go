@@ -1,55 +1,31 @@
 package req_handler
 
-import "net/http"
+import (
+	"net/http"
+	"strconv"
+
+	"github.com/multimario_api/internal/repository"
+	"github.com/multimario_api/internal/repository/players"
+	"github.com/multimario_api/internal/repository/races"
+	"github.com/multimario_api/internal/repository/records"
+	"github.com/multimario_api/internal/repository/records/runs"
+)
 
 /*
 * Add new Run
 *
-* ENDPOINT: POST /runs
+* ENDPOINT: PATCH records/{race_id}/{player_name}/runs/{category_name}
 *
 * EXPECTED:
 * {
-*	game_category: string //REQUIRED -- Name of the game category this run is for
-*	race_id: int //REQUIRED -- ID of the race this run is for
-*	player_id: int //REQUIRED -- ID of the player that this run belongs to
 *	time: string //OPTIONAL hh:mm:ss -- Time this player got in this run
-*	estimate: string //OPTIONAL hh:mm:ss -- Estimate this player had for this particular run
+*	estimate: string //OPTIONAL hh:mm:ss -- Estimate this player has for this particular run
 *	run_num: int //OPTIONAL -- The number this run was in the race. Races currently require a particular order, but this is here just in case
 * }
 *
 * RETURNS:
 * {
 *	success: boolean //True on successful creation
-*	id: int //Run ID
-		or
-	error: string //Error (only if success is false)
-* }
-*
-*/
-
-func (h *ReqHandler) AddRun(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
-}
-
-/*
-* Add new Run
-*
-* ENDPOINT: PATCH /runs/{run_id}
-*
-* EXPECTED:
-* {
-*	game_category: string //OPTIONAL -- Name of the game category this run is for
-*	race_id: int //OPTIONAL -- ID of the race this run is for
-*	player_id: int //OPTIONAL -- ID of the player that this run belongs to
-*	time: string //OPTIONAL hh:mm:ss -- Time this player got in this run
-*	estimate: string //OPTIONAL hh:mm:ss -- Estimate this player had for this particular run
-*	run_num: int //OPTIONAL -- The number this run was in the race. Races currently require a particular order, but this is here just in case
-* }
-*
-* RETURNS:
-* {
-*	success: boolean //True on successful creation
-*	id: int //Run ID
 		or
 	error: string //Error (only if success is false)
 * }
@@ -57,7 +33,73 @@ func (h *ReqHandler) AddRun(w http.ResponseWriter, r *http.Request) {
 */
 
 func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get path values
+	playerName := repository.MakeNullableStr(r.PathValue("player_name"))
+	raceIDStr := r.PathValue("race_id")
+	catName := repository.MakeNullableStr(r.PathValue("category_name"))
+
+	//Get request
+	req, err := parseReqJSON(r) //Parse request into map
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error parsing request") //Write error if unable to parse JSON for some reason
+		return
+	}
+
+	//Convert race ID to int
+	raceID, err := strconv.Atoi(raceIDStr)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "race ID can't be parsed as int")
+		return
+	}
+
+	//Validate request body
+	newTime, err := validateDuration(w, req, "time", false)
+	if err != nil {
+		return
+	}
+	newEstimate, err := validateDuration(w, req, "estimate", false)
+	if err != nil {
+		return
+	}
+	newRunNum, err := validateNumber(w, req, "run_num", false)
+	if err != nil {
+		return
+	}
+
+	//Get record from values
+	record, err := records.GetRecord(h.DataBase, repository.MakeNullableInt(raceID), playerName)
+	if err != nil {
+		switch err{
+		case races.RaceDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "race does not exist")
+		case players.PlayerDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "player does not exist")
+		default:
+			writeError(w, http.StatusInternalServerError, "unknown error parsing race record")
+		}
+		return
+	}
+
+	//Get run from record
+	var run *runs.Run = nil
+	for _, r := range record.Runs {
+		if r.Category.Name.Value == catName.Value {
+			run = r
+		}
+	}
+	if run == nil {
+		writeError(w, http.StatusBadRequest, "run with this game category not found")
+		return
+	}
+
+	//Update run
+	err = run.Update(h.DataBase, newTime, newEstimate, newRunNum)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error updating run")
+	}
+
+	//Run is updated
+	writeJSON(w, http.StatusOK, map[string]any{"success": true})
 }
 
 /*

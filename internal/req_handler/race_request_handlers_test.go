@@ -54,22 +54,23 @@ func TestMain(m *testing.M) {
 //Test CreateRace()
 //Slices of test values
 var successTestValues = []map[string]any {
-	{"category": "602"},
-	{"category": "246", "date": "2000-11-16"},
-	{"category": "sandbox_any%", "status": "completed"},
-	{"category": "real_category", "date": "2000-12-25", "status": ""},
-	{"category": "602", "status": "in_progress"},
-	{"category": "real_category", "status": "upcoming"},
+	{"category": "602"}, //Category valid, no date/status
+	{"category": "246", "date": "2000-11-16"}, //Category valid, no status
+	{"category": "sandbox_any%", "status": "completed"}, //Category valid, no date
+	{"category": "real_category", "date": "2000-12-25", "status": ""}, //Category valid, date valid, status invalid (should maybe be an error?)
+	{"category": "602", "status": "in_progress"}, //Category valid, status valid, date empty
+	{"category": "real_category", "status": "upcoming"}, //Category and status valid, date empty
+	{"category": "602", "":true}, //Category valid, extra stuff
 }
 
 var failureTestValues = []map[string]any {
-	{"":""},
-	{"category": 602},
-	{"category": "246", "date": "9/11/2001"},
-	{"category": "fake_category"},
-	{"category": "real_category", "date": "fake_date"},
-	{"category": "real_category", "status": "fake_status"},
-	{"category": "fake_category", "status": "completed"},
+	{"":""}, //invalid category
+	{"category": 602}, //invalid category
+	{"category": "246", "date": "9/11/2001"}, //valid category invalid date
+	{"category": "fake_category"}, //invalid category
+	{"category": "real_category", "date": "fake_date"}, //valid category, invalid date
+	{"category": "real_category", "status": "fake_status"}, //valid category, invalid status
+	{"category": "fake_category", "status": "completed"}, //invalid category, valid status
 }
 
 func TestCreateRace(t *testing.T) {

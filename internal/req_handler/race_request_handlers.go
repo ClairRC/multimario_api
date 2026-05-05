@@ -2,6 +2,7 @@ package req_handler
 
 import (
 	"net/http"
+	"slices"
 	"strconv"
 
 	"github.com/multimario_api/internal/repository"
@@ -17,7 +18,7 @@ import (
 * EXPECTED:
 * {
 *	category: string, //REQUIRED - The category of the race
-*	date: string, //OPTIONAL - YYYY-MM-DD format
+*	date: string, //OPTIONAL - YYYY-MM-DD format - Defaults to current date
 *	status: string //OPTIONAL - Defaults to "upcoming"
 *	start_time: string //OPTIONAL - Must be hh:mm:ss field
 * }
@@ -60,6 +61,12 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 	if !raceStatus.Valid {
 		raceStatus = repository.MakeNullableStr("upcoming")
 	} //If status is NULL, give it a default value
+
+	//Make sure race status is a valid string
+	if !raceStatusIsAllowed(raceStatus.Value) {
+		writeError(w, http.StatusBadRequest, "race status is invalid value")
+		return
+	}
 
 	raceStartTime, err := validateTime(w, req, "start_time", false)
 	if err != nil {
@@ -225,4 +232,15 @@ func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 
 func (h *ReqHandler) DeleteRace(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement
+}
+
+//Helper to make sure passed in race status is valid
+func raceStatusIsAllowed(status string) bool {
+	//Allowed race statuses
+	allowed := []string {
+		"upcoming",
+		"completed",
+		"in_progress",
+	}
+	return slices.Contains(allowed, status)
 }

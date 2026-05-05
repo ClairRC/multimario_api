@@ -35,6 +35,10 @@ func NewRace(database *sql.DB, date repository.NullableStr, startTime repository
 		return nil, repository.StringIsNullErr
 	}
 
+	if !status.Valid {
+		return nil, repository.StringIsNullErr
+	}
+
 	//Get race category
 	raceCategory, err := racecategories.GetRaceCategoryByName(database, categoryName)
 	if err != nil {
