@@ -6,21 +6,41 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/multimario_api/internal/db"
 	"github.com/multimario_api/internal/req_handler"
 	"github.com/multimario_api/internal/routes"
+	"github.com/multimario_api/internal/twitch"
 	_ "github.com/ncruces/go-sqlite3/driver"
 )
 
-const db_path = "./internal/db/mm_db.db" //Path of SQLite database that holds multimario stuff
-const port = ":8080" //Port the server listens
+type Settings struct {
+	TwitchClientID string `json:"twitch_client_id"`
+	TwitchClientSecret string `json:"twitch_client_secret"`
+	DBPath string `json:"database_path"`
+}
+
+const port = ":8080" //Port the server listens on
 
 func main() {
+	//Load settings
+	settings, err := loadSettings("settings.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//Set Twitch parameters
+	err = twitch.SetTwitchParams(settings.TwitchClientID, settings.TwitchClientSecret)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	//Open database
-	database, err := sql.Open("sqlite3", db_path)
+	database, err := sql.Open("sqlite3", settings.DBPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,4 +59,21 @@ func main() {
 
 	//Start HTTP server
 	log.Fatal(http.ListenAndServe(port, mux))
+}
+
+func loadSettings(settingsPath string) (*Settings, error) {
+	//Load settings
+	settingsFile, err := os.Open(settingsPath)
+	if err != nil {
+		return nil, err
+	}
+	defer settingsFile.Close()
+
+	var settings Settings
+	err = json.NewDecoder(settingsFile).Decode(&settings)
+	if err != nil {
+		return nil, err
+	}
+
+	return &settings, nil
 }

@@ -51,7 +51,10 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-//Test CreateRace()
+/*
+* Test CreateRace()
+*/
+
 //Slices of test values
 var successTestValues = []map[string]any {
 	{"category": "602"}, //Category valid, no date/status
