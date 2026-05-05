@@ -41,6 +41,10 @@ func NewPlayer(name repository.NullableStr, twitchName repository.NullableStr) (
 
 //Add player
 func (p *Player) Add(database *sql.DB) error {
+	if p.PlayerID != 0 {
+		return errors.New("player already exists")
+	}
+
 	//TODO: Make sure to also get twitch ID to add to DB
 
 	//Build SQL statements

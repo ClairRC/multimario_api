@@ -178,7 +178,7 @@ var initStatements = []string {
 		game_category_id INTEGER NOT NULL,
 		time TEXT,
 		estimate TEXT NOT NULL,
-		run_num INTEGER NOT NULL,
+		run_num INTEGER,
 		FOREIGN KEY (race_record_id) REFERENCES race_records(race_record_id)
 			ON DELETE CASCADE,
 		FOREIGN KEY (game_category_id) REFERENCES game_categories(game_category_id)

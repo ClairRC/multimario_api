@@ -36,6 +36,10 @@ func NewGame(name repository.NullableStr) (*Game, error) {
 
 //Add game
 func (g *Game) Add(database *sql.DB) error {
+	if g.GameID != 0 {
+		return errors.New("game already exists")
+	}
+
 	//Build SQL statements
 	stmt := db.BuildInsertStatement([]string{db.ColGameName}, db.TableGames, []any{g.Name.Value})
 	

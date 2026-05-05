@@ -76,6 +76,10 @@ func (r *Record) Add(database *sql.DB) error {
 	* The safest and easiest way to handle this is to guarantee atomicity in this function. 
 	*/
 	
+	if r.RecordID != 0 {
+		return errors.New("record already exists")
+	}
+
 	//Get player ID
 	playerID := r.Player.PlayerID
 	if playerID == 0 {
@@ -86,11 +90,6 @@ func (r *Record) Add(database *sql.DB) error {
 	raceID := r.Race.RaceID
 	if raceID == 0 {
 		return races.RaceDoesNotExistErr
-	}
-
-	//Make sure record doesn't exist to avoid duplicates
-	if r.RecordID != 0 {
-		return errors.New("record already exists")
 	}
 
 	//Check that each run is not already part of a different record
@@ -227,6 +226,16 @@ func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repos
 	}
 
 	return out, nil
+}
+
+//Verify record exists
+func RecordExists(database *sql.DB, recordID int64) (bool, error) {
+	exists, err := db.RecordExists(database, db.TableRecords, db.ColRecordID, recordID)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }
 
 func getRunsFromRecordID(database *sql.DB, recordID int64) ([]*runs.Run, error) {

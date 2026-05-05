@@ -56,8 +56,8 @@ func (c *RaceCategory) Add(database *sql.DB) error {
 	*/
 
 	//Make sure race category and game categories are valid
-	if c.CategoryID == 0 {
-		return RaceCategoryDoesNotExistErr
+	if c.CategoryID != 0 {
+		return errors.New("race category already exists")
 	}
 
 	for _, gameCat := range c.GameCategories {

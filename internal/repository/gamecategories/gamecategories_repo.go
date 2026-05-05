@@ -67,6 +67,10 @@ func NewGameCategory(database *sql.DB, name repository.NullableStr,
 
 // Add game category
 func (c *GameCategory) Add(database *sql.DB) error {
+	if c.CategoryID != 0 {
+		return errors.New("game category already exists")
+	}
+
 	//Get game FK
 	gameID := c.Game.GameID
 	if gameID == 0 {

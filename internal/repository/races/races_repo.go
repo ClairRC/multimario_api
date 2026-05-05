@@ -56,6 +56,10 @@ func NewRace(database *sql.DB, date repository.NullableStr, startTime repository
 
 // Add race. Returns race ID
 func (r *Race) Add(database *sql.DB) error {
+	if r.RaceID != 0 {
+		return errors.New("race already exists")
+	}
+
 	//Get race category ID
 	raceCatID := r.RaceCategory.CategoryID
 
