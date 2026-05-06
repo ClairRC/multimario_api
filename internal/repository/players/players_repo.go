@@ -16,6 +16,11 @@ type Player struct {
 	PlayerID int64 //DB id of player. Defaults to 0 for unadded player
 }
 
+type PlayerQuery struct {
+	Names []string
+	TwitchNames []string
+}
+
 //Default instantialtion
 var PlayerDoesNotExistErr error = errors.New("player does not exist")
 
@@ -132,6 +137,123 @@ func (p *Player) Update(database *sql.DB, newName repository.NullableStr, newTwi
 /*
 * Player Helpers
 */
+
+//Queries DB for players
+func QueryPlayers(database *sql.DB, playerQuery PlayerQuery) ([]*Player, error) {
+	//TODO: Refactor this. The logic I think is sound but its a mess lowkey
+	
+	//Handle results
+	out := make([]*Player, 0) //Output
+
+	//Build queries
+	cols := []string {
+		db.ColPlayerID,
+		db.ColPlayerName,
+		db.ColSocialsPlatformUserID,
+	}
+	table := db.JoinTables(db.TablePlayers, db.TableSocials, db.ColPlayerID, db.ColSocialsPlayerID)
+	whereCons := make([]db.WhereCondition, 0)
+
+	//Get name where conditions
+	var nameWherePtr *db.WhereCondition
+	for i, name := range playerQuery.Names {
+		if i == 0 {
+			nameWherePtr = &db.WhereCondition{
+				ColName: db.ColPlayerName,
+				Op: db.Equals,
+				Value: name,
+				Ors: make([]db.OrCondition, 0),
+			}
+		} else {
+			nameWherePtr.Ors = append(nameWherePtr.Ors, db.OrCondition{
+				Op: db.Equals,
+				Value: name,
+			})
+		}
+	}
+	if nameWherePtr != nil {
+		whereCons = append(whereCons, *nameWherePtr)
+	}
+
+	//Get twitch name where conditions
+	
+	//Get Twitch IDs from twitch names
+	//Map of Twitch IDs to name for parsing response
+	twitchIDs := make(map[string]string)
+
+	var twitchIDWherePtr *db.WhereCondition
+	for i, twitchName := range playerQuery.TwitchNames {
+		//Get twitch ID from the name
+		id, err := twitch.GetTwitchIDFromName(twitchName)
+		if err != nil {
+			return nil, err
+		}
+		twitchIDs[id] = twitchName //Link ID to name
+
+		if i == 0 {
+			twitchIDWherePtr = &db.WhereCondition{
+				ColName: db.ColSocialsPlatformUserID,
+				Op: db.Equals,
+				Value: id,
+				Ors: make([]db.OrCondition, 0),
+			}
+		} else {
+			twitchIDWherePtr.Ors = append(twitchIDWherePtr.Ors, db.OrCondition{
+				Op: db.Equals,
+				Value: id,
+			})
+		}
+	}
+	if twitchIDWherePtr != nil {
+		whereCons = append(whereCons, *twitchIDWherePtr)
+	}
+
+	//Get results
+	if len(whereCons) == 0 {
+		return out, nil
+	} //No conditions provided
+
+	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	//If results are empty, return nothing
+	if len(res[db.ColPlayerID]) == 0 {
+		return out, nil
+	}
+
+	//Loop through results and create players
+	for i := range len(res[db.ColPlayerID]) {
+		name := repository.MakeNullableStr(res[db.ColPlayerName][i])
+		twitchID, ok := res[db.ColSocialsPlatformUserID][i].(string) //Avoid panic for this type assertion
+		if !ok {
+			continue
+		}
+
+		twitchNameStr, cached := twitchIDs[twitchID]
+		if !cached {
+			alsoTwitchNameStr, err := twitch.GetTwitchNameFromID(twitchID)
+			twitchNameStr = alsoTwitchNameStr //I'll fix this dont worry
+			if err != nil {
+				return nil, err
+			}
+		}
+		twitchName := repository.MakeNullableStr(twitchNameStr)
+
+		id := res[db.ColPlayerID][i].(int64)
+
+		newPlayer := &Player {
+			Name: name,
+			TwitchName: twitchName,
+			PlayerID: id,
+		}
+		out = append(out, newPlayer)
+	}
+
+	return out, nil
+}
 
 //Gets player by name
 func GetPlayerByName(database *sql.DB, name repository.NullableStr) (*Player, error) {

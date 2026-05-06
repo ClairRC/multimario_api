@@ -186,9 +186,13 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 * ENDPOINT: GET /players
 *
 * OPTIONAL PARAMETERS:
-*	player_id: int //Returns player with this ID
-*	player_name: string //Returns player(s?) with this name
+*	player_name: string //Returns player with this display name.
 *	twitch_name: string //Returns player with this name on twitch
+*
+* Note: For multiple values, include them separately
+* ie. /players?player_name=expreli&player_name=odme_ will return both expreli and odme
+* Additionally, if you include both a player name and a twitch name, it will return players that match both
+* ie. /players?player_name=expreli&twitch_name=odme_ will return nothing. This behavior is probably not ideal for now.
 *
 * RETURNS:
 * {
@@ -196,7 +200,6 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 *	[
 *		{
 *			name: string //Player's name
-*			id: int //Player's ID
 *			twitch_name: string //Twitch name. NULL if player doesn't have associated Twitch
 *		}
 *	]
@@ -207,5 +210,35 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 */
 
 func (h *ReqHandler) GetPlayers(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get URL parameters
+	playerNames := r.URL.Query()["player_name"]
+	twitchNames := r.URL.Query()["twitch_name"]
+
+	//Get players from query
+	query := players.PlayerQuery{
+		Names: playerNames,
+		TwitchNames: twitchNames,
+	}
+	players, err := players.QueryPlayers(h.DataBase, query)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error fetching players from db")
+		return
+	}
+
+	out := make(map[string]any)
+	playerInfo := make([]map[string]any, 0)
+
+	for _, p := range players {
+		info := map[string]any {
+			"name": p.Name.Value,
+			"twitch_name": p.TwitchName.Value,
+		}
+		playerInfo = append(playerInfo, info)
+	}
+
+	//Write outputs
+	out["players"] = playerInfo
+	out["success"] = true
+
+	writeJSON(w, http.StatusOK, out)
 }

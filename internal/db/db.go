@@ -95,6 +95,13 @@ type WhereCondition struct {
 	ColName string
 	Op Operator
 	Value any
+	Ors []OrCondition
+}
+
+//Additional queries for WhereCondition
+type OrCondition struct {
+	Op Operator
+	Value any
 }
 
 // Table initializations
@@ -338,11 +345,18 @@ func BuildSelectStatement(columns []string, table string, where []WhereCondition
 
 	for i, w := range where {
 		if i == 0 {
-			stmt += fmt.Sprintf(" WHERE %s %s ?", w.ColName, w.Op)
+			stmt += fmt.Sprintf(" WHERE (%s %s ?", w.ColName, w.Op)
 		} else {
-			stmt += fmt.Sprintf(" AND %s %s ?", w.ColName, w.Op)
+			stmt += fmt.Sprintf(" AND (%s %s ?", w.ColName, w.Op)
 		}
 		args = append(args, w.Value)
+
+		//Add or conditions
+		for _, o := range w.Ors {
+			stmt += fmt.Sprintf(" OR %s %s ?", w.ColName, o.Op)
+			args = append(args, o.Value)
+		}
+		stmt += ")" //Add closing parenthesis
 	}
 
 	return SQLStatement{stmt, args, Select}
