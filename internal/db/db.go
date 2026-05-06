@@ -34,7 +34,9 @@ const (
 	ColPlayerID = "player_id"
 
 	TableSocials = "socials"
-	ColPlatformID = "platform_id"
+	ColSocialsPlayerID = "player_id"
+	ColSocialsPlatformName = "platform_name"
+	ColSocialsPlatformUserID = "platform_user_id"
 
 	TableRaceCatGameCat = "race_cat_game_cat"
 	ColRaceCatGameCatRaceCategoryID = "race_category_id"
@@ -191,9 +193,7 @@ var initStatements = []string {
 		social_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		player_id INTEGER NOT NULL,
 		platform_name TEXT NOT NULL,
-		platform_id INTEGER NOT NULL,
-		handle TEXT NOT NULL,
-		last_updated TEXT NOT NULL,
+		platform_user_id TEXT UNIQUE NOT NULL,
 		FOREIGN KEY (player_id) REFERENCES players(player_id)
 			ON DELETE CASCADE
 	)
@@ -203,7 +203,7 @@ var initStatements = []string {
 	`
 	CREATE TABLE IF NOT EXISTS counters(
 		counter_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-		counter_name TEXT NOT NULL
+		counter_twitch_id TEXT NOT NULL
 	)
 	`,
 

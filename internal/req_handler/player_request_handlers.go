@@ -8,11 +8,6 @@ import (
 )
 
 /*
-* TODO: Currently these handlers expect a twitch ID, but this should be a name, not an ID
-*	    I will change this once I implement twitch integration
- */
-
-/*
 * Add new Player
 *
 * ENDPOINT: POST /players
@@ -42,11 +37,15 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate inputs
-	name, err := validateText(w, req, "display_name", true)
+	name, err := validateText(w, req, "display_name", false)
 	if err != nil { return }
 
 	twitchName, err := validateText(w, req, "twitch_name", true)
 	if err != nil { return }
+
+	if !name.Valid {
+		name = twitchName
+	}
 
 	//Check that player isn't already in database
 	exists, err := players.PlayerExistsByName(h.DataBase, name)
@@ -58,6 +57,18 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 	//If player already exists, write error
 	if exists {
 		writeError(w, http.StatusBadRequest, "player already exists")
+		return
+	}
+
+	//Verify twitch name isn't in use
+	exists, err = players.TwitchInUseByName(h.DataBase, twitchName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error parsing twitch name")
+		return
+	}
+
+	if exists {
+		writeError(w, http.StatusBadRequest, "twitch name is already in use")
 		return
 	}
 
@@ -140,6 +151,20 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 
 		if exists {
 			writeError(w, http.StatusBadRequest, "new player name is already used")
+			return
+		}
+	}
+
+	//Make sure twitch name isn't in use
+	if twitchName.Valid {
+		exists, err := players.TwitchInUseByName(h.DataBase, twitchName)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "unknown error checking if twitch is in use")
+			return
+		}
+
+		if exists {
+			writeError(w, http.StatusBadRequest, "twitch name is already in use")
 			return
 		}
 	}

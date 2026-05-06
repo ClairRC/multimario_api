@@ -3,9 +3,11 @@ package players
 import (
 	"database/sql"
 	"errors"
+	"strings"
 
 	"github.com/multimario_api/internal/db"
 	"github.com/multimario_api/internal/repository"
+	"github.com/multimario_api/internal/twitch"
 )
 
 type Player struct {
@@ -31,7 +33,9 @@ func NewPlayer(name repository.NullableStr, twitchName repository.NullableStr) (
 		return nil, repository.StringIsNullErr
 	}
 
-	//TODO: Add check to make sure TwitchName exists and add a Socials row for this
+	//Twitch logins are lowercase, so make this lowercase just in case
+	twitchName.Value = strings.ToLower(twitchName.Value)
+
 	return &Player{Name: name, TwitchName: twitchName}, nil
 }
 
@@ -41,22 +45,25 @@ func NewPlayer(name repository.NullableStr, twitchName repository.NullableStr) (
 
 //Add player
 func (p *Player) Add(database *sql.DB) error {
+	/*
+	* Note: Simliarly to the records repository file, its important that a player gets added
+	* and their twitch also gets added since currently it is a hard requirement for joining a race.
+	* Because of this, to guarantee atomicity this function deals with raw SQL instead of using the DB abstractions.
+	* This should probably be fixed at some point.
+	*/
 	if p.PlayerID != 0 {
 		return errors.New("player already exists")
 	}
 
-	//TODO: Make sure to also get twitch ID to add to DB
-
-	//Build SQL statements
-	stmt := db.BuildInsertStatement([]string{db.ColPlayerName}, db.TablePlayers, []any{p.Name.Value})
-	
-	ids, err := db.ExecuteStatements(database, []db.SQLStatement{stmt})
+	//Get twitch ID from twitch name
+	pTwitchID, err := twitch.GetTwitchIDFromName(p.TwitchName.Value)
 	if err != nil {
 		return err
 	}
-	p.PlayerID = ids[0] //Register ID to player
 
-	return nil
+	//Add values to the DB
+	err = executeInsertStatements(database, p.Name.Value, pTwitchID)
+	return err
 }
 
 //Update player
@@ -68,9 +75,34 @@ func (p *Player) Update(database *sql.DB, newName repository.NullableStr, newTwi
 
 	stmts := make([]db.SQLStatement, 0, 2)
 
-	//If ID is valid, make the statement for that
+	//If twitch name is valid, make the statement for that
 	if newTwitchName.Valid {
-		//TODO: Add logic for updating twitch ID for new twitch account
+		//Get twitch ID
+		newTwitchID, err := twitch.GetTwitchIDFromName(newTwitchName.Value)
+		if err != nil {
+			return err
+		}
+		//Delete current social table and make a new one
+		twitchDel := db.BuildDeleteStatement(db.TableSocials, []db.WhereCondition{{
+			ColName: db.ColSocialsPlayerID,
+			Op: db.Equals,
+			Value: p.PlayerID,
+		}})
+		stmts = append(stmts, twitchDel)
+
+		//Add new table
+		cols := []string {
+			db.ColSocialsPlayerID,
+			db.ColSocialsPlatformName,
+			db.ColSocialsPlatformUserID,
+		}
+		vals := []any {
+			p.PlayerID,
+			"twitch",
+			newTwitchID,
+		}
+		twitchAdd := db.BuildInsertStatement(cols, db.TableSocials, vals)
+		stmts = append(stmts, twitchAdd)
 	}
 
 	//Get name update statement
@@ -136,7 +168,36 @@ func GetPlayerByName(database *sql.DB, name repository.NullableStr) (*Player, er
 		return nil, errors.New("unknown error getting player: unable to parse player ID")
 	}
 
-	return &Player{Name: repository.MakeNullableStr(pName), PlayerID: pID}, nil
+	//Get player twitch name
+	col = []string{db.ColSocialsPlatformUserID}
+	table = db.TableSocials
+	where = []db.WhereCondition{{
+		ColName: db.ColSocialsPlayerID,
+		Op: db.Equals,
+		Value: pID,
+	}}
+	stmt = db.BuildSelectStatement(col, table, where)
+	socials, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(socials[db.ColSocialsPlatformUserID]) == 0 {
+		return nil, errors.New("unknown error: player doesn't have a twitch registered")
+	} //Avoids a panic in rare edge case
+
+	twitchID, ok := socials[db.ColSocialsPlatformUserID][0].(string)
+	if !ok {
+		return nil, errors.New("unknown error getting twitch information: unable to parse twitch id")
+	}
+
+	//Get name from id
+	twitchName, err := twitch.GetTwitchNameFromID(twitchID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Player{Name: repository.MakeNullableStr(pName), TwitchName: repository.MakeNullableStr(twitchName), PlayerID: pID}, nil
 }
 
 //Checks if player already exists
@@ -151,4 +212,66 @@ func PlayerExistsByName(database *sql.DB, name repository.NullableStr) (bool, er
 	}
 
 	return exists, nil
+}
+
+//Checks if twitch name is already in use
+func TwitchInUseByName(database *sql.DB, name repository.NullableStr) (bool, error) {
+	if !name.Valid {
+		return false, repository.StringIsNullErr
+	}
+	
+	//Get twitch ID
+	id, err := twitch.GetTwitchIDFromName(name.Value)
+	if err != nil {
+		return false, err
+	}
+
+	exists, err := db.RecordExists(database, db.TableSocials, db.ColSocialsPlatformUserID, id)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
+//Adds player and their twitch to DB atomically
+func executeInsertStatements(database *sql.DB, playerName string, playerTwitchID string) error {
+	//Build SQL statements
+	playerStmt := db.BuildInsertStatement([]string{db.ColPlayerName}, db.TablePlayers, []any{playerName})
+
+	tx, err := database.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	//Add player to DB
+	res, err := tx.Exec(playerStmt.Stmt, playerStmt.Args...)
+	if err != nil {
+		return err
+	}
+	playerID, err := res.LastInsertId() //Get player ID
+	if err != nil {
+		return err
+	}
+
+	//Add social table for this player
+	cols := []string {
+		db.ColSocialsPlayerID,
+		db.ColSocialsPlatformName,
+		db.ColSocialsPlatformUserID,
+	}
+	table := db.TableSocials
+	vals := []any {
+		playerID,
+		"twitch",
+		playerTwitchID,
+	}
+	socialsStmt := db.BuildInsertStatement(cols, table, vals)
+	_, err = tx.Exec(socialsStmt.Stmt, socialsStmt.Args...)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
