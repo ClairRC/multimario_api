@@ -57,7 +57,4 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 	m.HandleFunc("PATCH /players/{player_name}", h.EditPlayer)
 	m.HandleFunc("GET /players", h.GetPlayers)
 
-	//Counters Handlers
-	m.HandleFunc("POST /counters", h.AddCounter)
-	m.HandleFunc("GET /counters", h.GetCounters)
 }

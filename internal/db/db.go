@@ -198,28 +198,6 @@ var initStatements = []string {
 			ON DELETE CASCADE
 	)
 	`,
-
-	//Create Counter table
-	`
-	CREATE TABLE IF NOT EXISTS counters(
-		counter_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-		counter_twitch_id TEXT NOT NULL
-	)
-	`,
-
-	//Create Player_Counter table
-	//Currently, any counter can count for any racer, so this 
-	//table will just be a "who added this counter" table, but if 
-	//counters ever have a list of players to count for, this table is needed for 1NF
-	`
-	CREATE TABLE IF NOT EXISTS player_counter(
-		player_counter_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-		player_id INTEGER NOT NULL,
-		counter_id INTEGER NOT NULL,
-		FOREIGN KEY (player_id) REFERENCES players(player_id),
-		FOREIGN KEY (counter_id) REFERENCES counters(counter_id)
-	)
-	`,
 }
 
 
