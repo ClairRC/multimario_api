@@ -13,6 +13,9 @@ type Game struct {
 	GameID int64
 }
 
+type GameQuery struct {
+	Names []string
+}
 
 //Default error instantialtion
 var GameDoesNotExistErr error = errors.New("game does not exist")
@@ -88,6 +91,71 @@ func (g *Game) Update(database *sql.DB, newName repository.NullableStr) error {
 /*
 * Game Helpers
 */
+
+//Gets games based on game query
+func QueryGames(database *sql.DB, gameQuery GameQuery) ([]*Game, error) {
+	out := make([]*Game, 0)
+
+	//Get SQL query values
+	cols := []string {
+		db.ColGameID,
+		db.ColGameName,
+	}
+	table := db.TableGames
+	whereCons := make([]db.WhereCondition, 0)
+
+	var newWhereConPtr *db.WhereCondition
+	for i, name := range gameQuery.Names {
+		if i == 0 {
+			newWhereCon := db.WhereCondition{
+				ColName: db.ColGameName,
+				Op: db.Equals,
+				Value: name,
+			}
+			newWhereConPtr = &newWhereCon
+		} else {
+			newOr := db.OrCondition{
+				Op: db.Equals,
+				Value: name,
+			}
+			newWhereConPtr.Ors = append(newWhereConPtr.Ors, newOr)
+		}
+	}
+	if newWhereConPtr != nil {
+		whereCons = append(whereCons, *newWhereConPtr)
+	}
+
+	//Execute query
+	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(res[db.ColGameID]) == 0 {
+		return out, nil
+	} //No results, return empty
+
+	for i := range len(res[db.ColGameID]) {
+		//Make sure return values are correct.
+		name, ok := res[db.ColGameName][i].(string)
+		if !ok {
+			continue
+		}
+		id, ok := res[db.ColGameID][i].(int64)
+		if !ok {
+			continue
+		}
+
+		newGame := &Game{
+			Name: repository.MakeNullableStr(name),
+			GameID: id,
+		}
+		out = append(out, newGame)
+	}
+
+	return out, nil
+}
 
 //Gets game by name
 func GetGameByName(database *sql.DB, name repository.NullableStr) (*Game, error) {

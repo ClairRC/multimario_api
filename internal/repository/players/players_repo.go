@@ -208,11 +208,6 @@ func QueryPlayers(database *sql.DB, playerQuery PlayerQuery) ([]*Player, error) 
 		whereCons = append(whereCons, *twitchIDWherePtr)
 	}
 
-	//Get results
-	if len(whereCons) == 0 {
-		return out, nil
-	} //No conditions provided
-
 	stmt := db.BuildSelectStatement(cols, table, whereCons)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {

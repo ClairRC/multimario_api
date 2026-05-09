@@ -231,7 +231,7 @@ func (h *ReqHandler) GetPlayers(w http.ResponseWriter, r *http.Request) {
 	for _, p := range players {
 		info := map[string]any {
 			"name": p.Name.Value,
-			"twitch_name": p.TwitchName.Value,
+			"twitch_name": p.TwitchName.NullableValue(),
 		}
 		playerInfo = append(playerInfo, info)
 	}
