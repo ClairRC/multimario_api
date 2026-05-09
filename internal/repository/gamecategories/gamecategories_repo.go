@@ -181,6 +181,39 @@ func (c *GameCategory) Update(
 * Helpers
 */
 
+//Queries game categories from GET request
+func QueryGameCategories(database *sql.DB, gamecategoryQuery GameCategoryQuery) ([]*GameCategory, error) {
+	//Set up request
+	cols := []string {
+		db.ColGameCategoryID,
+		db.ColGameCategoryName,
+		db.ColGameCategoryEstimate,
+		db.ColGameCategoryNumCollectibles,
+		db.ColGameCategoryGameID,
+		db.ColGameName,
+	}
+	table := getGameCategoryQueryTable()
+	whereCons := getGameCatWhereCons(gamecategoryQuery)
+
+	//Execute query
+	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	//Output
+	out := make([]*GameCategory, 0)
+	if len(res[db.ColGameCategoryID]) == 0 {
+		return out, nil
+	} //No results, return empty
+
+	//Parse results
+	out = parseGameCategoryQueryResults(res)
+
+	return out, nil
+}
+
 // Get game category
 func GetGameCategoryByName(database *sql.DB, name repository.NullableStr) (*GameCategory, error) {
 	if !name.Valid {

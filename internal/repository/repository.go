@@ -1,7 +1,13 @@
 package repository
 
+/*
+* This file includes general repository behavior
+ */
+
 import (
 	"errors"
+
+	"github.com/multimario_api/internal/db"
 )
 
 //Nullable interface
@@ -70,4 +76,30 @@ func (i NullableInt) NullableValue() any {
 	} else {
 		return nil
 	}
+}
+
+//Helper function to get a WhereCondition for a column name, slice of values, and operator for the query
+//Returns a pointer to the new where condition or nil if values is empty/invalid
+func GetWhereCondition[T any](colName string, values []T, operator db.Operator) *db.WhereCondition {
+	//TODO: This function might be better off living in a different file? It makes sense here for now since all repo files use it.
+	var out *db.WhereCondition
+
+	for i, val := range values {
+		if i == 0 {
+			newWhereCon := db.WhereCondition{
+				ColName: colName,
+				Op: operator,
+				Value: val,
+			}
+			out = &newWhereCon
+		} else {
+			newOr := db.OrCondition{
+				Op: operator,
+				Value: val,
+			}
+			out.Ors = append(out.Ors, newOr)
+		}
+	}
+
+	return out 
 }

@@ -199,12 +199,15 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 *
 * RETURNS:
 * {
+*	success: boolean
+*	error: string //Only if success is false
 *	game_categories: //Array of game categories
 *	[
 *		{
 *			name: string //Category name
 *			id: int //Category id
 *			game: string //Game that this category is part of
+*			estimate: string //hh:mm:ss, default estimate for this category. May be null/
 *			num_collectibles: int //Number of collectibles gotten in this category
 *		}
 *	]
@@ -214,5 +217,40 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 
 //Get game categories
 func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get URL parameters
+	catNames := r.URL.Query()["name"]
+	gameNames := r.URL.Query()["game"]
+	raceCatNames := r.URL.Query()["race_category"]
+
+	//Query for categories
+	q := gamecategories.GameCategoryQuery{
+		GameNames: gameNames,
+		RaceCategories: raceCatNames,
+		Names: catNames,
+	}
+	gameCats, err := gamecategories.QueryGameCategories(h.DataBase, q)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error fetching game categories")
+		return
+	}
+
+	//Format output
+	out := make(map[string]any)
+	outCats := make([]map[string]any, 0) //Array of categories
+
+	for _, c := range gameCats {
+		outObj :=  make(map[string]any)
+		outObj["name"] = c.Name.Value
+		outObj["id"] = c.CategoryID
+		outObj["game"] = c.Game.Name.Value
+		outObj["estimate"] = c.Estimate.NullableValue() //Can be NULL
+		outObj["num_collectibles"] = c.NumCollectibles.Value
+
+		outCats = append(outCats, outObj)
+	}
+
+	out["game_categories"] = outCats
+	out["success"] = true
+
+	writeJSON(w, http.StatusOK, out)
 }
