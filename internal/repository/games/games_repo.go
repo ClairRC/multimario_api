@@ -102,28 +102,7 @@ func QueryGames(database *sql.DB, gameQuery GameQuery) ([]*Game, error) {
 		db.ColGameName,
 	}
 	table := db.TableGames
-	whereCons := make([]db.WhereCondition, 0)
-
-	var newWhereConPtr *db.WhereCondition
-	for i, name := range gameQuery.Names {
-		if i == 0 {
-			newWhereCon := db.WhereCondition{
-				ColName: db.ColGameName,
-				Op: db.Equals,
-				Value: name,
-			}
-			newWhereConPtr = &newWhereCon
-		} else {
-			newOr := db.OrCondition{
-				Op: db.Equals,
-				Value: name,
-			}
-			newWhereConPtr.Ors = append(newWhereConPtr.Ors, newOr)
-		}
-	}
-	if newWhereConPtr != nil {
-		whereCons = append(whereCons, *newWhereConPtr)
-	}
+	whereCons := getGameWhereCons(gameQuery)
 
 	//Execute query
 	stmt := db.BuildSelectStatement(cols, table, whereCons)
@@ -136,25 +115,8 @@ func QueryGames(database *sql.DB, gameQuery GameQuery) ([]*Game, error) {
 		return out, nil
 	} //No results, return empty
 
-	for i := range len(res[db.ColGameID]) {
-		//Make sure return values are correct.
-		name, ok := res[db.ColGameName][i].(string)
-		if !ok {
-			continue
-		}
-		id, ok := res[db.ColGameID][i].(int64)
-		if !ok {
-			continue
-		}
-
-		newGame := &Game{
-			Name: repository.MakeNullableStr(name),
-			GameID: id,
-		}
-		out = append(out, newGame)
-	}
-
-	return out, nil
+	//Parse results and return them
+	return parseQueryResponse(res), nil
 }
 
 //Gets game by name

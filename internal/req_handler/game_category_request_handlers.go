@@ -214,5 +214,5 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 
 //Get game categories
 func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
-	//TODO Implement
+	//TODO: Implement
 }

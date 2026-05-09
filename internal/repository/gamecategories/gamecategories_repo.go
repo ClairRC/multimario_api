@@ -18,6 +18,12 @@ type GameCategory struct {
 	CategoryID int64 //0 if category hasn't been added to database yet
 }
 
+type GameCategoryQuery struct {
+	GameNames []string
+	RaceCategories []string
+	Names []string
+}
+
 // Errors
 var GameCategoryDoesNotExistErr error = errors.New("game category does not exist")
 
@@ -312,4 +318,77 @@ func extractGameCategoriesFromQueryResult(database *sql.DB, results map[string][
 	}
 
 	return out, nil
+}
+
+//Helper to get where conditions for query
+func getGameCatWhereCons(query GameCategoryQuery) ([]db.WhereCondition) {
+	out := make([]db.WhereCondition, 0)
+
+	//Check Game names
+	var gameNameWherePtr *db.WhereCondition
+	for i, gameName := range query.GameNames {
+		if i == 0 {
+			newWhereCon := db.WhereCondition{
+				ColName: db.ColGameName,
+				Op: db.Equals,
+				Value: gameName,
+			}
+			gameNameWherePtr = &newWhereCon
+		} else {
+			newOr := db.OrCondition{
+				Op: db.Equals,
+				Value: gameName,
+			}
+			gameNameWherePtr.Ors = append(gameNameWherePtr.Ors, newOr)
+		}
+	}
+	if gameNameWherePtr != nil {
+		out = append(out, *gameNameWherePtr)
+	}
+
+	//Check race categorys
+	var raceCatWherePtr *db.WhereCondition
+	for i, raceCat := range query.RaceCategories {
+		if i == 0 {
+			newWhereCon := db.WhereCondition{
+				ColName: db.ColRaceCategoryName,
+				Op: db.Equals,
+				Value: raceCat,
+			}
+			raceCatWherePtr = &newWhereCon
+		} else {
+			newOr := db.OrCondition{
+				Op: db.Equals,
+				Value: raceCat,
+			}
+			raceCatWherePtr.Ors = append(raceCatWherePtr.Ors, newOr)
+		}
+	}
+	if raceCatWherePtr != nil {
+		out = append(out, *raceCatWherePtr)
+	}
+
+	//Check game category names
+	var gameCatWherePtr *db.WhereCondition
+	for i, gameCat := range query.Names {
+		if i == 0 {
+			newWhereCon := db.WhereCondition{
+				ColName: db.ColGameCategoryName,
+				Op: db.Equals,
+				Value: gameCat,
+			}
+			gameCatWherePtr = &newWhereCon
+		} else {
+			newOr := db.OrCondition{
+				Op: db.Equals,
+				Value: gameCat,
+			}
+			gameCatWherePtr.Ors = append(gameCatWherePtr.Ors, newOr)
+		}
+	}
+	if gameCatWherePtr != nil {
+		out = append(out, *gameCatWherePtr)
+	}
+
+	return out
 }
