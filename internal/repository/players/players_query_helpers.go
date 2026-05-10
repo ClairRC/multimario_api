@@ -11,29 +11,14 @@ import (
 func getPlayerWhereCons(playerQuery PlayerQuery, twitchIDCache map[string]string) ([]db.WhereCondition, error) {
 	out := make([]db.WhereCondition, 0) //Return value
 
-	//Get name where conditions
-	var nameWherePtr *db.WhereCondition
-	for i, name := range playerQuery.Names {
-		if i == 0 {
-			nameWherePtr = &db.WhereCondition{
-				ColName: db.ColPlayerName,
-				Op: db.Equals,
-				Value: name,
-				Ors: make([]db.OrCondition, 0),
-			}
-		} else {
-			nameWherePtr.Ors = append(nameWherePtr.Ors, db.OrCondition{
-				Op: db.Equals,
-				Value: name,
-			})
-		}
-	}
+	//Get where conditions
+	nameWherePtr := repository.GetWhereCondition(db.ColPlayerName, playerQuery.Names, db.Equals)
 	if nameWherePtr != nil {
 		out = append(out, *nameWherePtr)
 	}
 
 	//Get twitch name where conditions
-	//Get Twitch IDs from twitch names
+	//This caches twitch IDs so the logic is too specific for the general GetWhereCondition helper
 	var twitchIDWherePtr *db.WhereCondition
 	for i, twitchName := range playerQuery.TwitchNames {
 		//Get twitch ID from the name

@@ -171,36 +171,25 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-* Get specific race from database
-*
-* ENDPOINT: GET /races/{race_id}
-*
-* RETURNS:
-* {
-*	id: int -- Race ID
-*	category: String
-*	date: String -- YYYY-MM-DD
-*	status: String
-*	start_time: string -- UTC
-* }
- */
-
-func (h *ReqHandler) GetRaceFromID(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
-}
-
-/*
 * Get races
 * ENDPOINT: GET /races
 *
 * OPTIONAL PARAMETERS:
+*	race_id: int -- IDs of the races you want to get
 *	before: String -- YYYY-MM-DD Races before this date
 *	after: String -- YYYY-MM-DD Races after this date
 *	on: String -- YYYY-MM-DD Races on this date
 *	category: String -- 602, 246, sandbox_any%, etc
+*	status: String -- must be valid status
+*
+* Example:
+* GET /races?before=2020-11-16&after=2018-12-25&category=602&category=246 (url encoded)
+* This returns races that happened after 12/25/2018, before 11/16/2020 and includes races that were 602 or 246
 *
 * RETURNS:
 * {
+*	success: bool
+*	error: string //Only if success is false
 * 	races: Array of races
 *   [
 *		{
@@ -215,7 +204,58 @@ func (h *ReqHandler) GetRaceFromID(w http.ResponseWriter, r *http.Request) {
  */
 
 func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get URL parameters
+	urlIDs := r.URL.Query()["race_id"]
+	urlBeforeDates := r.URL.Query()["before"]
+	urlAfterDates := r.URL.Query()["after"]
+	urlOnDates := r.URL.Query()["on"]
+	urlRaceCats := r.URL.Query()["category"]
+	urlRaceStatuses := r.URL.Query()["status"]
+
+	//Validate values
+	ids := make([]int64, 0)
+	for _, id := range urlIDs {
+		idNum, err := strconv.Atoi(id)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "unable to parse id "+id+" as int")
+			return
+		}
+		ids = append(ids, int64(idNum))
+	}
+
+	//Validate dates
+	for _, date := range slices.Concat(urlAfterDates, urlBeforeDates, urlOnDates) {
+		err := (&DateField{date}).Validate()
+		if err != nil {
+			switch err {
+			case FieldIsWrongFormatErr:
+				writeError(w, http.StatusBadRequest, date+" cannot be parsed as date. must be in yyyy-mm-dd format")
+			default:
+				writeError(w, http.StatusInternalServerError, "unknown error parsing date fields") //Should not ever happen, but safety first.
+			}
+			return
+		}
+	}
+
+	//Validate statuses
+	for _, status := range urlRaceStatuses {
+		if !raceStatusIsAllowed(status) {
+			writeError(w, http.StatusBadRequest, status+" is not a valid race status")
+			return
+		}
+	}
+
+	//Query
+	q := &races.RaceQuery{
+		IDs: ids,
+		BeforeDates: urlBeforeDates,
+		AfterDates: urlAfterDates,
+		OnDates: urlOnDates,
+		Categories: urlRaceCats,
+		Statuses: urlRaceStatuses,
+	}
+	
+	//TODO: Finish
 }
 
 /*

@@ -12,23 +12,7 @@ func getGameWhereCons(gameQuery GameQuery) []db.WhereCondition {
 	out := make([]db.WhereCondition, 0) //Output slice
 
 	//Get where condition
-	var newWhereConPtr *db.WhereCondition
-	for i, name := range gameQuery.Names {
-		if i == 0 {
-			newWhereCon := db.WhereCondition{
-				ColName: db.ColGameName,
-				Op: db.Equals,
-				Value: name,
-			}
-			newWhereConPtr = &newWhereCon
-		} else {
-			newOr := db.OrCondition{
-				Op: db.Equals,
-				Value: name,
-			}
-			newWhereConPtr.Ors = append(newWhereConPtr.Ors, newOr)
-		}
-	}
+	newWhereConPtr := repository.GetWhereCondition(db.ColGameName, gameQuery.Names, db.Equals)
 	if newWhereConPtr != nil {
 		out = append(out, *newWhereConPtr)
 	}

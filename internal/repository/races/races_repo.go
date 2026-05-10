@@ -17,6 +17,15 @@ type Race struct {
 	RaceID int64 //DB ID for race. Defaults to 0
 }
 
+type RaceQuery struct {
+	IDs []int64
+	BeforeDates []string
+	AfterDates []string
+	OnDates []string
+	Categories []string
+	Statuses []string
+}
+
 //Errors
 var RaceDoesNotExistErr error = errors.New("race does not exist")
 
@@ -152,6 +161,40 @@ func (r *Race) Update(database *sql.DB, newDate repository.NullableStr,
 /*
 * Race Helpers
 */
+
+//Query races
+func QueryRaces(database *sql.DB, raceQuery RaceQuery) ([]*Race, error) {
+	out := make([]*Race, 0)
+	
+	//Get query info
+	cols := []string{
+		db.ColRaceID,
+		db.ColRaceDate,
+		db.ColRaceStartTime,
+		db.ColRaceStatus,
+		db.ColRaceCategoryName,
+	}
+	table := db.JoinTables(db.TableRaces, db.TableRaceCategories, db.ColRaceRaceCategoryID, db.ColRaceCategoryID) //Races and Racecategories needed for information
+	whereCons := getRaceWhereCons(raceQuery)
+
+	//Execute query
+	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(res[db.ColRaceID]) == 0 {
+		return out, nil
+	} //No results, return empty slice
+
+	out, err = parseRaceQueryResponse(database, res)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
 
 // Get race
 func GetRaceByID(database *sql.DB, id int64) (*Race, error) {
