@@ -246,7 +246,7 @@ func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Query
-	q := &races.RaceQuery{
+	q := races.RaceQuery{
 		IDs: ids,
 		BeforeDates: urlBeforeDates,
 		AfterDates: urlAfterDates,
@@ -255,7 +255,29 @@ func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 		Statuses: urlRaceStatuses,
 	}
 	
-	//TODO: Finish
+	races, err := races.QueryRaces(h.DataBase, q)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error fetching races")
+	}
+
+	//Parse updates
+	out := make(map[string]any)
+	outRaces := make([]map[string]any, 0)
+	for _, race := range races {
+		newRaceMap := make(map[string]any)
+		newRaceMap["id"] = race.RaceID
+		newRaceMap["category"] = race.RaceCategory.Name.Value
+		newRaceMap["date"] = race.Date.NullableValue()
+		newRaceMap["status"] = race.Status.Value
+		newRaceMap["start_time"] = race.StartTime.NullableValue()
+
+		outRaces = append(outRaces, newRaceMap)
+	}
+
+	out["success"] = true
+	out["races"] = outRaces
+
+	writeJSON(w, http.StatusOK, out)
 }
 
 /*
