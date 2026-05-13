@@ -16,6 +16,12 @@ type RaceCategory struct {
 	CategoryID     int64 //Category ID. Defaults to 0
 }
 
+type RaceCategoryQuery struct {
+	RaceCategories []string
+	Games []string
+	GameCategories []string
+}
+
 // Default Erros
 var RaceCategoryDoesNotExistErr = errors.New("race category does not exist")
 
@@ -169,6 +175,39 @@ func (c *RaceCategory) Update(database *sql.DB, newName repository.NullableStr, 
 /*
 * RaceCategory Helpers
 */
+
+//Queries race categories
+func QueryRaceCategories(database *sql.DB, raceCategoryQuery RaceCategoryQuery) ([]*RaceCategory, error) {
+	//Set up request
+	cols := []string {
+		db.ColRaceCategoryName, 
+		db.ColRaceCategoryID, 
+		db.ColGameCategoryID,
+	}
+	table := getRaceCategoryQueryTable()
+	whereCons := getRaceCategoryWhereCons(raceCategoryQuery)
+
+	//Execute queries
+	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]*RaceCategory, 0)
+
+	//If results are empty, return empty slice
+	if len(res[db.ColRaceCategoryID]) == 0 {
+		return out, nil
+	}
+
+	out, err = parseRaceCategoryQueryResults(database, res)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
 
 // Get race category
 func GetRaceCategoryByName(database *sql.DB, name repository.NullableStr) (*RaceCategory, error) {

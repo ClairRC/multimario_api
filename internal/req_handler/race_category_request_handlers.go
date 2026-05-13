@@ -161,11 +161,14 @@ func (h *ReqHandler) EditRaceCategory(w http.ResponseWriter, r *http.Request) {
 * ENDPOINT: GET /racecategories
 *
 * OPTIONAL PARAMETERS:
-*	game: string //Race categories including this game
-*	game_category: string //Race categories that include this game category
+*	race_category: string //Race categories with these names
+*	game: string //Race categories including these games
+*	game_category: string //Race categories that include this game categories
 *
 * RETURNS:
 * {
+*	success: boolean
+*	error: string //Only if success is false
 *	race_categories: //Array of categories
 *	[
 *		{
@@ -177,6 +180,7 @@ func (h *ReqHandler) EditRaceCategory(w http.ResponseWriter, r *http.Request) {
 *					name: string //Name of the game category
 *					game: string //Name of the game belonging to this category
 *					num_collectibles: int //Number of collectibles in this category
+					estimate: string //Default estimate for this category
 *				}
 *			]
 *		}
@@ -187,7 +191,59 @@ func (h *ReqHandler) EditRaceCategory(w http.ResponseWriter, r *http.Request) {
 
 // Edit race category
 func (h *ReqHandler) GetRaceCategories(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Parse URL params
+	raceCategoryNames := r.URL.Query()["race_category"]
+	gameNames := r.URL.Query()["game"]
+	gameCategoryNames := r.URL.Query()["game_category"]
+
+	q := racecategories.RaceCategoryQuery{
+		RaceCategories: raceCategoryNames,
+		Games: gameNames,
+		GameCategories: gameCategoryNames,
+	}
+
+	raceCats, err := racecategories.QueryRaceCategories(h.DataBase, q)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error fetching race categories")
+		return
+	}
+
+	//Write outputs
+	out := make(map[string]any)
+	outRaceCats := make([]map[string]any, 0)
+
+	for _, c := range raceCats {
+		newRaceCat := make(map[string]any)
+		raceCatGameCats := make([]map[string]any, 0) //Game categories
+
+		//Loop through game categories for their information
+		totalNumCollectibles := 0 //Sum of game category collectibles
+		for _, g := range c.GameCategories {
+			newGameCat := make(map[string]any)
+
+			newGameCat["name"] = g.Name.Value
+			newGameCat["game"] = g.Game.Name.Value
+			newGameCat["num_collectibles"] = g.NumCollectibles.Value
+			newGameCat["estimate"] = g.Estimate.NullableValue()
+
+			totalNumCollectibles += g.NumCollectibles.Value
+
+			raceCatGameCats = append(raceCatGameCats, newGameCat)
+		}
+
+		//Add race category
+		newRaceCat["name"] = c.Name.Value
+		newRaceCat["num_collectibles"] = totalNumCollectibles
+		newRaceCat["game_categories"] = raceCatGameCats
+
+		outRaceCats = append(outRaceCats, newRaceCat)
+	}
+
+	//Format output
+	out["success"] = true
+	out["race_categories"] = outRaceCats
+
+	writeJSON(w, http.StatusOK, out)
 }
 
 // Helper function for parsing array of game categories
