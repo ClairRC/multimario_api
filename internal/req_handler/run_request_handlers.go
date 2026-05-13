@@ -108,7 +108,7 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 /*
 * Add new Run
 *
-* ENDPOINT: GET /runs
+* ENDPOINT: GET /records/runs
 *
 * OPTIONAL PARAMETERS:
 *	player_name: int //Runs by this player
@@ -117,11 +117,13 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 *
 * RETURNS:
 * {
+	success: boolean 
+	error: string //only if success is false
 *	runs: //Array of runs
 *	[
 *		{
 *			id: int //Run ID
-*			player_id: int //Player ID
+			player_name: string //Name of player
 *			race_id: int //Race ID
 *			game_category: string //Game category
 *			estimate: string //hh:mm:ss Estimate for this run
@@ -133,5 +135,54 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 */
 
 func (h *ReqHandler) GetRuns(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get URL values
+	urlPlayerNames := r.URL.Query()["player_name"]
+	urlGameCategories := r.URL.Query()["game_category"]
+	urlRaceIDs := r.URL.Query()["race_id"]
+
+	//Validate race IDs
+	raceIDs := make([]int64, 0)
+	for _, id := range urlRaceIDs {
+		idNum, err := strconv.Atoi(id)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "unable to parse id "+id+" as int")
+			return
+		}
+		raceIDs = append(raceIDs, int64(idNum))
+	}
+
+	//Build query
+	q := runs.RunQuery{
+		PlayerNames: urlPlayerNames,
+		GameCategories: urlGameCategories,
+		RaceIDs: raceIDs,
+	}
+
+	//Get runs
+	runs, err := runs.QueryRuns(h.DataBase, q)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error fetching runs")
+		return
+	}
+
+	//Get output
+	out := make(map[string]any)
+	outRuns := make([]map[string]any, 0)
+
+	for _, r := range runs {
+		newRun := make(map[string]any)
+		newRun["id"] = r.RunID
+		newRun["player_name"] = r.PlayerName
+		newRun["race_id"] = r.RaceID
+		newRun["game_category"] = r.Category.Name.Value
+		newRun["estimate"] = r.Estimate.Value
+		newRun["time"] = r.Time.NullableValue()
+
+		outRuns = append(outRuns, newRun)
+	}
+
+	out["success"] = true
+	out["runs"] = outRuns
+
+	writeJSON(w, http.StatusOK, out)
 }

@@ -14,6 +14,14 @@ type Run struct {
 	Time repository.NullableStr
 	Estimate repository.NullableStr
 	RunID int64 //Run ID. Defaults to 0
+
+	//These fields are only present when querying runs from a GET request because they are needed for the response.
+	//It's a band-aid fix, but since records generally manage runs, and runs are queried separately from records,
+	//the Run needs to know the player and race id which means it needs to know the record, but the record is what manages the run.
+	//This is really the best solution I could think of for this problem without entirely restructuring how records/runs work.
+	//But it is not a clean solution. It's messy internally but hopefully cleaner for actual end users.
+	PlayerName string
+	RaceID int64
 }
 
 type RunQuery struct {
@@ -132,8 +140,39 @@ func (r *Run) Update(database *sql.DB, newTime repository.NullableStr, newEstima
 */
 
 //Query runs
-func QueryRuns(database *sql.DB, runQuery RunQuery) {
-	
+func QueryRuns(database *sql.DB, runQuery RunQuery) ([]*Run, error) {
+	out := make([]*Run, 0)
+
+	//Build Query
+	cols := []string{
+		db.ColRunGameCategoryID, 
+		db.ColRunTime,
+		db.ColRunEstimate,
+		db.ColRunID,
+		db.ColRaceID,
+		db.ColPlayerName,
+	}
+	table := getRunQueryTable()
+	whereCons := getRunWhereCons(runQuery)
+
+	//Execute query
+	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	//If results empty, return empty slice
+	if len(res[db.ColRunID]) == 0 {
+		return out, nil
+	}
+
+	out, err = parseRunQueryResults(database, res)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
 }
 
 func GetRunFromID(database *sql.DB, runID int64) (*Run, error) {
@@ -149,6 +188,7 @@ func GetRunFromID(database *sql.DB, runID int64) (*Run, error) {
 		db.ColRecordID,
 	}
 	table := db.JoinTables(db.TableRuns, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID) //Join tables to get record ID
+	table = db.JoinTables(table, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
 	whereCon := []db.WhereCondition{{
 		ColName: db.ColRunID,
 		Op: db.Equals,
@@ -202,10 +242,13 @@ func GetRunFromRecordID(database *sql.DB, recordID int64, categoryName repositor
 		db.ColRunGameCategoryID,
 		db.ColRunTime,
 		db.ColRunEstimate,
+		db.ColPlayerName,
 	}
 
 	//Join tables to search with category name
 	table := db.JoinTables(db.TableRuns, db.TableGameCategories, db.ColRunGameCategoryID, db.ColGameCategoryID)
+	table = db.JoinTables(table, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID)
+	table = db.JoinTables(table, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
 	whereCon := []db.WhereCondition{{
 		ColName: db.ColGameCategoryName,
 		Op: db.Equals,

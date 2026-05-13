@@ -81,7 +81,7 @@ func getRecordQueryTable() string {
 func parseRecordQuery(database *sql.DB, res map[string][]any) []*Record {
 	out := make([]*Record, 0) //slice of record IDs to parse runs
 
-	//Make runless records for each result
+	//Make records for each result
 	for i := range len(res[db.ColRecordID]) {
 		//Parse required values
 		playerName, ok := res[db.ColPlayerName][i].(string)
@@ -133,3 +133,4 @@ func parseRecordQuery(database *sql.DB, res map[string][]any) []*Record {
 
 	return out
 }
+

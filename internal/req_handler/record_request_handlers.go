@@ -28,7 +28,7 @@ import (
 * EXPECTS:
 * {
 * 	race_id: int //REQUIRED -- ID of the race that this record belongs to
-*	player_name: int //REQUIRED -- Name of the player who is associated with this record
+*	player_name: string //REQUIRED -- Name of the player who is associated with this record
 *	finish_time: String //OPTIONAL -- hh:mm:ss format. The time that the player got in this race. Leave this blank if player did not finish
 *	num_collected: int //OPTIONAL -- The number of collectibles that this player has/got in the race. Defaults to 0.
 *	runs [ //OPTIONAL -- Information about each run that is part of this race. Unfilled runs default to unfinished run with default category estimate
