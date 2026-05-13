@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/multimario_api/internal/repository"
+	"github.com/multimario_api/internal/repository/gamecategories"
 	"github.com/multimario_api/internal/repository/players"
 	"github.com/multimario_api/internal/repository/races"
 	"github.com/multimario_api/internal/repository/records"
@@ -81,14 +82,16 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Get run from record
-	var run *runs.Run = nil
-	for _, r := range record.Runs {
-		if r.Category.Name.Value == catName.Value {
-			run = r
+	run, err := runs.GetRunFromRecordID(h.DataBase, record.RecordID, catName)
+	if err != nil {
+		switch err {
+		case runs.RunDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "run does not exist")
+		case gamecategories.GameCategoryDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "game category does not exist")
+		default:
+			writeError(w, http.StatusInternalServerError, "unknown error fetching run")
 		}
-	}
-	if run == nil {
-		writeError(w, http.StatusBadRequest, "run with this game category not found")
 		return
 	}
 
@@ -108,7 +111,7 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 * ENDPOINT: GET /runs
 *
 * OPTIONAL PARAMETERS:
-*	player_id: int //Runs by this player
+*	player_name: int //Runs by this player
 *	game_category: string //Runs of this game category
 *	race_id: int //Runs for this race
 *

@@ -226,13 +226,8 @@ func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 	//Validate dates
 	for _, date := range slices.Concat(urlAfterDates, urlBeforeDates, urlOnDates) {
 		err := (&DateField{date}).Validate()
-		if err != nil {
-			switch err {
-			case FieldIsWrongFormatErr:
-				writeError(w, http.StatusBadRequest, date+" cannot be parsed as date. must be in yyyy-mm-dd format")
-			default:
-				writeError(w, http.StatusInternalServerError, "unknown error parsing date fields") //Should not ever happen, but safety first.
-			}
+		if err == FieldIsWrongFormatErr {
+			writeError(w, http.StatusBadRequest, date+" cannot be parsed as date. must be in yyyy-mm-dd format")
 			return
 		}
 	}

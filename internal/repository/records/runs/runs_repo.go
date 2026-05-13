@@ -16,6 +16,12 @@ type Run struct {
 	RunID int64 //Run ID. Defaults to 0
 }
 
+type RunQuery struct {
+	PlayerNames []string
+	GameCategories []string
+	RaceIDs []int64
+}
+
 //Default Errors
 var RunDoesNotExistErr error = errors.New("run does not exist")
 
@@ -124,6 +130,12 @@ func (r *Run) Update(database *sql.DB, newTime repository.NullableStr, newEstima
 /*
 * Run Helpers
 */
+
+//Query runs
+func QueryRuns(database *sql.DB, runQuery RunQuery) {
+	
+}
+
 func GetRunFromID(database *sql.DB, runID int64) (*Run, error) {
 	if runID == 0 {
 		return nil, RunDoesNotExistErr
@@ -134,8 +146,9 @@ func GetRunFromID(database *sql.DB, runID int64) (*Run, error) {
 		db.ColRunGameCategoryID,
 		db.ColRunTime,
 		db.ColRunEstimate,
+		db.ColRecordID,
 	}
-	table := db.TableRuns
+	table := db.JoinTables(db.TableRuns, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID) //Join tables to get record ID
 	whereCon := []db.WhereCondition{{
 		ColName: db.ColRunID,
 		Op: db.Equals,
@@ -168,6 +181,62 @@ func GetRunFromID(database *sql.DB, runID int64) (*Run, error) {
 	//Return run
 	return &Run {
 		Category: cat,
+		Time: repository.MakeNullableStr(res[db.ColRunTime][0]),
+		Estimate: repository.MakeNullableStr(res[db.ColRunEstimate][0]),
+		RunID: runID,
+	}, nil
+}
+
+//Gets run from run record ID and category name
+func GetRunFromRecordID(database *sql.DB, recordID int64, categoryName repository.NullableStr) (*Run, error){
+	//Build query
+	if recordID == 0 {
+		return nil, RunDoesNotExistErr
+	}
+	if !categoryName.Valid {
+		return nil, gamecategories.GameCategoryDoesNotExistErr
+	}
+
+	cols := []string {
+		db.ColRunID,
+		db.ColRunGameCategoryID,
+		db.ColRunTime,
+		db.ColRunEstimate,
+	}
+
+	//Join tables to search with category name
+	table := db.JoinTables(db.TableRuns, db.TableGameCategories, db.ColRunGameCategoryID, db.ColGameCategoryID)
+	whereCon := []db.WhereCondition{{
+		ColName: db.ColGameCategoryName,
+		Op: db.Equals,
+		Value: categoryName.Value,
+	}}
+
+	//Execute statement
+	stmt := db.BuildSelectStatement(cols, table, whereCon)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	//Make sure results are not empty
+	if len(res[db.ColRunID]) == 0 {
+		return nil, RunDoesNotExistErr
+	}
+	runID, ok := res[db.ColRunID][0].(int64)
+	if !ok || runID == 0 {
+		return nil, RunDoesNotExistErr
+	}
+
+	//Get game category
+	gameCat, err := gamecategories.GetGameCategoryByName(database, categoryName)
+	if err != nil {
+		return nil, err
+	}
+
+	//Return run
+	return &Run {
+		Category: gameCat,
 		Time: repository.MakeNullableStr(res[db.ColRunTime][0]),
 		Estimate: repository.MakeNullableStr(res[db.ColRunEstimate][0]),
 		RunID: runID,

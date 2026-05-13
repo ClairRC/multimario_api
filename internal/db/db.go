@@ -333,7 +333,7 @@ func ExecuteQueries(db *sql.DB, statements []SQLStatement) (map[string][]any, er
 //Builds SQL statement from certain parameters
 func BuildSelectStatement(columns []string, table string, where []WhereCondition) SQLStatement {
 	args := make([]any, 0)
-	stmt := "SELECT"
+	stmt := "SELECT DISTINCT"
 	for i, v := range columns {
 		if i > 0 {
 			stmt += ","

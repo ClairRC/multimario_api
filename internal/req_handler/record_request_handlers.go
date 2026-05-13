@@ -3,6 +3,7 @@ package req_handler
 import (
 	"errors"
 	"net/http"
+	"slices"
 	"strconv"
 
 	"github.com/multimario_api/internal/repository"
@@ -108,7 +109,7 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Create new record and add it
-	record, err := records.NewRecord(h.DataBase, raceID, playerName, finishTime, numCollected, recordRuns)
+	record, err := records.NewRecord(h.DataBase, raceID, playerName, finishTime, numCollected)
 	if err != nil {
 		switch err {
 		case players.PlayerDoesNotExistErr:
@@ -119,7 +120,7 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = record.Add(h.DataBase)
+	err = record.Add(h.DataBase, recordRuns)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "uknown error adding record")
 		return
@@ -204,7 +205,8 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 * Gets race records
 *
 * OPTIONAL PARAMETERS:
-*	player_id: int -- Returns records just from specific players. Can be multiple.
+*	player_name: string -- Returns records just from specific players. Can be multiple.
+*	race_id: int -- Returns records for this race
 *	category: string -- Returns records just of a specific race category
 *	before: string -- YYYY-MM-DD Returns records from races before this date
 *	after: string -- YYYY-MM-DD Returns records from races after this date
@@ -216,13 +218,15 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 *
 * RETURNS
 * {
+	success: boolean 
+	error: string //only if success is false
 *	records: //Array of race records
 *	[
 *		{
 *			player_id: int //ID of the racer this record belongs to
 *			race_id: int //ID of the race this record belongs to
 *			time: string //hh:mm:ss The time that was gotten by this player in this race. NULL if unfinished
-*			num_collectibles: int //Number of collectibles this player got. If the race was finished, this should be the number of collectibles in the category
+*			num_collected: int //Number of collectibles this player got. If the race was finished, this should be the number of collectibles in the category
 *		}
 *	]
 * }
@@ -230,34 +234,81 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
  */
 
 func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement
-}
+	//Get URL parameters
+	urlPlayerNames := r.URL.Query()["player_name"]
+	urlRaceIDs := r.URL.Query()["race_id"]
+	urlCategories := r.URL.Query()["category"]
+	urlBeforeDates := r.URL.Query()["before"]
+	urlAfterDates := r.URL.Query()["after"]
+	urlOnDates := r.URL.Query()["on"]
+	urlTimeLower := r.URL.Query()["time_lowerthan"]
+	urlTimeGreater := r.URL.Query()["time_greaterthan"]	
 
-/*
-* Gets race records of a specific race
-*
-* ENDPOINT: GET /records/{race_id}
-*
-* OPTIONAL PARAMETERS:
-*	time_lowerthan: string //hh:mm:ss Returns time from this race lower than this threshold
-*	time_greaterthan: string //hh:mm:ss Returns time from this race higher than this threshold
-*
-* RETURNS
-* {
-*	records: //Array of race records
-*	[
-*		{
-*			player_id: int //ID of the racer this record belongs to
-*			time: string //hh:mm:ss The time that was gotten by this player in this race. NULL if unfinished
-*			num_collectibles: int //Number of collectibles this player got. If the race was finished, this should be the number of collectibles in the category
-*		}
-*	]
-* }
-*
- */
+	//Validate inputs
+	raceIDs := make([]int64, 0)
+	for _, id := range urlRaceIDs {
+		idNum, err := strconv.Atoi(id)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "unable to parse id "+id+" as int")
+			return
+		}
+		raceIDs = append(raceIDs, int64(idNum))
+	}
 
-func (h *ReqHandler) GetRaceRecordsFromRace(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Validate dates
+	for _, date := range slices.Concat(urlBeforeDates, urlAfterDates, urlOnDates) {
+		err := (&DateField{date}).Validate()
+		if err == FieldIsWrongFormatErr {
+			writeError(w, http.StatusBadRequest, date+" cannot be parsed as date. must be in yyyy-mm-dd format")
+			return
+		}
+	}
+
+	//Validate times
+	for _, time := range slices.Concat(urlTimeLower, urlTimeGreater) {
+		err := (&DurationField{time}).Validate()
+		if err == FieldIsWrongFormatErr {
+			writeError(w, http.StatusBadRequest, time+" cannot be parsed as duration. Must be hh:mm:ss format")
+			return
+		}
+	}
+
+	//Build query
+	q := records.RecordQuery{
+		PlayerNames: urlPlayerNames,
+		RaceIDs: raceIDs, 
+		Categories: urlCategories,
+		BeforeDates: urlBeforeDates,
+		AfterDates: urlAfterDates,
+		OnDates: urlOnDates,
+		LowerThan: urlTimeLower,
+		HigherThan: urlTimeGreater,
+	}
+
+	//Get records
+	records, err := records.QueryRecord(h.DataBase, q)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error fetching race records")
+		return
+	}
+
+	//Get output
+	out := make(map[string]any)
+	outRecords := make([]map[string]any, 0)
+
+	for _, r := range records {
+		newRecord := make(map[string]any)
+		newRecord["player_id"] = r.Player.Name.Value
+		newRecord["race_id"] = r.Race.RaceID
+		newRecord["time"] = r.FinishTime.NullableValue()
+		newRecord["num_collected"] = r.NumCollected.Value
+
+		outRecords = append(outRecords, newRecord)
+	}
+	out["success"] = true
+	out["records"] = outRecords
+
+	writeJSON(w, http.StatusOK, out)
 }
 
 /*

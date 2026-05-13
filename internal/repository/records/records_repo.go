@@ -16,8 +16,18 @@ type Record struct {
 	Race *races.Race
 	FinishTime repository.NullableStr
 	NumCollected repository.NullableInt
-	Runs []*runs.Run
 	RecordID int64 //Record ID. Defaults to 0
+}
+
+type RecordQuery struct {
+	PlayerNames []string
+	RaceIDs []int64
+	Categories []string
+	BeforeDates []string
+	AfterDates []string
+	OnDates []string
+	LowerThan []string
+	HigherThan []string
 }
 
 //Default errors
@@ -29,10 +39,7 @@ var RecordDoesNotExistErr error = errors.New("race record does not exist")
 
 //Creates new Record and returns a pointer to it
 func NewRecord(database *sql.DB, raceID repository.NullableInt, 
-	playerName repository.NullableStr, finishTime repository.NullableStr, numCollected repository.NullableInt, 
-	runs []*runs.Run) (*Record, error) {
-		//Note this function assumes runs are valid runs. The handler should validate them before passing them in
-
+	playerName repository.NullableStr, finishTime repository.NullableStr, numCollected repository.NullableInt) (*Record, error) {
 		//Make sure required fields exist
 		if !raceID.Valid {
 			return nil, errors.New("race is invalid")
@@ -58,7 +65,7 @@ func NewRecord(database *sql.DB, raceID repository.NullableInt,
 		}
 
 		//Created, return new record
-		return &Record{Race: race, Player: player, FinishTime: finishTime, NumCollected: numCollected, Runs: runs}, nil
+		return &Record{Race: race, Player: player, FinishTime: finishTime, NumCollected: numCollected}, nil
 	}
 
 /*
@@ -66,7 +73,7 @@ func NewRecord(database *sql.DB, raceID repository.NullableInt,
 */
 
 //Adds race to DB
-func (r *Record) Add(database *sql.DB) error {
+func (r *Record) Add(database *sql.DB, runs []*runs.Run) error {
 	/*
 	* This function, unlike all my other repository layer functions, handles raw SQL.
 	* This is intentional because the current database abstraction won't let me add a new Record
@@ -74,6 +81,11 @@ func (r *Record) Add(database *sql.DB) error {
 	* that these happen atomically. Since the Record is essentially a race signup, if a record
 	* exists but not any runs, then it could cause complications with updating during the race.
 	* The safest and easiest way to handle this is to guarantee atomicity in this function. 
+	*/
+
+	/*
+	* Additionally, unlike most repository layer abstractions, Record is responsible for adding Runs.
+	* This is because a run should not under any circumstance exist without a record.
 	*/
 	
 	if r.RecordID != 0 {
@@ -93,13 +105,13 @@ func (r *Record) Add(database *sql.DB) error {
 	}
 
 	//Check that each run is not already part of a different record
-	for _, run := range r.Runs {
+	for _, run := range runs {
 		if run.RunID != 0 {
 			return errors.New("run is already in database")
 		}
 	}
 
-	err := executeRecordInsertStatement(database, r, r.Runs)
+	err := executeRecordInsertStatement(database, r, runs)
 
 	return err
 }
@@ -148,6 +160,38 @@ func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, 
 /*
 * Records Helpers
 */
+
+//Queries records. Returns slice of records or error
+func QueryRecord(database *sql.DB, recordQuery RecordQuery) ([]*Record, error) {
+	//Get record information first and then query for the runs. It can probably be done in 1 SQL statement, but my abstractions 
+	//aren't really good enough for that. So this will work for this scale
+	cols := []string {
+		db.ColPlayerName,
+		db.ColRecordsRaceID,
+		db.ColRecordsFinishTime,
+		db.ColRecordsNumCollected,
+		db.ColRecordID,
+	}
+	table := getRecordQueryTable()
+	whereCons := getRecordsWhereCons(recordQuery)
+
+	//Execute queries
+	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	//Parse results
+	out := make([]*Record, 0)
+	if len(res[db.ColRecordID]) == 0 {
+		return out, nil
+	}
+
+	out = parseRecordQuery(database, res)
+
+	return out, nil
+}
 
 //Gets record from race ID and player name
 func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repository.NullableStr) (*Record, error) {
@@ -211,17 +255,12 @@ func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repos
 		return nil, errors.New("unknown error: number collected in record can't be parsed as int")
 	}
 
-	//Get runs that are part of this record
-	recordRuns, err := getRunsFromRecordID(database, recordID)
-	if err != nil { return nil, err }
-
 	//Make record and return it
 	out := &Record {
 		Player: player,
 		Race: race,
 		FinishTime: recordFinishTime,
 		NumCollected: repository.MakeNullableInt(numCollected),
-		Runs: recordRuns,
 		RecordID: recordID,
 	}
 
