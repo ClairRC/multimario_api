@@ -1,11 +1,12 @@
 package req_handler
 
 import (
-	"database/sql"
-	"log"
+	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/multimario_api/internal/db"
+	testutils "github.com/multimario_api/internal/testing"
 	_ "github.com/ncruces/go-sqlite3/driver"
 )
 
@@ -13,68 +14,359 @@ import (
 * Tests for race request handlers
  */
 
-//Variables for testing environment
-var database *sql.DB
-var handler *ReqHandler
-
-//Set up testing environment
-func TestMain(m *testing.M) {
-	err := initTestDB()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	handler = &ReqHandler{DataBase: database}
-
-	m.Run()
+//Race specific test struct
+type raceTestDB struct {
+	//TODO: This might be weird naming since this is mostly a wrapper for testutils.TestDB, but it's nbd
+	testDB testutils.TestDB
+	raceIDs []int64
 }
 
-/*
-* Test CreateRace()
-*/
+//Create test DB specific to these handlers
+func initRaceHandlerTestDB(t *testing.T) raceTestDB {
+	t.Helper()
 
+	//Create test DB
+	tdb := testutils.CreateTestDB(t)
+
+	//Races to add
+	type raceStruct struct {
+		Category string
+		Date string
+		Status string
+		StartTime string
+	}
+
+	races := []raceStruct {
+		{"602", "1000-07-13", "upcoming", "9:00:00"},
+		{"246", "3214-05-16", "upcoming", "9:00:00"},
+		{"sandbox_any%", "1002-10-03", "completed", "9:00:00"},
+		{"1862", "3054-12-25", "upcoming", "02:00:00"},
+		{"sandbox_100%", "4123-01-31", "upcoming", "9:00:00"},
+		{"540", "2025-04-01", "in_progress", "11:00:00"},
+		{"602", "2020-12-12", "upcoming", "3:00:00"},
+	}
+
+	raceIDs := make([]int64, 0)
+	for _, r := range races {
+		stmt := fmt.Sprintf("INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)",
+			db.TableRaces, db.ColRaceRaceCategoryID, db.ColRaceDate, db.ColRaceStatus, db.ColRaceStartTime)
+		res, err := tdb.Database.Exec(stmt, tdb.RaceCatIDs[r.Category], r.Date, r.Status, r.StartTime)
+		if err != nil {
+			t.Fatalf("unable to init test database: %v", err)
+		}
+
+		newRaceID, err := res.LastInsertId()
+		if err != nil {
+			t.Fatalf("unable to init test database: %v", err)
+		}
+
+		raceIDs= append(raceIDs, newRaceID)
+	}
+
+	return raceTestDB{
+		testDB: tdb,
+		raceIDs: raceIDs,
+	}
+}
+
+//Test CreateRace()
 func TestCreateRace(t *testing.T) {
-	//TODO: Implement
+	//Get test DB and handler
+	tdb := initRaceHandlerTestDB(t)
+	h := &ReqHandler{tdb.testDB.Database}
+
+	tests := getPOSTTests()
+	for _, test := range tests {
+		res := testutils.CallMutationHandler(t, test, h.CreateRace)
+		
+		//Validate response
+		if res["success"] == true {
+			_, ok := res["id"].(float64)
+			if !ok {
+				t.Errorf("%s: race id could not be parsed as int", test.TestName)
+			}
+		}
+	}
 }
 
-/*
-* Helper funtions for test environment
-*/
+//Test UpdateRace
+func TestUpdateRace(t *testing.T) {
+	//Get test DB and handler
+	tdb := initRaceHandlerTestDB(t)
+	h := &ReqHandler{tdb.testDB.Database}
 
-//Seeds database with test values
-func initTestDB() (error) {
-	var err error
-	database, err = sql.Open("sqlite3", ":memory:")
-	//DB can't be opened
-	if err != nil {
-		return err
+	tests := getPATCHTests(tdb.raceIDs)
+	for _, test := range tests {
+		testutils.CallMutationHandler(t, test, h.UpdateRace)
 	}
-
-	//Init database
-	db.DatabaseInit(database)
-
-	//Add test values for this package
-	raceCatNames := []string {
-		"602",
-		"246",
-		"sandbox_any%",
-		"real_category",
-	}
-
-	for i := range raceCatNames {
-		database.Exec(`INSERT INTO race_categories (race_category_name)
-				VALUES (?)`, raceCatNames[i])
-	}
-
-	return nil
 }
 
-//Resets database to initial state after each test
-func resetDB() {
-	//Close database and get a new one. Probably better to just delete it but this is fine for testing
-	database.Close()
-	err := initTestDB()
-	if err != nil {
-		log.Fatal("unable to reset database. ending testing")
+//Helper to create the tests for the post handler
+func getPOSTTests() []testutils.MutationHandlerTest {
+	//Create tests
+	return []testutils.MutationHandlerTest{{
+		//Valid tests
+		TestName: "ValidAllFields",
+		Body: map[string]any {
+			"category": "602",
+			"date": "2000-11-16",
+			"status": "completed",
+			"start_time": "09:00:00",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidNoDate",
+		Body: map[string]any {
+			"category": "sandbox_any%",
+			"status": "upcoming",
+			"start_time": "10:00:00",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidEmptyDate",
+		Body: map[string]any {
+			"category": "sandbox_100%",
+			"date": "",
+			"status": "completed",
+			"start_time": "13:00:00",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidNoStatus",
+		Body: map[string]any {
+			"category": "1862",
+			"date": "1776-07-04",
+			"start_time": "11:00:00",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidEmptyStatus",
+		Body: map[string]any {
+			"category": "246",
+			"date": "0001-12-25",
+			"status": "",
+			"start_time": "15:00:00",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidNoStartTime",
+		Body: map[string]any {
+			"category": "602",
+			"date": "1234-01-23",
+			"status": "upcoming",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidEmptyStartTime",
+		Body: map[string]any {
+			"category": "602",
+			"date": "5421-05-14",
+			"status": "in_progress",
+			"start_time": "",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidNoDateNoStatus",
+		Body: map[string]any {
+			"category": "sandbox_any%",
+			"start_time": "15:12:09",
+		}, 
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidNoDateNoStartTime",
+		Body: map[string]any {
+			"category": "sandbox_100%",
+			"status": "upcoming",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidNoStatusNoStartTime",
+		Body: map[string]any {
+			"category": "602",
+			"date": "2026-05-14",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidOnlyCategory",
+		Body: map[string]any {
+			"category": "246",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, 
+
+	//Invalid tests
+	{
+		TestName: "InvalidCategoryDoesntExist",
+		Body: map[string]any {
+			"category": "bad",
+			"date": "2000-01-01",
+			"status": "completed",
+			"start_time": "09:00:00",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedSuccess: false,
+	}, {
+		TestName: "InvalidCategoryEmpty",
+		Body: map[string]any {
+			"date": "2000-04-12",
+			"status": "upcoming",
+			"start_time": "09:01:13",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedSuccess: false,
+	}, {
+		TestName: "InvalidDateWrongFormat",
+		Body: map[string]any {
+			"category": "540",
+			"date": "12-13-2054",
+			"status": "upcoming",
+			"start_time": "09:12:12",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedSuccess: false,
+	}, {
+		TestName: "InvalidStatus",
+		Body: map[string]any {
+			"category": "sandbox_any%",
+			"date": "1234-03-12",
+			"status": "idk",
+			"start_time": "09:00:00",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedSuccess: false,
+	}, {
+		TestName: "InvalidTime",
+		Body: map[string]any {
+			"category": "602",
+			"date": "1999-01-01",
+			"status": "in_progress",
+			"start_time": "9am",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedSuccess: false,
+	}}
+}
+
+//Helper to create tests for PATCH requests
+func getPATCHTests(raceIDs []int64) []testutils.MutationHandlerTest {
+	tests := make([]testutils.MutationHandlerTest, 0)
+
+	//Create tests for each race ID
+	for _, id := range raceIDs {
+		idTests := []testutils.MutationHandlerTest{{
+			TestName: fmt.Sprintf("ID%vValidUpdateAll", id),
+			Body: map[string]any {
+				"date": "0000-11-16",
+				"status": "in_progress",
+				"start_time": "11:00:00",
+			},
+			RequestType: "PATCH",
+			Pattern: "PATCH /races/{race_id}",
+			URL: fmt.Sprintf("/races/%v", id),
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: fmt.Sprintf("ID%vInvalidDate", id),
+			Body: map[string]any {
+				"date": "9-15-1222",
+				"status": "upcoming",
+				"start_time": "11:13:12",
+			},
+			RequestType: "PATCH",
+			Pattern: "PATCH /races/{race_id}",
+			URL: fmt.Sprintf("/races/%v", id),
+			ExpectedResponseCode: http.StatusBadRequest,
+			ExpectedSuccess: false,
+		}, {
+			TestName: fmt.Sprintf("ID%vValidNoStatus", id),
+			Body: map[string]any {
+				"status": "completed",
+				"start_time": "11:00:00.01",
+			}, 
+			RequestType: "PATCH",
+			Pattern: "PATCH /races/{race_id}",
+			URL: fmt.Sprintf("/races/%v", id),
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: fmt.Sprintf("ID%vValidEmpty", id),
+			Body: make(map[string]any),
+			RequestType: "PATCH",
+			Pattern: "PATCH /races/{race_id}",
+			URL: fmt.Sprintf("/races/%v", id),
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: fmt.Sprintf("ID%vInvalidStartTime", id),
+			Body: map[string]any {
+				"start_time": "11am",
+			},
+			RequestType: "PATCH",
+			Pattern: "PATCH /races/{race_id}",
+			URL: fmt.Sprintf("/races/%v", id),
+			ExpectedResponseCode: http.StatusBadRequest,
+			ExpectedSuccess: false,
+		}}
+		tests = append(tests, idTests...)
 	}
+	return tests
 }
