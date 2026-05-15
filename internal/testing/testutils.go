@@ -227,6 +227,7 @@ func CallMutationHandler(t *testing.T, test MutationHandlerTest, handlerFunc fun
 	if err == nil {
 		t.Logf("%s response: %s", test.TestName, logBody)
 	}
+
 	return res_map
 }
 

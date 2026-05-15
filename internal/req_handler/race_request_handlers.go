@@ -240,6 +240,17 @@ func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	//Validate categories
+	for _, category := range urlRaceCats {
+		raceCatExists, err := racecategories.RaceCategoryExistsByName(h.DataBase, repository.MakeNullableStr(category))
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "unknown error searching for race category")
+		}
+		if !raceCatExists {
+			writeError(w, http.StatusBadRequest, category+" is not a valid race category")
+		}
+	}
+
 	//Query
 	q := races.RaceQuery{
 		IDs: ids,

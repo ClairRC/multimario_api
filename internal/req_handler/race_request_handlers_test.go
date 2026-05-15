@@ -116,6 +116,15 @@ func TestGetRaces(t *testing.T) {
 	for _, test := range tests {
 		res := testutils.CallQueryHandler(t, test, h.GetRaces)
 
+		//If test failed, body doesn't have all this information
+		resSuccess, ok := res["success"].(bool)
+		if !ok {
+			t.Fatalf("%s: unable to parse success field as boolean", test.TestName)
+		}
+		if !resSuccess {
+			continue
+		}
+
 		//Get test bounds
 		beforeDate, afterDate := getDateBounds(test.URLParams["before"], test.URLParams["after"])
 
@@ -227,6 +236,12 @@ func getDateBounds(befores []string, afters []string) (string, string) {
 
 	return beforeDate, afterDate
 }
+
+/*
+* Test cases 
+*/
+//TODO: These test cases could probably use better commenting and maybe could be split into a separate file if they get too bad
+//		for other handlers.
 
 //Helper to create the tests for the post handler
 func getPOSTTests() []testutils.MutationHandlerTest {
@@ -584,6 +599,77 @@ func getGETTests() []testutils.QueryHandlerTest {
 			URL: "/races",
 			ExpectedResponseCode: http.StatusOK,
 			ExpectedSuccess: true,
-		},
+		}, {
+			TestName: "Valid602Or1862RacesBetween1000And2000",
+			URLParams: map[string][]string {
+				"category": {"602", "1862"},
+				"before": {"2000-01-01"},
+				"after": {"1000-12-31"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: "ValidUpcoming602Races",
+			URLParams: map[string][]string {
+				"category": {"602"},
+				"status": {"upcoming"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: "InvalidBeforeDate",
+			URLParams: map[string][]string {
+				"race_id": {"1", "2", "3"},
+				"before": {"9/11/2001"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusBadRequest,
+			ExpectedSuccess: false,
+		}, {
+			TestName: "InvalidAfterDate",
+			URLParams: map[string][]string {
+				"category": {"602"},
+				"before": {"2000-12-25"},
+				"after": {"9/11/2001"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusBadRequest,
+			ExpectedSuccess: false,
+		}, {
+			TestName: "InvalidOnDate",
+			URLParams: map[string][]string {
+				"category": {"602", "1862"},
+				"on": {"25.12.0000"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusBadRequest,
+			ExpectedSuccess: false,
+		}, {
+			TestName: "InvalidCategoryDoesNotExist",
+			URLParams: map[string][]string {
+				"category": {"602", "1863"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusBadRequest,
+			ExpectedSuccess: false,
+		}, {
+			TestName: "InvalidStatus",
+			URLParams: map[string][]string {
+				"after": {"1000-12-31"},
+				"status": {"invalid"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusBadRequest,
+			ExpectedSuccess: false,
+		}, 
 	}
 }
