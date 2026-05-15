@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
 	"github.com/multimario_api/internal/db"
@@ -33,7 +34,6 @@ type QueryHandlerTest struct {
 	URL string
 	ExpectedResponseCode int
 	ExpectedSuccess bool
-	ExpectedCount int
 }
 
 //Test database struct
@@ -222,7 +222,72 @@ func CallMutationHandler(t *testing.T, test MutationHandlerTest, handlerFunc fun
 		}
 	}
 
+	//Log response body
+	logBody, err := json.MarshalIndent(res_map, "", " ")
+	if err == nil {
+		t.Logf("%s response: %s", test.TestName, logBody)
+	}
 	return res_map
 }
 
 //Takes a GET test and handler to call and returns the response body
+func CallQueryHandler(t *testing.T, test QueryHandlerTest, handlerFunc func(http.ResponseWriter, *http.Request)) map[string]any {
+	t.Helper()
+
+	//Build URL and make request
+	testURL, err := url.Parse(test.URL)
+	if err != nil {
+		t.Errorf("%s: error building url: %v", test.TestName, err)
+	}
+
+	params := url.Values{}
+	for k, v := range test.URLParams {
+		for i := range v {
+			params.Add(k, v[i])
+		}
+	}
+	testURL.RawQuery = params.Encode()
+
+	req := httptest.NewRequest("GET", testURL.String(), new(bytes.Buffer)) //Request
+
+	//Call handler and decode response
+	res := httptest.NewRecorder() //ResponseRecorder
+
+	//Mux for pattern matching
+	mux := http.NewServeMux()
+	mux.HandleFunc(test.Pattern, handlerFunc)
+	mux.ServeHTTP(res, req)
+
+	var res_map map[string]any
+	err = json.NewDecoder(res.Body).Decode(&res_map)
+	if err != nil {
+		t.Fatalf("%s: failed to decode json response: %v", test.TestName, err)
+	}
+
+	if res.Code != test.ExpectedResponseCode {
+		t.Errorf("%s: incorrect reponse code. expected %v, got %v", test.TestName, test.ExpectedResponseCode, res.Code)
+	}
+
+	success, ok := res_map["success"].(bool)
+	if !ok {
+		t.Fatalf("%s: unable to parse success field as boolean", test.TestName)
+	}
+
+	if success != test.ExpectedSuccess {
+		t.Errorf("%s: returned success doesn't match expected value. expected %v, got %v", test.TestName, test.ExpectedSuccess, success)
+		
+		//Write the error if it can be parsed
+		errString, ok := res_map["error"].(string)
+		if ok {
+			t.Logf("%s", errString)
+		}
+	}
+
+	//Log response body
+	logBody, err := json.MarshalIndent(res_map, "", " ")
+	if err == nil {
+		t.Logf("%s response: %s", test.TestName, logBody)
+	}
+
+	return res_map
+}

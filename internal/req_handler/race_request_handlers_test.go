@@ -3,6 +3,8 @@ package req_handler
 import (
 	"fmt"
 	"net/http"
+	"slices"
+	"strconv"
 	"testing"
 
 	"github.com/multimario_api/internal/db"
@@ -44,6 +46,7 @@ func initRaceHandlerTestDB(t *testing.T) raceTestDB {
 		{"sandbox_100%", "4123-01-31", "upcoming", "9:00:00"},
 		{"540", "2025-04-01", "in_progress", "11:00:00"},
 		{"602", "2020-12-12", "upcoming", "3:00:00"},
+		{"1862", "0000-12-25", "upcoming", "30:00:00"},
 	}
 
 	raceIDs := make([]int64, 0)
@@ -99,6 +102,130 @@ func TestUpdateRace(t *testing.T) {
 	for _, test := range tests {
 		testutils.CallMutationHandler(t, test, h.UpdateRace)
 	}
+}
+
+//Test GetRaces
+func TestGetRaces(t *testing.T) {
+	//Lowkey this function is a mess but its a test so whatever
+	//Get teset DB and handler
+	tdb := initRaceHandlerTestDB(t)
+	h := &ReqHandler{tdb.testDB.Database}
+
+	tests := getGETTests()
+
+	for _, test := range tests {
+		res := testutils.CallQueryHandler(t, test, h.GetRaces)
+
+		//Get test bounds
+		beforeDate, afterDate := getDateBounds(test.URLParams["before"], test.URLParams["after"])
+
+		//Confirm return type
+		raceArr, ok := res["races"].([]any)
+		if !ok {
+			t.Errorf("%s: unable to parse races as array", test.TestName)
+		}
+
+		for _, a := range raceArr {
+			obj, ok := a.(map[string]any)
+			if !ok {
+				t.Errorf("%s: unable to parse race objects", test.TestName)
+				continue
+			}
+
+			//Validate object types
+			raceID, ok := obj["id"].(float64)
+			if !ok {
+				t.Errorf("%s: unable to parse race id as int", test.TestName)
+				continue
+			}
+			catName, ok := obj["category"].(string)
+			if !ok {
+				t.Errorf("%s: unable to parse category name as string", test.TestName)
+				continue
+			}
+			date, ok := obj["date"].(string)
+			if !ok {
+				t.Errorf("%s: unable to parse date as string", test.TestName)
+				continue
+			}
+			status, ok := obj["status"].(string)
+			if !ok {
+				t.Errorf("%s: unable to parse status as string", test.TestName)
+				continue
+			}
+			_, ok = obj["start_time"].(string)
+			if !ok {
+				t.Errorf("%s: unable to parse start time as string", test.TestName)
+				continue
+			}
+
+			//Make sure they match the params
+			if len(test.URLParams["race_id"]) > 0 {
+				validID := slices.Contains(test.URLParams["race_id"], strconv.Itoa(int(raceID)))
+				if !validID {
+					t.Errorf("%s: race id not filtered", test.TestName)
+					continue
+				}
+			}
+
+			if len(test.URLParams["category"]) > 0 {
+				if !slices.Contains(test.URLParams["category"], catName) {
+					t.Errorf("%s: race category not filtered", test.TestName)
+					continue
+				}
+			}
+
+			if len(test.URLParams["status"]) > 0 {
+				if !slices.Contains(test.URLParams["status"], status) {
+					t.Errorf("%s: race status not filtered", test.TestName)
+					continue
+				}
+			}
+			
+			if len(test.URLParams["before"]) > 0 {
+				if date > beforeDate {
+					t.Errorf("%s: date not filtered", test.TestName)
+					continue
+				}
+			}
+
+			if len(test.URLParams["after"]) > 0 {
+				if date < afterDate {
+					t.Errorf("%s: date not filtered", test.TestName)
+					continue
+				}
+			}
+
+			if len(test.URLParams["on"]) > 0 {
+				if !slices.Contains(test.URLParams["on"], date) {
+					t.Errorf("%s: date not filtered", test.TestName)
+					continue
+				}
+			}
+		}
+	}
+}
+
+//Helper to confirm that GET dates are within the timeframe
+func getDateBounds(befores []string, afters []string) (string, string) {
+	//Make sure date is between these
+	//Get latest before date, since it encompasses all other dates
+	var beforeDate string
+	for i, date := range befores {
+		if i == 0 || date > beforeDate {
+			beforeDate = date
+		}
+	}
+
+	//Get earliest after date
+	var afterDate string
+	for i, date := range afters {
+		if i == 0 || date < afterDate {
+			afterDate = date
+		}
+	}
+
+	return beforeDate, afterDate
 }
 
 //Helper to create the tests for the post handler
@@ -369,4 +496,94 @@ func getPATCHTests(raceIDs []int64) []testutils.MutationHandlerTest {
 		tests = append(tests, idTests...)
 	}
 	return tests
+}
+
+//Returns GET tests
+func getGETTests() []testutils.QueryHandlerTest {
+	return []testutils.QueryHandlerTest{
+		{
+			TestName: "ValidNoQueries",
+			URLParams: make(map[string][]string),
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: "ValidOnly602",
+			URLParams: map[string][]string{
+				"category": {"602"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: "Valid602AndSandboxAny%",
+			URLParams: map[string][]string {
+				"category": {"602", "sandbox_any%"}, 
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: "ValidBefore2020",
+			URLParams: map[string][]string {
+				"before": {"2020-01-01"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: "ValidBetween1000And2000",
+			URLParams: map[string][]string {
+				"before": {"2000-01-01"},
+				"after": {"1000-12-31"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: "ValidBetween1000And2000AndBirthOfChrist",
+			URLParams: map[string][]string {
+				"before": {"2000-01-01"},
+				"after": {"1000-12-31"},
+				"on": {"0000-12-25"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: "ValidOnBirthOfChrist",
+			URLParams: map[string][]string {
+				"on": {"0000-12-25"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		}, {
+			TestName: "ValidBefore4000OrBefore3000",
+			URLParams: map[string][]string {
+				"before": {"4000-01-01", "3000-01-01"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		},
+		{
+			TestName: "ValidRaces123",
+			URLParams: map[string][]string {
+				"race_id": {"1", "2", "3"},
+			},
+			Pattern: "GET /races",
+			URL: "/races",
+			ExpectedResponseCode: http.StatusOK,
+			ExpectedSuccess: true,
+		},
+	}
 }
