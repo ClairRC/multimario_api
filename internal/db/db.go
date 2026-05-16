@@ -434,14 +434,14 @@ func BuildDeleteStatement(table string, where []WhereCondition) SQLStatement {
 }
 
 //Gets the ON clause to prevent very messy string stuff
-func getOnClause(table1 string, table2 string, joinCol1 string, joinCol2 string) string {
-	return fmt.Sprintf("%s.%s = %s.%s", table1, joinCol1, table2, joinCol2)
+func GetOnClause(table1 string, table2 string, joinCol1 string, joinCol2 string) string {
+	return fmt.Sprintf("(%s.%s = %s.%s)", table1, joinCol1, table2, joinCol2)
 }
 
-//Gets linking table
-func JoinTables(table1 string, table2 string, joinCol1 string, joinCol2 string) string {
-	on := getOnClause(table1, table2, joinCol1, joinCol2)
-	return fmt.Sprintf("%s JOIN %s ON %s", table1, table2, on)
+
+//Gets linking table using a LEFT JOIN
+func JoinTables(table1 string, table2 string, on string) string {
+	return fmt.Sprintf("%s LEFT JOIN %s ON %s", table1, table2, on) //LEFT JOIN!!! important to know!!
 }
 
 //Checks if record exists

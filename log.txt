@@ -1,0 +1,822 @@
+?   	github.com/multimario_api	[no test files]
+?   	github.com/multimario_api/internal/db	[no test files]
+?   	github.com/multimario_api/internal/repository	[no test files]
+?   	github.com/multimario_api/internal/repository/gamecategories	[no test files]
+?   	github.com/multimario_api/internal/repository/games	[no test files]
+?   	github.com/multimario_api/internal/repository/players	[no test files]
+?   	github.com/multimario_api/internal/repository/racecategories	[no test files]
+?   	github.com/multimario_api/internal/repository/races	[no test files]
+?   	github.com/multimario_api/internal/repository/records	[no test files]
+?   	github.com/multimario_api/internal/repository/records/runs	[no test files]
+=== RUN   TestAddGameCategory
+    game_category_request_handlers_test.go:25: Valid response: {
+         "success": true
+        }
+    game_category_request_handlers_test.go:25: InvalidNameType response: {
+         "error": "category_name must be string",
+         "success": false
+        }
+    game_category_request_handlers_test.go:25: InvalidCollectiblesType response: {
+         "error": "num_collectibles must be an int",
+         "success": false
+        }
+    game_category_request_handlers_test.go:25: InvalidEstimateFormat response: {
+         "error": "estimate must be valid duration in hh:mm:ss format",
+         "success": false
+        }
+    game_category_request_handlers_test.go:25: InvalidGameDoesntExist response: {
+         "error": "game does not exist",
+         "success": false
+        }
+    game_category_request_handlers_test.go:25: InvalidMissingGame response: {
+         "error": "game_name cannot be empty",
+         "success": false
+        }
+--- PASS: TestAddGameCategory (0.01s)
+=== RUN   TestEditGameCategory
+    game_category_request_handlers_test.go:38: ValidAllValues response: {
+         "success": true
+        }
+    game_category_request_handlers_test.go:38: ValidNoNewName response: {
+         "success": true
+        }
+    game_category_request_handlers_test.go:38: ValidSameGame response: {
+         "success": true
+        }
+    game_category_request_handlers_test.go:38: ValidSameCollectbiles response: {
+         "success": true
+        }
+    game_category_request_handlers_test.go:38: ValidNoChanges response: {
+         "success": true
+        }
+    game_category_request_handlers_test.go:38: ValidNewEstimateNewCollectibles response: {
+         "success": true
+        }
+    game_category_request_handlers_test.go:38: InvalidCategoryDoesntExist response: {
+         "error": "game category does not exist",
+         "success": false
+        }
+    game_category_request_handlers_test.go:38: InvalidCategoryAlreadyExists response: {
+         "error": "new game category already exists",
+         "success": false
+        }
+    game_category_request_handlers_test.go:38: InvalidGameDoesNotExist response: {
+         "error": "game does not exist",
+         "success": false
+        }
+    game_category_request_handlers_test.go:38: InvalidType response: {
+         "error": "category_name must be string",
+         "success": false
+        }
+--- PASS: TestEditGameCategory (0.01s)
+=== RUN   TestGetGameCategories
+    game_category_request_handlers_test.go:51: ValidAllCategories response: {
+         "game_categories": [
+          {
+           "estimate": "1:00:00",
+           "game": "sm64",
+           "id": 1,
+           "name": "sm64_70",
+           "num_collectibles": 70
+          },
+          {
+           "estimate": "2:00:00",
+           "game": "sm64",
+           "id": 2,
+           "name": "sm64_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "3:00:00",
+           "game": "smg1",
+           "id": 3,
+           "name": "smg1_any%",
+           "num_collectibles": 61
+          },
+          {
+           "estimate": "6:00:00",
+           "game": "smg1",
+           "id": 4,
+           "name": "smg1_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "1:30:00",
+           "game": "sms",
+           "id": 5,
+           "name": "sms_any%",
+           "num_collectibles": 44
+          },
+          {
+           "estimate": "3:30:00",
+           "game": "sms",
+           "id": 6,
+           "name": "sms_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "3:30:00",
+           "game": "smg2",
+           "id": 7,
+           "name": "smg2_any%",
+           "num_collectibles": 71
+          },
+          {
+           "estimate": "6:00:00",
+           "game": "smg2",
+           "id": 8,
+           "name": "smg2_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "10:00:00",
+           "game": "smg2",
+           "id": 9,
+           "name": "smg2_242",
+           "num_collectibles": 242
+          },
+          {
+           "estimate": "1:30:00",
+           "game": "smo",
+           "id": 10,
+           "name": "smo_any%",
+           "num_collectibles": 124
+          },
+          {
+           "estimate": "3:30:00",
+           "game": "smo",
+           "id": 11,
+           "name": "smo_darker_side",
+           "num_collectibles": 503
+          },
+          {
+           "estimate": "9:00:00",
+           "game": "smo",
+           "id": 12,
+           "name": "smo_all_moons",
+           "num_collectibles": 880
+          },
+          {
+           "estimate": "11:00:00",
+           "game": "smo",
+           "id": 13,
+           "name": "smo_100%",
+           "num_collectibles": 880
+          },
+          {
+           "estimate": "1:50:00",
+           "game": "sm3dw",
+           "id": 14,
+           "name": "sm3dw_any%",
+           "num_collectibles": 170
+          },
+          {
+           "estimate": "4:00:00",
+           "game": "sm3dw",
+           "id": 15,
+           "name": "sm3dw_380",
+           "num_collectibles": 380
+          },
+          {
+           "estimate": "8:00:00",
+           "game": "sm3dw",
+           "id": 16,
+           "name": "sm3dw_100%",
+           "num_collectibles": 380
+          }
+         ],
+         "success": true
+        }
+    game_category_request_handlers_test.go:51: ValidSM64Cats response: {
+         "game_categories": [
+          {
+           "estimate": "1:00:00",
+           "game": "sm64",
+           "id": 1,
+           "name": "sm64_70",
+           "num_collectibles": 70
+          },
+          {
+           "estimate": "2:00:00",
+           "game": "sm64",
+           "id": 2,
+           "name": "sm64_120",
+           "num_collectibles": 120
+          }
+         ],
+         "success": true
+        }
+    game_category_request_handlers_test.go:51: ValidSMG2Cats response: {
+         "game_categories": [
+          {
+           "estimate": "3:30:00",
+           "game": "smg2",
+           "id": 7,
+           "name": "smg2_any%",
+           "num_collectibles": 71
+          },
+          {
+           "estimate": "6:00:00",
+           "game": "smg2",
+           "id": 8,
+           "name": "smg2_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "10:00:00",
+           "game": "smg2",
+           "id": 9,
+           "name": "smg2_242",
+           "num_collectibles": 242
+          }
+         ],
+         "success": true
+        }
+--- PASS: TestGetGameCategories (0.00s)
+=== RUN   TestAddGame
+    game_request_handlers_test.go:25: ValidName response: {
+         "success": true
+        }
+    game_request_handlers_test.go:25: InvalidType response: {
+         "error": "name must be string",
+         "success": false
+        }
+    game_request_handlers_test.go:25: InvalidNoName response: {
+         "error": "name cannot be empty",
+         "success": false
+        }
+    game_request_handlers_test.go:25: InvalidWrongField response: {
+         "error": "name cannot be empty",
+         "success": false
+        }
+--- PASS: TestAddGame (0.00s)
+=== RUN   TestChangeGameName
+    game_request_handlers_test.go:38: ValidChangeMario64 response: {
+         "success": true
+        }
+    game_request_handlers_test.go:38: ValidChangeSM3DW response: {
+         "success": true
+        }
+    game_request_handlers_test.go:38: InvalidType response: {
+         "error": "name must be string",
+         "success": false
+        }
+    game_request_handlers_test.go:38: InvalidNoName response: {
+         "error": "name cannot be empty",
+         "success": false
+        }
+    game_request_handlers_test.go:38: InvalidBadPathValue response: {
+         "error": "requested game does not exist",
+         "success": false
+        }
+    game_request_handlers_test.go:38: InvalidGameAlreadyExists response: {
+         "error": "game name already exists",
+         "success": false
+        }
+--- PASS: TestChangeGameName (0.00s)
+=== RUN   TestGetGames
+    game_request_handlers_test.go:51: ValidGetSM64 response: {
+         "games": [
+          {
+           "name": "sm64"
+          }
+         ],
+         "success": true
+        }
+    game_request_handlers_test.go:51: ValidGet3DW response: {
+         "games": [
+          {
+           "name": "sm3dw"
+          }
+         ],
+         "success": true
+        }
+    game_request_handlers_test.go:51: ValidGetSMSorSMG response: {
+         "games": [
+          {
+           "name": "smg1"
+          },
+          {
+           "name": "sms"
+          }
+         ],
+         "success": true
+        }
+    game_request_handlers_test.go:51: ValidNoRestrictions response: {
+         "games": [
+          {
+           "name": "sm64"
+          },
+          {
+           "name": "smg1"
+          },
+          {
+           "name": "sms"
+          },
+          {
+           "name": "smg2"
+          },
+          {
+           "name": "smo"
+          },
+          {
+           "name": "sm3dw"
+          }
+         ],
+         "success": true
+        }
+    game_request_handlers_test.go:51: ValidNoGameExists response: {
+         "games": [],
+         "success": true
+        }
+--- PASS: TestGetGames (0.00s)
+=== RUN   TestCreateRace
+    race_request_handlers_test.go:83: ValidAllFields response: {
+         "id": 9,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidNoDate response: {
+         "id": 10,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidEmptyDate response: {
+         "id": 11,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidNoStatus response: {
+         "id": 12,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidEmptyStatus response: {
+         "id": 13,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidNoStartTime response: {
+         "id": 14,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidEmptyStartTime response: {
+         "id": 15,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidNoDateNoStatus response: {
+         "id": 16,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidNoDateNoStartTime response: {
+         "id": 17,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidNoStatusNoStartTime response: {
+         "id": 18,
+         "success": true
+        }
+    race_request_handlers_test.go:83: ValidOnlyCategory response: {
+         "id": 19,
+         "success": true
+        }
+    race_request_handlers_test.go:83: InvalidCategoryDoesntExist response: {
+         "error": "race category does not exist",
+         "success": false
+        }
+    race_request_handlers_test.go:83: InvalidCategoryEmpty response: {
+         "error": "category cannot be empty",
+         "success": false
+        }
+    race_request_handlers_test.go:83: InvalidDateWrongFormat response: {
+         "error": "date must be in YYYY-MM-DD format",
+         "success": false
+        }
+    race_request_handlers_test.go:83: InvalidStatus response: {
+         "error": "race status is invalid value",
+         "success": false
+        }
+    race_request_handlers_test.go:83: InvalidTime response: {
+         "error": "start_time must be valid time in hh:mm:ss format",
+         "success": false
+        }
+--- PASS: TestCreateRace (0.01s)
+=== RUN   TestUpdateRace
+    race_request_handlers_test.go:103: ID1ValidUpdateAll response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID1InvalidDate response: {
+         "error": "date must be in YYYY-MM-DD format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID1ValidNoStatus response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID1ValidEmpty response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID1InvalidStartTime response: {
+         "error": "start_time must be valid time in hh:mm:ss format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID2ValidUpdateAll response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID2InvalidDate response: {
+         "error": "date must be in YYYY-MM-DD format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID2ValidNoStatus response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID2ValidEmpty response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID2InvalidStartTime response: {
+         "error": "start_time must be valid time in hh:mm:ss format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID3ValidUpdateAll response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID3InvalidDate response: {
+         "error": "date must be in YYYY-MM-DD format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID3ValidNoStatus response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID3ValidEmpty response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID3InvalidStartTime response: {
+         "error": "start_time must be valid time in hh:mm:ss format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID4ValidUpdateAll response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID4InvalidDate response: {
+         "error": "date must be in YYYY-MM-DD format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID4ValidNoStatus response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID4ValidEmpty response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID4InvalidStartTime response: {
+         "error": "start_time must be valid time in hh:mm:ss format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID5ValidUpdateAll response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID5InvalidDate response: {
+         "error": "date must be in YYYY-MM-DD format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID5ValidNoStatus response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID5ValidEmpty response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID5InvalidStartTime response: {
+         "error": "start_time must be valid time in hh:mm:ss format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID6ValidUpdateAll response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID6InvalidDate response: {
+         "error": "date must be in YYYY-MM-DD format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID6ValidNoStatus response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID6ValidEmpty response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID6InvalidStartTime response: {
+         "error": "start_time must be valid time in hh:mm:ss format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID7ValidUpdateAll response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID7InvalidDate response: {
+         "error": "date must be in YYYY-MM-DD format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID7ValidNoStatus response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID7ValidEmpty response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID7InvalidStartTime response: {
+         "error": "start_time must be valid time in hh:mm:ss format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID8ValidUpdateAll response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID8InvalidDate response: {
+         "error": "date must be in YYYY-MM-DD format",
+         "success": false
+        }
+    race_request_handlers_test.go:103: ID8ValidNoStatus response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID8ValidEmpty response: {
+         "success": true
+        }
+    race_request_handlers_test.go:103: ID8InvalidStartTime response: {
+         "error": "start_time must be valid time in hh:mm:ss format",
+         "success": false
+        }
+--- PASS: TestUpdateRace (0.04s)
+=== RUN   TestGetRaces
+    race_request_handlers_test.go:117: ValidNoQueries response: {
+         "races": [
+          {
+           "category": "602",
+           "date": "1000-07-13",
+           "id": 1,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "246",
+           "date": "3214-05-16",
+           "id": 2,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "sandbox_any%",
+           "date": "1002-10-03",
+           "id": 3,
+           "start_time": "9:00:00",
+           "status": "completed"
+          },
+          {
+           "category": "1862",
+           "date": "3054-12-25",
+           "id": 4,
+           "start_time": "02:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "sandbox_100%",
+           "date": "4123-01-31",
+           "id": 5,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "540",
+           "date": "2025-04-01",
+           "id": 6,
+           "start_time": "11:00:00",
+           "status": "in_progress"
+          },
+          {
+           "category": "602",
+           "date": "2020-12-12",
+           "id": 7,
+           "start_time": "3:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "1862",
+           "date": "0000-12-25",
+           "id": 8,
+           "start_time": "30:00:00",
+           "status": "upcoming"
+          }
+         ],
+         "success": true
+        }
+    race_request_handlers_test.go:117: ValidOnly602 response: {
+         "races": [
+          {
+           "category": "602",
+           "date": "1000-07-13",
+           "id": 1,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "602",
+           "date": "2020-12-12",
+           "id": 7,
+           "start_time": "3:00:00",
+           "status": "upcoming"
+          }
+         ],
+         "success": true
+        }
+    race_request_handlers_test.go:117: Valid602AndSandboxAny% response: {
+         "races": [
+          {
+           "category": "602",
+           "date": "1000-07-13",
+           "id": 1,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "sandbox_any%",
+           "date": "1002-10-03",
+           "id": 3,
+           "start_time": "9:00:00",
+           "status": "completed"
+          },
+          {
+           "category": "602",
+           "date": "2020-12-12",
+           "id": 7,
+           "start_time": "3:00:00",
+           "status": "upcoming"
+          }
+         ],
+         "success": true
+        }
+    race_request_handlers_test.go:117: ValidBefore2020 response: {
+         "races": [
+          {
+           "category": "602",
+           "date": "1000-07-13",
+           "id": 1,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "sandbox_any%",
+           "date": "1002-10-03",
+           "id": 3,
+           "start_time": "9:00:00",
+           "status": "completed"
+          },
+          {
+           "category": "1862",
+           "date": "0000-12-25",
+           "id": 8,
+           "start_time": "30:00:00",
+           "status": "upcoming"
+          }
+         ],
+         "success": true
+        }
+    race_request_handlers_test.go:117: ValidBetween1000And2000 response: {
+         "races": [
+          {
+           "category": "sandbox_any%",
+           "date": "1002-10-03",
+           "id": 3,
+           "start_time": "9:00:00",
+           "status": "completed"
+          }
+         ],
+         "success": true
+        }
+    race_request_handlers_test.go:117: ValidOnBirthOfChrist response: {
+         "races": [
+          {
+           "category": "1862",
+           "date": "0000-12-25",
+           "id": 8,
+           "start_time": "30:00:00",
+           "status": "upcoming"
+          }
+         ],
+         "success": true
+        }
+    race_request_handlers_test.go:117: ValidBefore4000OrBefore3000 response: {
+         "races": [
+          {
+           "category": "602",
+           "date": "1000-07-13",
+           "id": 1,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "246",
+           "date": "3214-05-16",
+           "id": 2,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "sandbox_any%",
+           "date": "1002-10-03",
+           "id": 3,
+           "start_time": "9:00:00",
+           "status": "completed"
+          },
+          {
+           "category": "1862",
+           "date": "3054-12-25",
+           "id": 4,
+           "start_time": "02:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "540",
+           "date": "2025-04-01",
+           "id": 6,
+           "start_time": "11:00:00",
+           "status": "in_progress"
+          },
+          {
+           "category": "602",
+           "date": "2020-12-12",
+           "id": 7,
+           "start_time": "3:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "1862",
+           "date": "0000-12-25",
+           "id": 8,
+           "start_time": "30:00:00",
+           "status": "upcoming"
+          }
+         ],
+         "success": true
+        }
+    race_request_handlers_test.go:117: ValidRaces123 response: {
+         "races": [
+          {
+           "category": "602",
+           "date": "1000-07-13",
+           "id": 1,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "246",
+           "date": "3214-05-16",
+           "id": 2,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "sandbox_any%",
+           "date": "1002-10-03",
+           "id": 3,
+           "start_time": "9:00:00",
+           "status": "completed"
+          }
+         ],
+         "success": true
+        }
+    race_request_handlers_test.go:117: Valid602Or1862RacesBetween1000And2000 response: {
+         "races": [],
+         "success": true
+        }
+    race_request_handlers_test.go:117: ValidUpcoming602Races response: {
+         "races": [
+          {
+           "category": "602",
+           "date": "1000-07-13",
+           "id": 1,
+           "start_time": "9:00:00",
+           "status": "upcoming"
+          },
+          {
+           "category": "602",
+           "date": "2020-12-12",
+           "id": 7,
+           "start_time": "3:00:00",
+           "status": "upcoming"
+          }
+         ],
+         "success": true
+        }
+    race_request_handlers_test.go:117: InvalidBeforeDate response: {
+         "error": "9/11/2001 cannot be parsed as date. must be in yyyy-mm-dd format",
+         "success": false
+        }
+    race_request_handlers_test.go:117: InvalidAfterDate response: {
+         "error": "9/11/2001 cannot be parsed as date. must be in yyyy-mm-dd format",
+         "success": false
+        }
+    race_request_handlers_test.go:117: InvalidOnDate response: {
+         "error": "25.12.0000 cannot be parsed as date. must be in yyyy-mm-dd format",
+         "success": false
+        }
+    race_request_handlers_test.go:117: InvalidCategoryDoesNotExist response: {
+         "error": "1863 is not a valid race category",
+         "success": false
+        }
+    race_request_handlers_test.go:117: InvalidStatus response: {
+         "error": "invalid is not a valid race status",
+         "success": false
+        }
+--- PASS: TestGetRaces (0.03s)
+PASS
+ok  	github.com/multimario_api/internal/req_handler	0.312s
+?   	github.com/multimario_api/internal/routes	[no test files]
+?   	github.com/multimario_api/internal/testing	[no test files]
+?   	github.com/multimario_api/internal/twitch	[no test files]

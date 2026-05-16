@@ -184,12 +184,18 @@ func (c *GameCategory) Update(
 //Queries game categories from GET request
 func QueryGameCategories(database *sql.DB, gamecategoryQuery GameCategoryQuery) ([]*GameCategory, error) {
 	//Set up request
+
+	/*
+	* TODO: Currently we have to add table.column here since the joined table has multiple "game_category_id"s.
+	*		There is probably a better solution so this happens automatically, but since this is only sometimes a problem,
+	*		for now I'll handle it on a case-by-case basis
+	*/
 	cols := []string {
-		db.ColGameCategoryID,
+		db.TableGameCategories + "." + db.ColGameCategoryID,
 		db.ColGameCategoryName,
 		db.ColGameCategoryEstimate,
 		db.ColGameCategoryNumCollectibles,
-		db.ColGameCategoryGameID,
+		db.TableGameCategories + "." + db.ColGameCategoryGameID,
 		db.ColGameName,
 	}
 	table := getGameCategoryQueryTable()
@@ -284,7 +290,7 @@ func GetGameCategoryByID(database *sql.DB, id int64) (*GameCategory, error) {
 // Checks if gamecategory exists
 func GameCategoryExistsByName(database *sql.DB, name repository.NullableStr) (bool, error) {
 	if !name.Valid {
-		return false, repository.StringIsNullErr
+		return false, nil
 	}
 
 	exists, err := db.RecordExists(database, db.TableGameCategories, db.ColGameCategoryName, name.Value)

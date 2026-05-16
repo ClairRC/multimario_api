@@ -26,7 +26,7 @@ func TestAddGame(t *testing.T) {
 	}
 }
 
-//Test UpdateRace
+//Test UpdateGame
 func TestChangeGameName(t *testing.T) {
 	//Get test DB and handler
 	tdb := testutils.CreateTestDB(t)

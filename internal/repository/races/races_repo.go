@@ -174,7 +174,8 @@ func QueryRaces(database *sql.DB, raceQuery RaceQuery) ([]*Race, error) {
 		db.ColRaceStatus,
 		db.ColRaceCategoryName,
 	}
-	table := db.JoinTables(db.TableRaces, db.TableRaceCategories, db.ColRaceRaceCategoryID, db.ColRaceCategoryID) //Races and Racecategories needed for information
+	table := db.JoinTables(db.TableRaces, db.TableRaceCategories, 
+		db.GetOnClause(db.TableRaces, db.TableRaceCategories, db.ColRaceRaceCategoryID, db.ColRaceCategoryID)) //Races and Racecategories needed for information
 	whereCons := getRaceWhereCons(raceQuery)
 
 	//Execute query

@@ -39,10 +39,14 @@ func getRunWhereCons(query RunQuery) []db.WhereCondition {
 //Gets table for run queries
 //Needs Players for player names, game categories for gamecat name, and records-races for race IDs
 func getRunQueryTable() string {
-	table := db.JoinTables(db.TableRuns, db.TableGameCategories, db.ColRunGameCategoryID, db.ColGameCategoryID)
-	table = db.JoinTables(table, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID)
-	table = db.JoinTables(table, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
-	table = db.JoinTables(table, db.TableRaces, db.ColRecordsRaceID, db.ColRaceID)
+	on := db.GetOnClause(db.TableRuns, db.TableGameCategories, db.ColRunGameCategoryID, db.ColGameCategoryID)
+	table := db.JoinTables(db.TableRuns, db.TableGameCategories, on)
+
+	on = db.GetOnClause(db.TableRuns, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID)
+	table = db.JoinTables(table, db.TableRecords, on)
+
+	on = db.GetOnClause(db.TableRecords, db.TableRaces, db.ColRecordsRaceID, db.ColRaceID)
+	table = db.JoinTables(table, db.TableRaces, on)
 
 	return table
 }

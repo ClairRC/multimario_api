@@ -42,7 +42,7 @@ func (h *ReqHandler) AddGameCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate category name
-	catName, err := validateText(w, req, "game_category", true)
+	catName, err := validateText(w, req, "category_name", true)
 	if err != nil { return }
 
 	//Validate game name
@@ -157,14 +157,16 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 	newGameName, err := validateText(w, req, "game_name", false)
 	if err != nil { return }
 
-	exists, err = games.GameExistsByName(h.DataBase, newGameName)
-	if err != nil {
-		writeError(w, http.StatusInternalServerError, "unknown error parsing game name")
-		return
-	}
-	if !exists {
-		writeError(w, http.StatusBadRequest, "game does not exist")
-		return
+	if newGameName.Valid {
+		exists, err = games.GameExistsByName(h.DataBase, newGameName)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "unknown error parsing game name")
+			return
+		}
+		if !exists {
+			writeError(w, http.StatusBadRequest, "game does not exist")
+			return
+		}
 	}
 
 	//Check for new estimate
@@ -230,7 +232,7 @@ func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
 	}
 	gameCats, err := gamecategories.QueryGameCategories(h.DataBase, q)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "unknown error fetching game categories")
+		writeError(w, http.StatusInternalServerError, "unknown error fetching game categories: " + err.Error())
 		return
 	}
 

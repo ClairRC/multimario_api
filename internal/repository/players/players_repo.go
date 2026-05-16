@@ -146,8 +146,9 @@ func QueryPlayers(database *sql.DB, playerQuery PlayerQuery) ([]*Player, error) 
 		db.ColPlayerName,
 		db.ColSocialsPlatformUserID,
 	}
-	table := db.JoinTables(db.TablePlayers, db.TableSocials, db.ColPlayerID, db.ColSocialsPlayerID)
-	
+	table := db.JoinTables(db.TablePlayers, db.TableSocials, 
+		db.GetOnClause(db.TablePlayers, db.TableSocials, db.ColPlayerID, db.ColSocialsPlayerID))
+
 	twitchIDCache := make(map[string]string) //Maps ID to Name to avoid redundant Twitch API calls
 	whereCons, err := getPlayerWhereCons(playerQuery, twitchIDCache)
 	if err != nil {

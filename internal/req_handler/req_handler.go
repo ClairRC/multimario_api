@@ -161,7 +161,8 @@ func validateNumber(w http.ResponseWriter, req map[string]any, key string, requi
 		} 
 	}
 
-	return repository.MakeNullableInt(req[key].(int)), nil
+	//JSON decodes this as float64, so assert type as float64 instead of int. Weird but it works.
+	return repository.MakeNullableInt(req[key].(float64)), nil
 }
 
 //Validates array field

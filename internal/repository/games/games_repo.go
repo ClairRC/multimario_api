@@ -204,7 +204,7 @@ func GetGameByID(database *sql.DB, id int64) (*Game, error) {
 //Checks if game already exists
 func GameExistsByName(database *sql.DB, name repository.NullableStr) (bool, error) {
 	if !name.Valid {
-		return false, repository.StringIsNullErr
+		return false, nil //Invalid game means it just doesn't exist
 	}
 
 	exists, err := db.RecordExists(database, db.TableGames, db.ColGameName, name.Value)

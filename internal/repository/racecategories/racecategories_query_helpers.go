@@ -37,9 +37,14 @@ func getRaceCategoryWhereCons(query RaceCategoryQuery) []db.WhereCondition {
 
 //Needs racecategories-racecatgamecat-gamecatories for querying by game categories and games for querying by game names
 func getRaceCategoryQueryTable() string {
-	table := db.JoinTables(db.TableRaceCategories, db.TableRaceCatGameCat, db.ColRaceCategoryID, db.ColRaceCatGameCatRaceCategoryID)
-	table = db.JoinTables(table, db.TableGameCategories, db.ColRaceCatGameCatGameCatgeoryID, db.ColGameCategoryID)
-	table = db.JoinTables(table, db.TableGames, db.ColGameCategoryGameID, db.ColGameID)
+	on := db.GetOnClause(db.TableRaceCategories, db.TableRaceCatGameCat, db.ColRaceCategoryID, db.ColRaceCatGameCatRaceCategoryID)
+	table := db.JoinTables(db.TableRaceCategories, db.TableRaceCatGameCat, on)
+
+	on = db.GetOnClause(db.TableRaceCatGameCat, db.TableGameCategories, db.ColRaceCatGameCatGameCatgeoryID, db.ColGameCategoryID)
+	table = db.JoinTables(table, db.TableGameCategories, on)
+
+	on = db.GetOnClause(db.TableGameCategories, db.TableGames, db.ColGameCategoryGameID, db.ColGameID)
+	table = db.JoinTables(table, db.TableGames, on)
 
 	return table
 }

@@ -187,8 +187,13 @@ func GetRunFromID(database *sql.DB, runID int64) (*Run, error) {
 		db.ColRunEstimate,
 		db.ColRecordID,
 	}
-	table := db.JoinTables(db.TableRuns, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID) //Join tables to get record ID
-	table = db.JoinTables(table, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
+
+	on := db.GetOnClause(db.TableRuns, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID)
+	table := db.JoinTables(db.TableRuns, db.TableRecords, on)
+
+	on = db.GetOnClause(table, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
+	table = db.JoinTables(table, db.TablePlayers, on)
+
 	whereCon := []db.WhereCondition{{
 		ColName: db.ColRunID,
 		Op: db.Equals,
@@ -246,9 +251,15 @@ func GetRunFromRecordID(database *sql.DB, recordID int64, categoryName repositor
 	}
 
 	//Join tables to search with category name
-	table := db.JoinTables(db.TableRuns, db.TableGameCategories, db.ColRunGameCategoryID, db.ColGameCategoryID)
-	table = db.JoinTables(table, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID)
-	table = db.JoinTables(table, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
+	on := db.GetOnClause(db.TableRuns, db.TableGameCategories, db.ColRunGameCategoryID, db.ColGameCategoryID)
+	table := db.JoinTables(db.TableRuns, db.TableGameCategories, on)
+
+	on = db.GetOnClause(db.TableRuns, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID)
+	table = db.JoinTables(table, db.TableRecords, on)
+	
+	on = db.GetOnClause(table, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
+	table = db.JoinTables(table, db.TablePlayers, on)
+	
 	whereCon := []db.WhereCondition{{
 		ColName: db.ColGameCategoryName,
 		Op: db.Equals,

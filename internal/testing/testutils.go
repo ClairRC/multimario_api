@@ -97,7 +97,7 @@ func CreateTestDB(t *testing.T) TestDB {
 		{"sms", "sms_120", "3:30:00", 120},
 		{"smg2", "smg2_any%", "3:30:00", 71},
 		{"smg2", "smg2_120", "6:00:00", 120},
-		{"smg2", "smg2_242", "10:00:00", 242},
+		{"smg2", "smg2_242", "", 242},
 		{"smo", "smo_any%", "1:30:00", 124},
 		{"smo", "smo_darker_side", "3:30:00", 503},
 		{"smo", "smo_all_moons", "9:00:00", 880},

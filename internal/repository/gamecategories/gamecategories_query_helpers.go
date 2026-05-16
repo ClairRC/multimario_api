@@ -12,9 +12,14 @@ import (
 //We need GameCategories, Games, GameCatRaceCat, and RaceCategories for the query
 func getGameCategoryQueryTable() string {
 	//Note: GameCatRaceCat is only necessary for searching on RaceCategory name. We don't actually need information from that table.
-	table := db.JoinTables(db.TableGameCategories, db.TableGames, db.ColGameCategoryGameID, db.ColGameID)
-	table = db.JoinTables(table, db.TableRaceCatGameCat, db.ColGameCategoryID, db.ColRaceCatGameCatGameCatgeoryID)
-	table = db.JoinTables(table, db.TableRaceCategories, db.ColRaceCatGameCatRaceCategoryID, db.ColRaceCategoryID)
+	on := db.GetOnClause(db.TableGameCategories, db.TableGames, db.ColGameCategoryGameID, db.ColGameID)
+	table := db.JoinTables(db.TableGameCategories, db.TableGames, on)
+
+	on = db.GetOnClause(db.TableGameCategories, db.TableRaceCatGameCat, db.ColGameCategoryID, db.ColRaceCatGameCatGameCatgeoryID)
+	table = db.JoinTables(table, db.TableRaceCatGameCat, on)
+
+	on = db.GetOnClause(db.TableRaceCatGameCat, db.TableRaceCategories, db.ColRaceCatGameCatRaceCategoryID, db.ColRaceCategoryID)
+	table = db.JoinTables(table, db.TableRaceCategories, on)
 
 	return table
 }

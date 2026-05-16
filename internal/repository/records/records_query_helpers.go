@@ -69,10 +69,17 @@ func getRecordsWhereCons(query RecordQuery) []db.WhereCondition {
 //Helper to get table for querying race records.
 //Needs player to search on player name and races-racecatgamecat-racecategories to search on race category names
 func getRecordQueryTable() string {
-	table := db.JoinTables(db.TableRecords, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
-	table = db.JoinTables(table, db.TableRaces, db.ColRecordsRaceID, db.ColRaceID)
-	table = db.JoinTables(table, db.TableRaceCatGameCat, db.ColRaceCategoryID, db.ColRaceCatGameCatRaceCategoryID)
-	table = db.JoinTables(table, db.TableRaceCategories, db.ColRaceCatGameCatRaceCategoryID, db.ColRaceCategoryID)
+	on := db.GetOnClause(db.TableRecords, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
+	table := db.JoinTables(db.TableRecords, db.TablePlayers, on)
+
+	on = db.GetOnClause(db.TableRecords, db.TableRaces, db.ColRecordsRaceID, db.ColRaceID)
+	table = db.JoinTables(table, db.TableRaces, on)
+
+	on = db.GetOnClause(db.TableRaces, db.TableRaceCatGameCat, db.ColRaceCategoryID, db.ColRaceCatGameCatRaceCategoryID)
+	table = db.JoinTables(table, db.TableRaceCatGameCat, on)
+
+	on = db.GetOnClause(db.TableRaceCatGameCat, db.TableRaceCategories, db.ColRaceCatGameCatRaceCategoryID, db.ColRaceCategoryID)
+	table = db.JoinTables(table, db.TableRaceCategories, on)
 
 	return table
 }

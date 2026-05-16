@@ -56,6 +56,8 @@ func MakeNullableInt(i any) NullableInt {
 		return NullableInt{v, true}
 	case int64:
 		return NullableInt{int(v), true}
+	case float64:
+		return NullableInt{int(v), true}
 	default:
 		return NULLInt
 	}

@@ -145,12 +145,12 @@ func (f *IntField) Validate() error {
 		return FieldIsEmptyErr
 	} //Field is empty
 
-	_, ok := f.Value.(int64)
-	if !ok {
+	switch f.Value.(type) {
+	case int, int64, float64:
+		return nil
+	default:
 		return FieldIsWrongFormatErr
 	}
-
-	return nil
 }
 
 func (f *ArrayField) Validate() error {
