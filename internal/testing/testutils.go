@@ -292,3 +292,25 @@ func CallQueryHandler(t *testing.T, test QueryHandlerTest, handlerFunc func(http
 
 	return res_map
 }
+
+//Helper to confirm that GET dates are within the timeframe
+func GetDateBounds(befores []string, afters []string) (string, string) {
+	//Make sure date is between these
+	//Get latest before date, since it encompasses all other dates
+	var beforeDate string
+	for i, date := range befores {
+		if i == 0 || date > beforeDate {
+			beforeDate = date
+		}
+	}
+
+	//Get earliest after date
+	var afterDate string
+	for i, date := range afters {
+		if i == 0 || date < afterDate {
+			afterDate = date
+		}
+	}
+
+	return beforeDate, afterDate
+}

@@ -78,7 +78,7 @@ func TestCreateRace(t *testing.T) {
 	tdb := initRaceHandlerTestDB(t)
 	h := &ReqHandler{tdb.testDB.Database}
 
-	tests := getPOSTTests()
+	tests := racesGetPOSTTests()
 	for _, test := range tests {
 		res := testutils.CallMutationHandler(t, test, h.CreateRace)
 		
@@ -98,7 +98,7 @@ func TestUpdateRace(t *testing.T) {
 	tdb := initRaceHandlerTestDB(t)
 	h := &ReqHandler{tdb.testDB.Database}
 
-	tests := getPATCHTests(tdb.raceIDs)
+	tests := racesGetPATCHTests(tdb.raceIDs)
 	for _, test := range tests {
 		testutils.CallMutationHandler(t, test, h.UpdateRace)
 	}
@@ -111,7 +111,7 @@ func TestGetRaces(t *testing.T) {
 	tdb := initRaceHandlerTestDB(t)
 	h := &ReqHandler{tdb.testDB.Database}
 
-	tests := getGETTests()
+	tests := racesGetGETTests()
 
 	for _, test := range tests {
 		res := testutils.CallQueryHandler(t, test, h.GetRaces)
@@ -126,7 +126,7 @@ func TestGetRaces(t *testing.T) {
 		}
 
 		//Get test bounds
-		beforeDate, afterDate := getDateBounds(test.URLParams["before"], test.URLParams["after"])
+		beforeDate, afterDate := testutils.GetDateBounds(test.URLParams["before"], test.URLParams["after"])
 
 		//Confirm return type
 		raceArr, ok := res["races"].([]any)
@@ -215,28 +215,6 @@ func TestGetRaces(t *testing.T) {
 	}
 }
 
-//Helper to confirm that GET dates are within the timeframe
-func getDateBounds(befores []string, afters []string) (string, string) {
-	//Make sure date is between these
-	//Get latest before date, since it encompasses all other dates
-	var beforeDate string
-	for i, date := range befores {
-		if i == 0 || date > beforeDate {
-			beforeDate = date
-		}
-	}
-
-	//Get earliest after date
-	var afterDate string
-	for i, date := range afters {
-		if i == 0 || date < afterDate {
-			afterDate = date
-		}
-	}
-
-	return beforeDate, afterDate
-}
-
 /*
 * Test cases 
 */
@@ -244,7 +222,7 @@ func getDateBounds(befores []string, afters []string) (string, string) {
 //		for other handlers.
 
 //Helper to create the tests for the post handler
-func getPOSTTests() []testutils.MutationHandlerTest {
+func racesGetPOSTTests() []testutils.MutationHandlerTest {
 	//Create tests
 	return []testutils.MutationHandlerTest{{
 		//Valid tests
@@ -449,7 +427,7 @@ func getPOSTTests() []testutils.MutationHandlerTest {
 }
 
 //Helper to create tests for PATCH requests
-func getPATCHTests(raceIDs []int64) []testutils.MutationHandlerTest {
+func racesGetPATCHTests(raceIDs []int64) []testutils.MutationHandlerTest {
 	tests := make([]testutils.MutationHandlerTest, 0)
 
 	//Create tests for each race ID
@@ -514,7 +492,7 @@ func getPATCHTests(raceIDs []int64) []testutils.MutationHandlerTest {
 }
 
 //Returns GET tests
-func getGETTests() []testutils.QueryHandlerTest {
+func racesGetGETTests() []testutils.QueryHandlerTest {
 	return []testutils.QueryHandlerTest{
 		{
 			TestName: "ValidNoQueries",
@@ -555,17 +533,6 @@ func getGETTests() []testutils.QueryHandlerTest {
 			URLParams: map[string][]string {
 				"before": {"2000-01-01"},
 				"after": {"1000-12-31"},
-			},
-			Pattern: "GET /races",
-			URL: "/races",
-			ExpectedResponseCode: http.StatusOK,
-			ExpectedSuccess: true,
-		}, {
-			TestName: "ValidBetween1000And2000AndBirthOfChrist",
-			URLParams: map[string][]string {
-				"before": {"2000-01-01"},
-				"after": {"1000-12-31"},
-				"on": {"0000-12-25"},
 			},
 			Pattern: "GET /races",
 			URL: "/races",

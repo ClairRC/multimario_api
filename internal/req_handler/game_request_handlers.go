@@ -43,7 +43,7 @@ func (h *ReqHandler) AddGame(w http.ResponseWriter, r *http.Request) {
 	game.Add(h.DataBase)
 
 	//Write output
-	writeJSON(w, http.StatusOK, map[string]any{"succes": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true})
 }
 
 /*
@@ -107,7 +107,7 @@ func (h *ReqHandler) ChangeGameName(w http.ResponseWriter, r *http.Request) {
 	//Fields are all verified
 	err = game.Update(h.DataBase, newName)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "uknown error updating game name")
+		writeError(w, http.StatusInternalServerError, "unknown error updating game name")
 	}
 
 	writeJSON(w, http.StatusOK, map[string]any{"success": true})
@@ -136,7 +136,7 @@ func (h *ReqHandler) ChangeGameName(w http.ResponseWriter, r *http.Request) {
 
 func (h *ReqHandler) GetGames(w http.ResponseWriter, r *http.Request) {
 	//Get URL names
-	gameNames := r.URL.Query()["player_name"]
+	gameNames := r.URL.Query()["name"]
 
 	//Build query
 	q := games.GameQuery{Names: gameNames}
