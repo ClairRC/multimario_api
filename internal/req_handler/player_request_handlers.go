@@ -63,7 +63,12 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 	//Verify twitch name isn't in use
 	exists, err = players.TwitchInUseByName(h.DataBase, twitchName)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "error parsing twitch name")
+		switch (err) {
+		case players.PlayerDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "twitch name is invalid")
+		default:
+			writeError(w, http.StatusInternalServerError, "error parsing twitch name")
+		}
 		return
 	}
 
@@ -122,7 +127,7 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 		case repository.StringIsNullErr:
 			writeError(w, http.StatusBadRequest, "player name is null")
 		default:
-			writeError(w, http.StatusInternalServerError, "unknown error")
+			writeError(w, http.StatusInternalServerError, "unknown error: "+err.Error())
 		}
 		return
 	}
@@ -159,7 +164,12 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 	if twitchName.Valid {
 		exists, err := players.TwitchInUseByName(h.DataBase, twitchName)
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, "unknown error checking if twitch is in use")
+			switch(err) {
+			case players.PlayerDoesNotExistErr:
+				writeError(w, http.StatusBadRequest, "twitch name is invalid")
+			default: 
+				writeError(w, http.StatusInternalServerError, "unknown error checking if twitch is in use")
+			}
 			return
 		}
 
@@ -183,6 +193,9 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 /*
 * Get players
 *
+* Note: This endpoint does NOT work as expected. If you include both player name AND twitch name, it tries to match BOTH, not either.
+*		This is an issue that should be fixed. For now, use separate queries for player name and twitch name.
+*
 * ENDPOINT: GET /players
 *
 * OPTIONAL PARAMETERS:
@@ -190,6 +203,7 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 *	twitch_name: string //Returns player with this name on twitch
 *
 * Note: For multiple values, include them separately
+*
 * ie. /players?player_name=expreli&player_name=odme_ will return both expreli and odme
 * Additionally, if you include both a player name and a twitch name, it will return players that match both
 * ie. /players?player_name=expreli&twitch_name=odme_ will return nothing. This behavior is probably not ideal for now.
@@ -221,7 +235,7 @@ func (h *ReqHandler) GetPlayers(w http.ResponseWriter, r *http.Request) {
 	}
 	players, err := players.QueryPlayers(h.DataBase, query)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "unknown error fetching players from db")
+		writeError(w, http.StatusInternalServerError, "unknown error fetching players from db: " + err.Error())
 		return
 	}
 

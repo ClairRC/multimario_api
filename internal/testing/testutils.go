@@ -4,13 +4,16 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"testing"
 
 	"github.com/multimario_api/internal/db"
+	"github.com/multimario_api/internal/twitch"
 )
 
 //Package for general testing functionality
@@ -42,6 +45,12 @@ type TestDB struct {
 	GameIDs map[string]int64 
 	GameCatIDs map[string]int64
 	RaceCatIDs map[string]int64
+}
+
+//Fake twitch client for mocking API calls
+type TestTwitchClient struct {
+	//Valid twitch names. ID corresponse to name's index.
+	ValidTwitchNames []string
 }
 
 //Creates and seeds database with a handful of games and categories that actually exist for testing.
@@ -97,7 +106,7 @@ func CreateTestDB(t *testing.T) TestDB {
 		{"sms", "sms_120", "3:30:00", 120},
 		{"smg2", "smg2_any%", "3:30:00", 71},
 		{"smg2", "smg2_120", "6:00:00", 120},
-		{"smg2", "smg2_242", "", 242},
+		{"smg2", "smg2_242", "9:00:00", 242},
 		{"smo", "smo_any%", "1:30:00", 124},
 		{"smo", "smo_darker_side", "3:30:00", 503},
 		{"smo", "smo_all_moons", "9:00:00", 880},
@@ -313,4 +322,34 @@ func GetDateBounds(befores []string, afters []string) (string, string) {
 	}
 
 	return beforeDate, afterDate
+}
+
+//Sets test twitch client
+func SetMockTwitchClient(validTwitchNames []string) {
+	client := TestTwitchClient{ValidTwitchNames: validTwitchNames}
+	twitch.SetTwitchClient(client)
+}
+
+//Fake API Twitch functions
+func (c TestTwitchClient) GetTwitchIDFromName(name string) (string, error) {
+	id := "-1"
+	for i, clientName := range c.ValidTwitchNames {
+		if clientName == name {
+			id = strconv.Itoa(i)
+		}
+	}
+
+	if id == "-1" {
+		return "", errors.New("invalid twitch name passed in")
+	}
+
+	return id, nil
+}
+
+func (c TestTwitchClient) GetTwitchNameFromID(id string) (string, error) {
+	idAsNum, err := strconv.Atoi(id)
+	if err != nil || idAsNum >= len(c.ValidTwitchNames) || idAsNum < 0 {
+		return "", errors.New("invalid twitch id passed in")
+	}
+	return c.ValidTwitchNames[idAsNum], nil
 }

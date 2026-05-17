@@ -55,15 +55,10 @@ func parseRaceCategoryQueryResults(database *sql.DB, res map[string][]any) ([]*R
 
 	//Cache for race categories we've gotten. Since they have a 1:M relationship, multiple race categories will be returned with different game categories
 	//{raceID: *RaceCategory}
-	catCache := make(map[int64]*RaceCategory)
+	catCache := make(map[string]*RaceCategory)
 	for i := range len(res[db.ColRaceCategoryID]) {
 		//Get required values
 		raceCatID, ok := res[db.ColRaceCategoryID][i].(int64)
-		if !ok {
-			continue
-		}
-
-		gameCategoryID, ok := res[db.ColGameCategoryID][i].(int64)
 		if !ok {
 			continue
 		}
@@ -73,26 +68,24 @@ func parseRaceCategoryQueryResults(database *sql.DB, res map[string][]any) ([]*R
 			continue
 		}
 
-		//Get the category from the ID
-		//This is an extra couple of DB calls, but there's only a handful of race categories and game categories per race category
-		//So it's not worth the extra complexity to do it all in 1 call currently.
-		gameCat, err := gamecategories.GetGameCategoryByID(database, gameCategoryID)
-		if err != nil {
-			continue
-		}
-
-		//Check if we've already seen this race category. If so, create a new one
-		if _, exists := catCache[raceCatID]; !exists {
+		//Skip this game category if we've already seen it. Left join will return more race categories, so filter duplicates
+		if _, exists := catCache[raceCatName]; !exists {
 			newRaceCat := &RaceCategory{
 				Name: repository.MakeNullableStr(raceCatName),
 				CategoryID: raceCatID,
 				GameCategories: make([]*gamecategories.GameCategory, 0),
 			}
-			catCache[raceCatID] = newRaceCat
+			catCache[raceCatName] = newRaceCat
 		} //Race category hasn't been seen yet
+	}
 
-		//Add game category to the race category list
-		catCache[raceCatID].GameCategories = append(catCache[raceCatID].GameCategories, gameCat)
+	//Get game categories for each race category
+	for k, v := range catCache {
+		gameCats, err := gamecategories.GetGameCategoriesFromRaceCategory(database, k)
+		if err != nil {
+			return nil, err
+		}
+		v.GameCategories = append(v.GameCategories, gameCats...)
 	}
 
 	//Add cached values to slice

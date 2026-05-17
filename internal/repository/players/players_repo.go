@@ -61,7 +61,7 @@ func (p *Player) Add(database *sql.DB) error {
 	}
 
 	//Get twitch ID from twitch name
-	pTwitchID, err := twitch.GetTwitchIDFromName(p.TwitchName.Value)
+	pTwitchID, err := twitch.Client.GetTwitchIDFromName(p.TwitchName.Value)
 	if err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func (p *Player) Update(database *sql.DB, newName repository.NullableStr, newTwi
 	//If twitch name is valid, make the statement for that
 	if newTwitchName.Valid {
 		//Get twitch ID
-		newTwitchID, err := twitch.GetTwitchIDFromName(newTwitchName.Value)
+		newTwitchID, err := twitch.Client.GetTwitchIDFromName(newTwitchName.Value)
 		if err != nil {
 			return err
 		}
@@ -141,8 +141,9 @@ func (p *Player) Update(database *sql.DB, newName repository.NullableStr, newTwi
 //Queries DB for players
 func QueryPlayers(database *sql.DB, playerQuery PlayerQuery) ([]*Player, error) {
 	//Build queries
+	//Similar to game category, table needs to be specified to avoid ambiguity
 	cols := []string {
-		db.ColPlayerID,
+		db.TablePlayers + "." + db.ColPlayerID,
 		db.ColPlayerName,
 		db.ColSocialsPlatformUserID,
 	}
@@ -198,9 +199,41 @@ func GetPlayerByName(database *sql.DB, name repository.NullableStr) (*Player, er
 		return nil, err
 	}
 
-	//Get player from the query. If there's none or this column doesn't exist, there's an error
+	//Get player from the query. If there's no names, check for twitch name as a fallback
+
 	names, exists := player[db.ColPlayerName]
-	if !exists || len(names) == 0 {
+	
+	//Search for player based on twitch name and update variables
+	if len(names) == 0 {
+		//Check if twitch name is valid
+		twitchID, err := twitch.Client.GetTwitchIDFromName(name.Value)
+		if err != nil {
+			return nil, PlayerDoesNotExistErr
+		} //If invalid, player doesn't exist
+
+		//TODO: Similarly with game categories, table needs to be specified to avoid abiguity
+		col := []string {
+			db.ColPlayerName, 
+			db.TablePlayers + "." + db.ColPlayerID}		
+
+		on := db.GetOnClause(db.TablePlayers, db.TableSocials, db.ColPlayerID, db.ColSocialsPlayerID)
+		table = db.JoinTables(db.TablePlayers, db.TableSocials, on)
+		where = []db.WhereCondition{{
+			ColName: db.ColSocialsPlatformUserID,
+			Op: db.Equals,
+			Value: twitchID,
+		}}
+
+		stmt = db.BuildSelectStatement(col, table, where)
+		player, err = db.ExecuteQueries(database, []db.SQLStatement{stmt})
+		if err != nil {
+			return nil, err
+		}
+
+		names, exists = player[db.ColPlayerName] //Update variables for the rest of the function
+	}
+
+	if !exists {
 		return nil, PlayerDoesNotExistErr
 	}
 
@@ -238,7 +271,7 @@ func GetPlayerByName(database *sql.DB, name repository.NullableStr) (*Player, er
 	}
 
 	//Get name from id
-	twitchName, err := twitch.GetTwitchNameFromID(twitchID)
+	twitchName, err := twitch.Client.GetTwitchNameFromID(twitchID)
 	if err != nil {
 		return nil, err
 	}
@@ -267,9 +300,9 @@ func TwitchInUseByName(database *sql.DB, name repository.NullableStr) (bool, err
 	}
 	
 	//Get twitch ID
-	id, err := twitch.GetTwitchIDFromName(name.Value)
+	id, err := twitch.Client.GetTwitchIDFromName(name.Value)
 	if err != nil {
-		return false, err
+		return false, PlayerDoesNotExistErr
 	}
 
 	exists, err := db.RecordExists(database, db.TableSocials, db.ColSocialsPlatformUserID, id)

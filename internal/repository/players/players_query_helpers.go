@@ -22,7 +22,7 @@ func getPlayerWhereCons(playerQuery PlayerQuery, twitchIDCache map[string]string
 	var twitchIDWherePtr *db.WhereCondition
 	for i, twitchName := range playerQuery.TwitchNames {
 		//Get twitch ID from the name
-		id, err := twitch.GetTwitchIDFromName(twitchName)
+		id, err := twitch.Client.GetTwitchIDFromName(twitchName)
 		if err != nil {
 			return nil, err
 		}
@@ -68,7 +68,7 @@ func parsePlayerQueryResponse(res map[string][]any, twitchIDCache map[string]str
 
 		twitchNameStr, cached := twitchIDCache[twitchID] //Check if twitch ID is cached
 		if !cached {
-			alsoTwitchNameStr, err := twitch.GetTwitchNameFromID(twitchID)
+			alsoTwitchNameStr, err := twitch.Client.GetTwitchNameFromID(twitchID)
 			twitchNameStr = alsoTwitchNameStr //Good name
 			if err != nil {
 				return nil, err

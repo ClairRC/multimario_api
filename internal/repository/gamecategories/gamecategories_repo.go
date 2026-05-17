@@ -301,6 +301,55 @@ func GameCategoryExistsByName(database *sql.DB, name repository.NullableStr) (bo
 	return exists, nil
 }
 
+//Gets game categories that are part of a race category
+func GetGameCategoriesFromRaceCategory(database *sql.DB, raceCatName string) ([]*GameCategory, error) {
+	//Get queries
+	cols := []string {
+		db.TableGameCategories + "." + db.ColGameCategoryID,
+	}
+	
+	on := db.GetOnClause(db.TableGameCategories, db.TableRaceCatGameCat, db.ColGameCategoryID, db.ColRaceCatGameCatGameCatgeoryID)
+	table := db.JoinTables(db.TableGameCategories, db.TableRaceCatGameCat, on)
+
+	on = db.GetOnClause(db.TableRaceCatGameCat, db.TableRaceCategories, db.ColRaceCatGameCatRaceCategoryID, db.ColRaceCategoryID)
+	table = db.JoinTables(table, db.TableRaceCategories, on)
+
+	whereCon := []db.WhereCondition{{
+		ColName: db.ColRaceCategoryName,
+		Op: db.Equals,
+		Value: raceCatName,
+	}}
+
+	//Execute query
+	stmt := db.BuildSelectStatement(cols, table, whereCon)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]*GameCategory, 0)
+	if len(res[db.ColGameCategoryID]) == 0 {
+		return out, nil
+	}
+
+	//Loop through and build the game categories
+	for i := range len(res[db.ColGameCategoryID]) {
+		//TODO: These should be gotten in 1 DB call instead of calling the helper.
+		//		This is a lot of unnecessary DB calls
+		id, ok := res[db.ColGameCategoryID][i].(int64)
+		if !ok {
+			return nil, errors.New("at least one game category has non-int id")
+		}
+		gameCat, err := GetGameCategoryByID(database, id)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, gameCat)
+	}
+
+	return out, nil
+}
+
 // Helper function for extracing game categories from SQL results
 func extractGameCategoriesFromQueryResult(database *sql.DB, results map[string][]any) ([]*GameCategory, error) {
 	//Get game category from the query. If there's none or this column doesn't exist, there's an error

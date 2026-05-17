@@ -13,6 +13,15 @@ import (
 //Package for handling Twitch integration.
 //For the backend, this just gets Twitch IDs from Twitch names, and verifies their existence
 
+//Interface to be able to mock twitch client for testing purposes
+type TwitchAPICaller interface {
+	GetTwitchIDFromName(string) (string, error)
+	GetTwitchNameFromID(string) (string, error)
+}
+
+//Struct for twitch API calls
+type TwitchClient struct {}
+
 type TwitchTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn int `json:"expires_in"`
@@ -27,6 +36,9 @@ type TwitchUser struct {
 	ID string `json:"id"`
 	Login string `json:"login"`
 }
+
+//Default twitch client for API calls since the actual struct doesn't have any state, its just there for the interface.
+var Client TwitchAPICaller = TwitchClient{}
 
 var httpClient *http.Client = &http.Client{Timeout: 10 * time.Second}
 var clientID string = ""
@@ -73,7 +85,7 @@ func SetTwitchParams(twitchClientID string, twitchClientSecret string) error {
 }
 
 //Gets Twitch ID from name. Returns an error if unable to get it
-func GetTwitchIDFromName(twitchName string) (string, error) {
+func (c TwitchClient) GetTwitchIDFromName(twitchName string) (string, error) {
 	params := url.Values{}
 	params.Set("login", twitchName)
 	endpoint := "https://api.twitch.tv/helix/users?" + params.Encode()
@@ -127,7 +139,7 @@ func GetTwitchIDFromName(twitchName string) (string, error) {
 }
 
 //Get twitch name from twitch ID
-func GetTwitchNameFromID(twitchID string) (string, error){
+func (c TwitchClient) GetTwitchNameFromID(twitchID string) (string, error){
 	params := url.Values{}
 	params.Set("id", twitchID)
 	endpoint := "https://api.twitch.tv/helix/users?" + params.Encode()
@@ -209,4 +221,11 @@ func refreshAccessToken() {
 	}
 
 	appAccessToken = resp.AccessToken
+}
+
+//Sets twitch Client
+//Useful for mocking twitch API calls for testing
+func SetTwitchClient(client TwitchAPICaller) {
+	//TODO: This might not be a super clean solution but like. It works I just don't want real API calls in testing.
+	Client = client
 }

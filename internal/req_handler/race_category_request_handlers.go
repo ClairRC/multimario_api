@@ -126,9 +126,21 @@ func (h *ReqHandler) EditRaceCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Validate name
-	newCatName, err := validateText(w, req, "race_category_name", false)
+	newCatName, err := validateText(w, req, "name", false)
 	if err != nil {
 		return
+	}
+
+	//Make sure race category doesn't already exist
+	if newCatName.Valid {
+		exists, err := racecategories.RaceCategoryExistsByName(h.DataBase, newCatName)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "unknown error querying database for new race category")
+		}
+
+		if exists {
+			writeError(w, http.StatusBadRequest, "new race category already exists")
+		}
 	}
 
 	//Validate game categories
@@ -204,7 +216,7 @@ func (h *ReqHandler) GetRaceCategories(w http.ResponseWriter, r *http.Request) {
 
 	raceCats, err := racecategories.QueryRaceCategories(h.DataBase, q)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "unknown error fetching race categories")
+		writeError(w, http.StatusInternalServerError, "unknown error fetching race categories: "+err.Error())
 		return
 	}
 

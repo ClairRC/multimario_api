@@ -24,6 +24,10 @@
          "error": "estimate must be valid duration in hh:mm:ss format",
          "success": false
         }
+    game_category_request_handlers_test.go:25: InvalidEstimateType response: {
+         "error": "estimate must be valid duration in hh:mm:ss format",
+         "success": false
+        }
     game_category_request_handlers_test.go:25: InvalidGameDoesntExist response: {
          "error": "game does not exist",
          "success": false
@@ -129,7 +133,7 @@
            "num_collectibles": 120
           },
           {
-           "estimate": "10:00:00",
+           "estimate": "9:00:00",
            "game": "smg2",
            "id": 9,
            "name": "smg2_242",
@@ -223,7 +227,7 @@
            "num_collectibles": 120
           },
           {
-           "estimate": "10:00:00",
+           "estimate": "9:00:00",
            "game": "smg2",
            "id": 9,
            "name": "smg2_242",
@@ -232,7 +236,228 @@
          ],
          "success": true
         }
---- PASS: TestGetGameCategories (0.00s)
+    game_category_request_handlers_test.go:51: ValidSMG2OrSMOCats response: {
+         "game_categories": [
+          {
+           "estimate": "3:30:00",
+           "game": "smg2",
+           "id": 7,
+           "name": "smg2_any%",
+           "num_collectibles": 71
+          },
+          {
+           "estimate": "6:00:00",
+           "game": "smg2",
+           "id": 8,
+           "name": "smg2_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "9:00:00",
+           "game": "smg2",
+           "id": 9,
+           "name": "smg2_242",
+           "num_collectibles": 242
+          },
+          {
+           "estimate": "1:30:00",
+           "game": "smo",
+           "id": 10,
+           "name": "smo_any%",
+           "num_collectibles": 124
+          },
+          {
+           "estimate": "3:30:00",
+           "game": "smo",
+           "id": 11,
+           "name": "smo_darker_side",
+           "num_collectibles": 503
+          },
+          {
+           "estimate": "9:00:00",
+           "game": "smo",
+           "id": 12,
+           "name": "smo_all_moons",
+           "num_collectibles": 880
+          },
+          {
+           "estimate": "11:00:00",
+           "game": "smo",
+           "id": 13,
+           "name": "smo_100%",
+           "num_collectibles": 880
+          }
+         ],
+         "success": true
+        }
+    game_category_request_handlers_test.go:51: Valid602Cats response: {
+         "game_categories": [
+          {
+           "estimate": "2:00:00",
+           "game": "sm64",
+           "id": 2,
+           "name": "sm64_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "6:00:00",
+           "game": "smg1",
+           "id": 4,
+           "name": "smg1_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "3:30:00",
+           "game": "sms",
+           "id": 6,
+           "name": "sms_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "9:00:00",
+           "game": "smg2",
+           "id": 9,
+           "name": "smg2_242",
+           "num_collectibles": 242
+          }
+         ],
+         "success": true
+        }
+    game_category_request_handlers_test.go:51: ValidSMG1_120 response: {
+         "game_categories": [
+          {
+           "estimate": "6:00:00",
+           "game": "smg1",
+           "id": 4,
+           "name": "smg1_120",
+           "num_collectibles": 120
+          }
+         ],
+         "success": true
+        }
+    game_category_request_handlers_test.go:51: ValidSMOCatsIn602 response: {
+         "game_categories": [],
+         "success": true
+        }
+    game_category_request_handlers_test.go:51: ValidSMGCatsIn246/540/602 response: {
+         "game_categories": [
+          {
+           "estimate": "3:00:00",
+           "game": "smg1",
+           "id": 3,
+           "name": "smg1_any%",
+           "num_collectibles": 61
+          },
+          {
+           "estimate": "6:00:00",
+           "game": "smg1",
+           "id": 4,
+           "name": "smg1_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "3:30:00",
+           "game": "smg2",
+           "id": 7,
+           "name": "smg2_any%",
+           "num_collectibles": 71
+          },
+          {
+           "estimate": "9:00:00",
+           "game": "smg2",
+           "id": 9,
+           "name": "smg2_242",
+           "num_collectibles": 242
+          }
+         ],
+         "success": true
+        }
+    game_category_request_handlers_test.go:51: ValidSMOCatsIn540/sandbox_100% response: {
+         "game_categories": [
+          {
+           "estimate": "1:30:00",
+           "game": "smo",
+           "id": 10,
+           "name": "smo_any%",
+           "num_collectibles": 124
+          },
+          {
+           "estimate": "9:00:00",
+           "game": "smo",
+           "id": 12,
+           "name": "smo_all_moons",
+           "num_collectibles": 880
+          }
+         ],
+         "success": true
+        }
+    game_category_request_handlers_test.go:51: ValidSMOany%SMG2120 response: {
+         "game_categories": [
+          {
+           "estimate": "6:00:00",
+           "game": "smg2",
+           "id": 8,
+           "name": "smg2_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "1:30:00",
+           "game": "smo",
+           "id": 10,
+           "name": "smo_any%",
+           "num_collectibles": 124
+          }
+         ],
+         "success": true
+        }
+    game_category_request_handlers_test.go:51: ValidCategoriesIn1862 response: {
+         "game_categories": [
+          {
+           "estimate": "2:00:00",
+           "game": "sm64",
+           "id": 2,
+           "name": "sm64_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "6:00:00",
+           "game": "smg1",
+           "id": 4,
+           "name": "smg1_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "3:30:00",
+           "game": "sms",
+           "id": 6,
+           "name": "sms_120",
+           "num_collectibles": 120
+          },
+          {
+           "estimate": "9:00:00",
+           "game": "smg2",
+           "id": 9,
+           "name": "smg2_242",
+           "num_collectibles": 242
+          },
+          {
+           "estimate": "9:00:00",
+           "game": "smo",
+           "id": 12,
+           "name": "smo_all_moons",
+           "num_collectibles": 880
+          },
+          {
+           "estimate": "4:00:00",
+           "game": "sm3dw",
+           "id": 15,
+           "name": "sm3dw_380",
+           "num_collectibles": 380
+          }
+         ],
+         "success": true
+        }
+--- PASS: TestGetGameCategories (0.01s)
 === RUN   TestAddGame
     game_request_handlers_test.go:25: ValidName response: {
          "success": true
@@ -273,7 +498,7 @@
          "error": "game name already exists",
          "success": false
         }
---- PASS: TestChangeGameName (0.00s)
+--- PASS: TestChangeGameName (0.01s)
 === RUN   TestGetGames
     game_request_handlers_test.go:51: ValidGetSM64 response: {
          "games": [
@@ -330,6 +555,1109 @@
          "success": true
         }
 --- PASS: TestGetGames (0.00s)
+=== RUN   TestAddPlayer
+    player_request_handlers_test.go:116: ValidAllFields response: {
+         "success": true
+        }
+    player_request_handlers_test.go:116: ValidEmptyDisplayName response: {
+         "success": true
+        }
+    player_request_handlers_test.go:116: ValidNoDisplayName response: {
+         "success": true
+        }
+    player_request_handlers_test.go:116: InvalidTwitchName response: {
+         "error": "twitch name is invalid",
+         "success": false
+        }
+    player_request_handlers_test.go:116: InvalidNoTwitchName response: {
+         "error": "twitch_name cannot be empty",
+         "success": false
+        }
+    player_request_handlers_test.go:116: InvalidEmptyTwitchName response: {
+         "error": "twitch_name cannot be empty",
+         "success": false
+        }
+    player_request_handlers_test.go:116: InvalidTwitchNameInUse response: {
+         "error": "twitch name is already in use",
+         "success": false
+        }
+    player_request_handlers_test.go:116: InvalidDisplayNameInUse response: {
+         "error": "player already exists",
+         "success": false
+        }
+    player_request_handlers_test.go:116: InvalidEmptyBody response: {
+         "error": "twitch_name cannot be empty",
+         "success": false
+        }
+--- PASS: TestAddPlayer (0.00s)
+=== RUN   TestEditPlayer
+    player_request_handlers_test.go:128: ValidChangeName response: {
+         "success": true
+        }
+    player_request_handlers_test.go:128: ValidChangeTwitch response: {
+         "success": true
+        }
+    player_request_handlers_test.go:128: ValidChangeBoth response: {
+         "success": true
+        }
+    player_request_handlers_test.go:128: ValidChangeNameFromTwitch response: {
+         "success": true
+        }
+    player_request_handlers_test.go:128: InvalidNameInUse response: {
+         "error": "new player name is already used",
+         "success": false
+        }
+    player_request_handlers_test.go:128: InvalidNewTwitch response: {
+         "error": "twitch name is invalid",
+         "success": false
+        }
+    player_request_handlers_test.go:128: InvalidPathName response: {
+         "error": "player does not exist",
+         "success": false
+        }
+--- PASS: TestEditPlayer (0.01s)
+=== RUN   TestGetPlayers
+    player_request_handlers_test.go:141: ValidAllPlayers response: {
+         "players": [
+          {
+           "name": "Odme",
+           "twitch_name": "odme_"
+          },
+          {
+           "name": "expreli_",
+           "twitch_name": "expreli_"
+          },
+          {
+           "name": "jake",
+           "twitch_name": "thorn_97"
+          },
+          {
+           "name": "fizz",
+           "twitch_name": "fizz64"
+          },
+          {
+           "name": "zgamut",
+           "twitch_name": "zgamut"
+          },
+          {
+           "name": "me",
+           "twitch_name": "clairdss"
+          },
+          {
+           "name": "juka",
+           "twitch_name": "jukatox"
+          },
+          {
+           "name": "galax",
+           "twitch_name": "galax_v"
+          }
+         ],
+         "success": true
+        }
+    player_request_handlers_test.go:141: ValidExpreliOdmeGamut response: {
+         "players": [
+          {
+           "name": "Odme",
+           "twitch_name": "odme_"
+          },
+          {
+           "name": "expreli_",
+           "twitch_name": "expreli_"
+          },
+          {
+           "name": "zgamut",
+           "twitch_name": "zgamut"
+          }
+         ],
+         "success": true
+        }
+    player_request_handlers_test.go:141: ValidSearchByTwitchNames response: {
+         "players": [
+          {
+           "name": "expreli_",
+           "twitch_name": "expreli_"
+          },
+          {
+           "name": "me",
+           "twitch_name": "clairdss"
+          },
+          {
+           "name": "juka",
+           "twitch_name": "jukatox"
+          }
+         ],
+         "success": true
+        }
+    player_request_handlers_test.go:141: ValidSearchByBoth response: {
+         "players": [
+          {
+           "name": "me",
+           "twitch_name": "clairdss"
+          }
+         ],
+         "success": true
+        }
+--- PASS: TestGetPlayers (0.01s)
+=== RUN   TestAddRaceCategory
+    race_category_request_handlers_test.go:25: Valid response: {
+         "success": true
+        }
+    race_category_request_handlers_test.go:25: ValidOneGame response: {
+         "success": true
+        }
+    race_category_request_handlers_test.go:25: InvalidNoGames response: {
+         "error": "game_categories cannot be empty",
+         "success": false
+        }
+    race_category_request_handlers_test.go:25: InvalidNoGameCatNames response: {
+         "error": "game_category_name cannot be empty",
+         "success": false
+        }
+    race_category_request_handlers_test.go:25: InvalidGameCatDoesntExist response: {
+         "error": "game category does not exist",
+         "success": false
+        }
+    race_category_request_handlers_test.go:25: InvalidMissingRaceCategoryName response: {
+         "error": "name cannot be empty",
+         "success": false
+        }
+    race_category_request_handlers_test.go:25: InvalidRaceCatAlreadyExists response: {
+         "error": "race category already exists",
+         "success": false
+        }
+--- PASS: TestAddRaceCategory (0.00s)
+=== RUN   TestEditRaceCategory
+    race_category_request_handlers_test.go:38: ValidChangeNameAndGames response: {
+         "success": true
+        }
+    race_category_request_handlers_test.go:38: ValidChangeNameNotGames response: {
+         "success": true
+        }
+    race_category_request_handlers_test.go:38: ValidChangeGames response: {
+         "success": true
+        }
+    race_category_request_handlers_test.go:38: ValidEmpty response: {
+         "success": true
+        }
+    race_category_request_handlers_test.go:38: ValidEmptyArray response: {
+         "success": true
+        }
+    race_category_request_handlers_test.go:38: InvalidGameCatDoesntExist response: {
+         "error": "game category does not exist",
+         "success": false
+        }
+    race_category_request_handlers_test.go:38: InvalidRaceCatDoesntExist response: {
+         "error": "race category does not exist",
+         "success": false
+        }
+    race_category_request_handlers_test.go:38: InvalidRaceCatAlreadyExists response: {
+         "error": "new race category already exists",
+         "success": false
+        }
+--- PASS: TestEditRaceCategory (0.01s)
+=== RUN   TestGetRaceCategories
+    race_category_request_handlers_test.go:53: ValidAll response: {
+         "race_categories": [
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smo",
+             "name": "smo_all_moons",
+             "num_collectibles": 880
+            },
+            {
+             "estimate": "4:00:00",
+             "game": "sm3dw",
+             "name": "sm3dw_380",
+             "num_collectibles": 380
+            }
+           ],
+           "name": "1862",
+           "num_collectibles": 1862
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            },
+            {
+             "estimate": "1:50:00",
+             "game": "sm3dw",
+             "name": "sm3dw_any%",
+             "num_collectibles": 170
+            }
+           ],
+           "name": "540",
+           "num_collectibles": 540
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            }
+           ],
+           "name": "602",
+           "num_collectibles": 602
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            }
+           ],
+           "name": "246",
+           "num_collectibles": 246
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            }
+           ],
+           "name": "sandbox_any%",
+           "num_collectibles": 238
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smo",
+             "name": "smo_all_moons",
+             "num_collectibles": 880
+            }
+           ],
+           "name": "sandbox_100%",
+           "num_collectibles": 1120
+          }
+         ],
+         "success": true
+        }
+    race_category_request_handlers_test.go:53: Valid602 response: {
+         "race_categories": [
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            }
+           ],
+           "name": "602",
+           "num_collectibles": 602
+          }
+         ],
+         "success": true
+        }
+    race_category_request_handlers_test.go:53: Valid6021862 response: {
+         "race_categories": [
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            }
+           ],
+           "name": "602",
+           "num_collectibles": 602
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smo",
+             "name": "smo_all_moons",
+             "num_collectibles": 880
+            },
+            {
+             "estimate": "4:00:00",
+             "game": "sm3dw",
+             "name": "sm3dw_380",
+             "num_collectibles": 380
+            }
+           ],
+           "name": "1862",
+           "num_collectibles": 1862
+          }
+         ],
+         "success": true
+        }
+    race_category_request_handlers_test.go:53: ValidRaceCategoriesWithSMO response: {
+         "race_categories": [
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            },
+            {
+             "estimate": "1:50:00",
+             "game": "sm3dw",
+             "name": "sm3dw_any%",
+             "num_collectibles": 170
+            }
+           ],
+           "name": "540",
+           "num_collectibles": 540
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            }
+           ],
+           "name": "sandbox_any%",
+           "num_collectibles": 238
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smo",
+             "name": "smo_all_moons",
+             "num_collectibles": 880
+            }
+           ],
+           "name": "sandbox_100%",
+           "num_collectibles": 1120
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smo",
+             "name": "smo_all_moons",
+             "num_collectibles": 880
+            },
+            {
+             "estimate": "4:00:00",
+             "game": "sm3dw",
+             "name": "sm3dw_380",
+             "num_collectibles": 380
+            }
+           ],
+           "name": "1862",
+           "num_collectibles": 1862
+          }
+         ],
+         "success": true
+        }
+    race_category_request_handlers_test.go:53: ValidCategoryWithSMSany% response: {
+         "race_categories": [
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            }
+           ],
+           "name": "246",
+           "num_collectibles": 246
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            }
+           ],
+           "name": "sandbox_any%",
+           "num_collectibles": 238
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            },
+            {
+             "estimate": "1:50:00",
+             "game": "sm3dw",
+             "name": "sm3dw_any%",
+             "num_collectibles": 170
+            }
+           ],
+           "name": "540",
+           "num_collectibles": 540
+          }
+         ],
+         "success": true
+        }
+    race_category_request_handlers_test.go:53: ValidHasSMOAndSMOAllMoons response: {
+         "race_categories": [
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smo",
+             "name": "smo_all_moons",
+             "num_collectibles": 880
+            }
+           ],
+           "name": "sandbox_100%",
+           "num_collectibles": 1120
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smo",
+             "name": "smo_all_moons",
+             "num_collectibles": 880
+            },
+            {
+             "estimate": "4:00:00",
+             "game": "sm3dw",
+             "name": "sm3dw_380",
+             "num_collectibles": 380
+            }
+           ],
+           "name": "1862",
+           "num_collectibles": 1862
+          }
+         ],
+         "success": true
+        }
+    race_category_request_handlers_test.go:53: Valid602AndSMO response: {
+         "race_categories": [],
+         "success": true
+        }
+    race_category_request_handlers_test.go:53: ValidSM6470OrSMG1Any% response: {
+         "race_categories": [
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            }
+           ],
+           "name": "246",
+           "num_collectibles": 246
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            }
+           ],
+           "name": "sandbox_any%",
+           "num_collectibles": 238
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            },
+            {
+             "estimate": "1:50:00",
+             "game": "sm3dw",
+             "name": "sm3dw_any%",
+             "num_collectibles": 170
+            }
+           ],
+           "name": "540",
+           "num_collectibles": 540
+          }
+         ],
+         "success": true
+        }
+    race_category_request_handlers_test.go:53: ValidSMOAny%InSandboxAny% response: {
+         "race_categories": [
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            }
+           ],
+           "name": "sandbox_any%",
+           "num_collectibles": 238
+          }
+         ],
+         "success": true
+        }
+    race_category_request_handlers_test.go:53: ValidCategoriesWithSMG2 response: {
+         "race_categories": [
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            }
+           ],
+           "name": "246",
+           "num_collectibles": 246
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smo",
+             "name": "smo_all_moons",
+             "num_collectibles": 880
+            },
+            {
+             "estimate": "4:00:00",
+             "game": "sm3dw",
+             "name": "sm3dw_380",
+             "num_collectibles": 380
+            }
+           ],
+           "name": "1862",
+           "num_collectibles": 1862
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            },
+            {
+             "estimate": "1:50:00",
+             "game": "sm3dw",
+             "name": "sm3dw_any%",
+             "num_collectibles": 170
+            }
+           ],
+           "name": "540",
+           "num_collectibles": 540
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            }
+           ],
+           "name": "602",
+           "num_collectibles": 602
+          }
+         ],
+         "success": true
+        }
+--- PASS: TestGetRaceCategories (0.02s)
 === RUN   TestCreateRace
     race_request_handlers_test.go:83: ValidAllFields response: {
          "id": 9,
@@ -395,7 +1723,7 @@
          "error": "start_time must be valid time in hh:mm:ss format",
          "success": false
         }
---- PASS: TestCreateRace (0.01s)
+--- PASS: TestCreateRace (0.02s)
 === RUN   TestUpdateRace
     race_request_handlers_test.go:103: ID1ValidUpdateAll response: {
          "success": true
@@ -533,7 +1861,7 @@
          "error": "start_time must be valid time in hh:mm:ss format",
          "success": false
         }
---- PASS: TestUpdateRace (0.04s)
+--- PASS: TestUpdateRace (0.03s)
 === RUN   TestGetRaces
     race_request_handlers_test.go:117: ValidNoQueries response: {
          "races": [
@@ -814,9 +2142,9 @@
          "error": "invalid is not a valid race status",
          "success": false
         }
---- PASS: TestGetRaces (0.03s)
+--- PASS: TestGetRaces (0.02s)
 PASS
-ok  	github.com/multimario_api/internal/req_handler	0.312s
+ok  	github.com/multimario_api/internal/req_handler	0.344s
 ?   	github.com/multimario_api/internal/routes	[no test files]
 ?   	github.com/multimario_api/internal/testing	[no test files]
 ?   	github.com/multimario_api/internal/twitch	[no test files]

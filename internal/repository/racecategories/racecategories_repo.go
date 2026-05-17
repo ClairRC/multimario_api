@@ -179,10 +179,11 @@ func (c *RaceCategory) Update(database *sql.DB, newName repository.NullableStr, 
 //Queries race categories
 func QueryRaceCategories(database *sql.DB, raceCategoryQuery RaceCategoryQuery) ([]*RaceCategory, error) {
 	//Set up request
+	//TODO: Table needs to be specified to avoid ambiguous column names
 	cols := []string {
 		db.ColRaceCategoryName, 
-		db.ColRaceCategoryID, 
-		db.ColGameCategoryID,
+		db.TableRaceCategories + "." + db.ColRaceCategoryID, 
+		db.TableGameCategories + "." + db.ColGameCategoryID,
 	}
 	table := getRaceCategoryQueryTable()
 	whereCons := getRaceCategoryWhereCons(raceCategoryQuery)
