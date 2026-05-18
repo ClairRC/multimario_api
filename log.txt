@@ -498,7 +498,7 @@
          "error": "game name already exists",
          "success": false
         }
---- PASS: TestChangeGameName (0.01s)
+--- PASS: TestChangeGameName (0.00s)
 === RUN   TestGetGames
     game_request_handlers_test.go:51: ValidGetSM64 response: {
          "games": [
@@ -767,6 +767,30 @@
              "num_collectibles": 120
             },
             {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smo",
+             "name": "smo_all_moons",
+             "num_collectibles": 880
+            }
+           ],
+           "name": "sandbox_100%",
+           "num_collectibles": 1120
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
              "estimate": "6:00:00",
              "game": "smg1",
              "name": "smg1_120",
@@ -925,30 +949,6 @@
            ],
            "name": "sandbox_any%",
            "num_collectibles": 238
-          },
-          {
-           "game_categories": [
-            {
-             "estimate": "2:00:00",
-             "game": "sm64",
-             "name": "sm64_120",
-             "num_collectibles": 120
-            },
-            {
-             "estimate": "3:30:00",
-             "game": "sms",
-             "name": "sms_120",
-             "num_collectibles": 120
-            },
-            {
-             "estimate": "9:00:00",
-             "game": "smo",
-             "name": "smo_all_moons",
-             "num_collectibles": 880
-            }
-           ],
-           "name": "sandbox_100%",
-           "num_collectibles": 1120
           }
          ],
          "success": true
@@ -1076,48 +1076,6 @@
              "num_collectibles": 70
             },
             {
-             "estimate": "3:00:00",
-             "game": "smg1",
-             "name": "smg1_any%",
-             "num_collectibles": 61
-            },
-            {
-             "estimate": "1:30:00",
-             "game": "sms",
-             "name": "sms_any%",
-             "num_collectibles": 44
-            },
-            {
-             "estimate": "3:30:00",
-             "game": "smg2",
-             "name": "smg2_any%",
-             "num_collectibles": 71
-            },
-            {
-             "estimate": "1:30:00",
-             "game": "smo",
-             "name": "smo_any%",
-             "num_collectibles": 124
-            },
-            {
-             "estimate": "1:50:00",
-             "game": "sm3dw",
-             "name": "sm3dw_any%",
-             "num_collectibles": 170
-            }
-           ],
-           "name": "540",
-           "num_collectibles": 540
-          },
-          {
-           "game_categories": [
-            {
-             "estimate": "1:00:00",
-             "game": "sm64",
-             "name": "sm64_70",
-             "num_collectibles": 70
-            },
-            {
              "estimate": "1:30:00",
              "game": "sms",
              "name": "sms_any%",
@@ -1198,6 +1156,48 @@
            ],
            "name": "1862",
            "num_collectibles": 1862
+          },
+          {
+           "game_categories": [
+            {
+             "estimate": "1:00:00",
+             "game": "sm64",
+             "name": "sm64_70",
+             "num_collectibles": 70
+            },
+            {
+             "estimate": "3:00:00",
+             "game": "smg1",
+             "name": "smg1_any%",
+             "num_collectibles": 61
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "sms",
+             "name": "sms_any%",
+             "num_collectibles": 44
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "smg2",
+             "name": "smg2_any%",
+             "num_collectibles": 71
+            },
+            {
+             "estimate": "1:30:00",
+             "game": "smo",
+             "name": "smo_any%",
+             "num_collectibles": 124
+            },
+            {
+             "estimate": "1:50:00",
+             "game": "sm3dw",
+             "name": "sm3dw_any%",
+             "num_collectibles": 170
+            }
+           ],
+           "name": "540",
+           "num_collectibles": 540
           }
          ],
          "success": true
@@ -1513,6 +1513,36 @@
           {
            "game_categories": [
             {
+             "estimate": "2:00:00",
+             "game": "sm64",
+             "name": "sm64_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "6:00:00",
+             "game": "smg1",
+             "name": "smg1_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "3:30:00",
+             "game": "sms",
+             "name": "sms_120",
+             "num_collectibles": 120
+            },
+            {
+             "estimate": "9:00:00",
+             "game": "smg2",
+             "name": "smg2_242",
+             "num_collectibles": 242
+            }
+           ],
+           "name": "602",
+           "num_collectibles": 602
+          },
+          {
+           "game_categories": [
+            {
              "estimate": "1:00:00",
              "game": "sm64",
              "name": "sm64_70",
@@ -1623,36 +1653,6 @@
            ],
            "name": "540",
            "num_collectibles": 540
-          },
-          {
-           "game_categories": [
-            {
-             "estimate": "2:00:00",
-             "game": "sm64",
-             "name": "sm64_120",
-             "num_collectibles": 120
-            },
-            {
-             "estimate": "6:00:00",
-             "game": "smg1",
-             "name": "smg1_120",
-             "num_collectibles": 120
-            },
-            {
-             "estimate": "3:30:00",
-             "game": "sms",
-             "name": "sms_120",
-             "num_collectibles": 120
-            },
-            {
-             "estimate": "9:00:00",
-             "game": "smg2",
-             "name": "smg2_242",
-             "num_collectibles": 242
-            }
-           ],
-           "name": "602",
-           "num_collectibles": 602
           }
          ],
          "success": true
@@ -1723,7 +1723,7 @@
          "error": "start_time must be valid time in hh:mm:ss format",
          "success": false
         }
---- PASS: TestCreateRace (0.02s)
+--- PASS: TestCreateRace (0.01s)
 === RUN   TestUpdateRace
     race_request_handlers_test.go:103: ID1ValidUpdateAll response: {
          "success": true
@@ -2143,8 +2143,410 @@
          "success": false
         }
 --- PASS: TestGetRaces (0.02s)
+=== RUN   TestCreateRecord
+    record_request_handlers_test.go:59: ValidAllFields response: {
+         "success": true
+        }
+    record_request_handlers_test.go:59: ValidNoFinishTime response: {
+         "success": true
+        }
+    record_request_handlers_test.go:59: ValidNoCollectibles response: {
+         "success": true
+        }
+    record_request_handlers_test.go:59: ValidNoTwitchName response: {
+         "success": true
+        }
+    record_request_handlers_test.go:59: ValidNoRuns response: {
+         "success": true
+        }
+    record_request_handlers_test.go:59: InvalidBadEstimateFormat response: {
+         "error": "estimate must be valid duration in hh:mm:ss format",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidBadGameTimeFormat response: {
+         "error": "time must be valid duration in hh:mm:ss format",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidRaceDoesntExist response: {
+         "error": "requested race id is invalid",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidPlayerDoesntExist response: {
+         "error": "player does not exist",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidCategoryNotInRace response: {
+         "error": "smo_100% is not apart of race",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidFinishTimeFormat response: {
+         "error": "finish_time must be valid duration in hh:mm:ss format",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidNoCategoryName response: {
+         "error": "category_name cannot be empty",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidEmpty response: {
+         "error": "race_id cannot be empty",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidNoPlayer response: {
+         "error": "player_name cannot be empty",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidEmpty response: {
+         "error": "race_id cannot be empty",
+         "success": false
+        }
+    record_request_handlers_test.go:59: InvalidRecordExists response: {
+         "error": "race record already exists",
+         "success": false
+        }
+--- PASS: TestCreateRecord (0.02s)
+=== RUN   TestUpdateRecord
+    record_request_handlers_test.go:71: ValidAllFields response: {
+         "success": true
+        }
+    record_request_handlers_test.go:71: ValidNoNumCollected response: {
+         "success": true
+        }
+    record_request_handlers_test.go:71: ValidNoFinish response: {
+         "success": true
+        }
+    record_request_handlers_test.go:71: ValidEmpty response: {
+         "success": true
+        }
+    record_request_handlers_test.go:71: InvalidPlayer response: {
+         "error": "player does not exist",
+         "success": false
+        }
+    record_request_handlers_test.go:71: InvalidRace response: {
+         "error": "race does not exist",
+         "success": false
+        }
+    record_request_handlers_test.go:71: InvalidTimeFormat response: {
+         "error": "finish_time must be valid duration in hh:mm:ss format",
+         "success": false
+        }
+    record_request_handlers_test.go:71: InvalidCollectedFormat response: {
+         "error": "num_collected must be an int",
+         "success": false
+        }
+--- PASS: TestUpdateRecord (0.01s)
+=== RUN   TestGetRecords
+    record_request_handlers_test.go:84: ValidAllRecords response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 2,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 3,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "jake",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "me",
+           "race_id": 6,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "galax",
+           "race_id": 2,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "juka",
+           "race_id": 7,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidFromOdme response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 2,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 3,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidFromOdmeOrMe response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 2,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 3,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "me",
+           "race_id": 6,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidBefore2020 response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 3,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "jake",
+           "race_id": 1,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidBefore2000After1000 response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 3,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidOn response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "jake",
+           "race_id": 1,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidSlowerThan30hr response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 2,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 3,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "jake",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "me",
+           "race_id": 6,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "galax",
+           "race_id": 2,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "juka",
+           "race_id": 7,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidSlowerThan20hr response: {
+         "records": [],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidFasterThan20hr response: {
+         "records": [],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidFasterThan10hr response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 2,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 3,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "jake",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "me",
+           "race_id": 6,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "galax",
+           "race_id": 2,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "juka",
+           "race_id": 7,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: Valid602s response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "Odme",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "jake",
+           "race_id": 1,
+           "time": "20:00:00"
+          },
+          {
+           "num_collected": 15,
+           "player_name": "juka",
+           "race_id": 7,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidFromThorn response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "jake",
+           "race_id": 1,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidFromThornAndJake response: {
+         "records": [
+          {
+           "num_collected": 15,
+           "player_name": "jake",
+           "race_id": 1,
+           "time": "20:00:00"
+          }
+         ],
+         "success": true
+        }
+    record_request_handlers_test.go:84: ValidPlayerDoesntExist response: {
+         "records": [],
+         "success": true
+        }
+    record_request_handlers_test.go:84: InvalidDate response: {
+         "error": "12/31/1000 cannot be parsed as date. must be in yyyy-mm-dd format",
+         "success": false
+        }
+    record_request_handlers_test.go:84: InvalidTime response: {
+         "error": "3:69:12 cannot be parsed as duration. Must be hh:mm:ss format",
+         "success": false
+        }
+--- PASS: TestGetRecords (0.03s)
 PASS
-ok  	github.com/multimario_api/internal/req_handler	0.344s
+ok  	github.com/multimario_api/internal/req_handler	0.350s
 ?   	github.com/multimario_api/internal/routes	[no test files]
 ?   	github.com/multimario_api/internal/testing	[no test files]
 ?   	github.com/multimario_api/internal/twitch	[no test files]

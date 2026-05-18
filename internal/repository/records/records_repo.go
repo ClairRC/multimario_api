@@ -167,7 +167,7 @@ func QueryRecord(database *sql.DB, recordQuery RecordQuery) ([]*Record, error) {
 	//aren't really good enough for that. So this will work for this scale
 	cols := []string {
 		db.ColPlayerName,
-		db.ColRecordsRaceID,
+		db.TableRecords + "." + db.ColRecordsRaceID,
 		db.ColRecordsFinishTime,
 		db.ColRecordsNumCollected,
 		db.ColRecordID,
@@ -275,6 +275,36 @@ func RecordExists(database *sql.DB, recordID int64) (bool, error) {
 	}
 
 	return exists, nil
+}
+
+//Check record exists using race and player name
+func RecordExistsFromRaceAndPlayer(database *sql.DB, raceID int64, playerName string) (bool, error) {
+	//Get race values from DB
+	cols := []string {
+		db.ColRecordID,
+	}
+
+	whereCons := []db.WhereCondition{{
+		ColName: db.ColPlayerName,
+		Op: db.Equals,
+		Value: playerName,
+	},
+	{
+		ColName: db.ColRecordsRaceID,
+		Op: db.Equals,
+		Value: raceID,
+	}}
+	
+	on := db.GetOnClause(db.TablePlayers, db.TableRecords, db.ColRecordsPlayerID, db.ColPlayerID)
+	table := db.JoinTables(db.TablePlayers, db.TableRecords, on)
+
+	//Get record
+	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil { return false, err }
+
+	//Check length of response. Greater than 0 means record exists
+	return len(res[db.ColRecordID]) > 0, nil
 }
 
 func getRunsFromRecordID(database *sql.DB, recordID int64) ([]*runs.Run, error) {

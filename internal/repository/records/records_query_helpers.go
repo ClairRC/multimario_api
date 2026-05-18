@@ -72,6 +72,7 @@ func getRecordQueryTable() string {
 	on := db.GetOnClause(db.TableRecords, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
 	table := db.JoinTables(db.TableRecords, db.TablePlayers, on)
 
+
 	on = db.GetOnClause(db.TableRecords, db.TableRaces, db.ColRecordsRaceID, db.ColRaceID)
 	table = db.JoinTables(table, db.TableRaces, on)
 

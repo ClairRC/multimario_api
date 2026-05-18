@@ -90,6 +90,18 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 		numCollected = repository.MakeNullableInt(0) //Set default value to 0
 	}
 
+	//Check that this player doesn't already have a record to prevent double adding
+	recordExists, err := records.RecordExistsFromRaceAndPlayer(h.DataBase, int64(raceID.Value), playerName.Value)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unable to verify record existence")
+		return
+	}
+
+	if recordExists {
+		writeError(w, http.StatusBadRequest, "race record already exists")
+		return
+	}
+
 	//Get race from ID
 	race, err := races.GetRaceByID(h.DataBase, int64(raceID.Value))
 	if err != nil {
@@ -223,7 +235,7 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 *	records: //Array of race records
 *	[
 *		{
-*			player_id: int //ID of the racer this record belongs to
+*			player_name: string //Name of the racer this record belongs to.
 *			race_id: int //ID of the race this record belongs to
 *			time: string //hh:mm:ss The time that was gotten by this player in this race. NULL if unfinished
 *			num_collected: int //Number of collectibles this player got. If the race was finished, this should be the number of collectibles in the category
@@ -273,6 +285,16 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	//For names that are twitch names not display names, replace the name with the display name.
+	//TODO: This is many extra DB calls and not really super clean. Worth refactoring
+	for i, name := range urlPlayerNames{
+		player, err := players.GetPlayerByName(h.DataBase, repository.MakeNullableStr(name))
+		if err != nil {
+			continue 
+		} //No player by this name Or twitch name
+		urlPlayerNames[i] = player.Name.Value
+	}
+
 	//Build query
 	q := records.RecordQuery{
 		PlayerNames: urlPlayerNames,
@@ -288,7 +310,7 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 	//Get records
 	records, err := records.QueryRecord(h.DataBase, q)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "unknown error fetching race records")
+		writeError(w, http.StatusInternalServerError, "unknown error fetching race records: "+err.Error())
 		return
 	}
 
@@ -298,7 +320,7 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 
 	for _, r := range records {
 		newRecord := make(map[string]any)
-		newRecord["player_id"] = r.Player.Name.Value
+		newRecord["player_name"] = r.Player.Name.Value
 		newRecord["race_id"] = r.Race.RaceID
 		newRecord["time"] = r.FinishTime.NullableValue()
 		newRecord["num_collected"] = r.NumCollected.Value

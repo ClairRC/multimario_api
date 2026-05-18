@@ -27,7 +27,7 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 
 	//Race Records Handlers
 	m.HandleFunc("POST /records", h.CreateRecord)
-	m.HandleFunc("PATCH /records", h.UpdateRecord)
+	m.HandleFunc("PATCH /records/{race_id}/{player_name}", h.UpdateRecord)
 	m.HandleFunc("GET /records", h.GetRaceRecords)
 	m.HandleFunc("DELETE /records", h.DeleteRaceRecord)
 
