@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/multimario_api/internal/db"
+	"github.com/multimario_api/internal/repository/races"
 	testutils "github.com/multimario_api/internal/testing"
 	"github.com/multimario_api/internal/twitch"
 	_ "github.com/ncruces/go-sqlite3/driver"
@@ -193,11 +194,11 @@ func initRecordHandlerTestDB(t *testing.T) recordTestDB {
 }
 
 //Helper function to handle SQL calls to the test database
-func populateTestDB(t *testing.T, tdb testutils.TestDB, players []playerStruct, races []raceStruct, records []recordStruct) recordTestDB {
+func populateTestDB(t *testing.T, tdb testutils.TestDB, players []playerStruct, raceStruct []raceStruct, records []recordStruct) recordTestDB {
 	t.Helper()
 
 	raceIDs := make([]int64, 0)
-	for _, r := range races {
+	for _, r := range raceStruct {
 		stmt := fmt.Sprintf("INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)",
 			db.TableRaces, db.ColRaceRaceCategoryID, db.ColRaceDate, db.ColRaceStatus, db.ColRaceStartTime)
 		res, err := tdb.Database.Exec(stmt, tdb.RaceCatIDs[r.Category], r.Date, r.Status, r.StartTime)
@@ -211,6 +212,12 @@ func populateTestDB(t *testing.T, tdb testutils.TestDB, players []playerStruct, 
 		}
 
 		raceIDs = append(raceIDs, newRaceID)
+	}
+
+	//Init current race
+	err := races.InitCurrentRace(tdb.Database)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	playerIDs := make([]int64, 0)

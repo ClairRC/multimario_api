@@ -91,7 +91,7 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -187,7 +187,7 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Success
-	writeJSON(w, http.StatusOK, map[string]any{"success":true})
+	writeJSON(w, http.StatusOK, map[string]any{"success":true}, nil)
 }
 
 /*
@@ -254,5 +254,5 @@ func (h *ReqHandler) GetPlayers(w http.ResponseWriter, r *http.Request) {
 	out["players"] = playerInfo
 	out["success"] = true
 
-	writeJSON(w, http.StatusOK, out)
+	writeJSON(w, http.StatusOK, out, nil)
 }

@@ -3,6 +3,9 @@ package races
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"log"
+	"sync"
 
 	"github.com/multimario_api/internal/db"
 	"github.com/multimario_api/internal/repository"
@@ -26,8 +29,17 @@ type RaceQuery struct {
 	Statuses []string
 }
 
+//Struct for current race and mutex
+type currentRaceStruct struct {
+	id int64
+	mu sync.RWMutex
+}
+
+var currentRace currentRaceStruct = currentRaceStruct{0, *new(sync.RWMutex)}
+
 //Errors
 var RaceDoesNotExistErr error = errors.New("race does not exist")
+var RaceIsInProgressErr error = errors.New("a race is currently in progress")
 
 /*
 * Race Constructor
@@ -73,6 +85,18 @@ func (r *Race) Add(database *sql.DB) error {
 		return errors.New("race already exists")
 	}
 
+	//If race status is in progress, check if there is already a race in progress
+	if r.Status.Value == "in_progress" {
+		currentRace.mu.Lock()
+		defer currentRace.mu.Unlock()
+		
+		inProgress := raceIsInProgress()
+		fmt.Printf("\n\n%v\n\n", currentRace.id)
+		if inProgress {
+			return RaceIsInProgressErr
+		}
+	}
+
 	//Get race category ID
 	raceCatID := r.RaceCategory.CategoryID
 
@@ -110,6 +134,12 @@ func (r *Race) Add(database *sql.DB) error {
 
 	//Get race ID and return
 	r.RaceID = ids[0]
+	
+	//Update the current race to be in progress
+	if r.Status.Value == "in_progress" {
+		currentRace.id = r.RaceID
+	}
+	
 	return nil
 }
 
@@ -121,6 +151,25 @@ func (r *Race) Update(database *sql.DB, newDate repository.NullableStr,
 		//Check if race ID exists
 		if r.RaceID == 0 {
 			return RaceDoesNotExistErr
+		}
+
+		//Check new race status
+		if newStatus.Value == "in_progress" {
+			currentRace.mu.Lock()
+			defer currentRace.mu.Unlock()
+			
+			inProgress := raceIsInProgress()
+			if inProgress {
+				return RaceIsInProgressErr
+			}
+		}
+
+		//If we are finishing this race and there's no errors, set the current race to be 0
+		if newStatus.Value == "completed" && r.Status.Value == "in_progress" {
+			//Lock mutex and update the race ID
+			currentRace.mu.Lock()
+			currentRace.id = 0
+			currentRace.mu.Unlock()
 		}
 
 		//Build Update statement parameters
@@ -155,7 +204,19 @@ func (r *Race) Update(database *sql.DB, newDate repository.NullableStr,
 
 		//Execute update
 		_, err = db.ExecuteStatements(database, []db.SQLStatement{update})
-		return err
+		if err != nil {
+			return err
+		}
+
+		//Update current race ID if necesarry
+		if newStatus.Value == "in_progress" {
+			currentRace.id = r.RaceID
+		}
+		if newStatus.Value == "completed" && r.Status.Value == "in_progress" {
+			currentRace.id = 0
+		}
+
+		return nil
 }
 
 /*
@@ -250,4 +311,55 @@ func GetRaceByID(database *sql.DB, id int64) (*Race, error) {
 		RaceCategory: raceCat,
 		RaceID: id,
 	}, nil
+}
+
+//Helpers for getting information about the current race
+func raceIsInProgress() bool {
+	return currentRace.id != 0
+}
+
+//Helper to get current race ID. If it's 0, there is no race in prorgess
+func GetCurrentRaceID() int64 {
+	currentRace.mu.RLock()
+	defer currentRace.mu.RUnlock()
+
+	return currentRace.id
+}
+
+//Helper to initiate the current race struct at startup
+func InitCurrentRace(database *sql.DB) error {
+	//Check DB for in progress race
+	cols := []string{
+		db.ColRaceID,
+	}
+	table := db.TableRaces
+	whereCon := []db.WhereCondition{{
+		ColName: db.ColRaceStatus,
+		Op: db.Equals,
+		Value: "in_progress",
+	}}
+
+	stmt := db.BuildSelectStatement(cols, table, whereCon)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return err
+	}
+
+	//If there are no races in progress, just return false because default current race is 0
+	if len(res[db.ColRaceID]) == 0 {
+		return nil
+	}
+
+	if len(res[db.ColRaceID]) > 1 {
+		log.Println("warning: multiple races set to in_progress status. using the first one.")
+	}
+
+	//Lock mutex and set the ID
+	newID, ok := res[db.ColRaceID][0].(int64)
+	if !ok {
+		return errors.New("unknown error: race id can't be parsed as int")
+	}
+
+	currentRace.id = newID
+	return nil
 }

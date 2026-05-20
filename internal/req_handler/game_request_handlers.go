@@ -43,7 +43,7 @@ func (h *ReqHandler) AddGame(w http.ResponseWriter, r *http.Request) {
 	game.Add(h.DataBase)
 
 	//Write output
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -110,7 +110,7 @@ func (h *ReqHandler) ChangeGameName(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "unknown error updating game name")
 	}
 
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -160,5 +160,5 @@ func (h *ReqHandler) GetGames(w http.ResponseWriter, r *http.Request) {
 	out["games"] = outGames
 	out["success"] = true
 
-	writeJSON(w, http.StatusOK, out)
+	writeJSON(w, http.StatusOK, out, nil)
 }

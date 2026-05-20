@@ -9,6 +9,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"net/url"
+	"strconv"
 
 	"github.com/multimario_api/internal/repository"
 )
@@ -34,9 +36,13 @@ func parseReqJSON(r *http.Request) (map[string]any, error) {
 }
 
 //Helper function to write JSON to w
-func writeJSON(w http.ResponseWriter, status int, data map[string]any) {
+func writeJSON(w http.ResponseWriter, status int, data map[string]any, meta map[string]any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
+
+	if meta != nil {
+		data["meta"] = meta //Add metadata
+	}
 	json.NewEncoder(w).Encode(&data)
 }
 
@@ -45,6 +51,60 @@ func writeError(w http.ResponseWriter, status int, err string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(&(map[string]any {"success": false, "error": err}))
+}
+
+//Function to parse URL parameters into page number for pagination
+func getResponsePageNum(urlPageNumParams []string) (int, error) {
+	//If there's no page number, defaults to 1
+	pageNum := 1
+	if len(urlPageNumParams) > 0 {
+		parsed, err := strconv.Atoi(urlPageNumParams[0])
+		if err != nil {
+			return -1, err
+		}
+
+		if parsed > 0 {
+			pageNum = parsed
+		}
+	}
+	return pageNum, nil
+}
+
+//Function to convert items into paginated items. Returns paginated items and metadata
+func paginate(items []map[string]any, url *url.URL, pageNum int, limit int) ([]map[string]any, map[string]any) {
+	offset := (pageNum - 1) * limit
+
+	//Get metadata for this
+	meta := make(map[string]any)
+	if pageNum > 1 {
+		urlCopy := *url
+		q := urlCopy.Query()
+		q.Set("page_num", strconv.Itoa(pageNum-1))
+		urlCopy.RawQuery = q.Encode()
+		meta["prev_url"] = urlCopy.String()
+	} else {
+		meta["prev_url"] = nil
+	}
+
+	if offset + limit < len(items) {
+		urlCopy := *url
+		q := urlCopy.Query()
+		q.Set("page_num", strconv.Itoa(pageNum + 1))
+		urlCopy.RawQuery = q.Encode()
+		meta["next_url"] = urlCopy.String()
+	} else {
+		meta["next_url"] = nil
+	}
+	meta["total_items"] = len(items)
+
+	//Set items to only be between the two limits
+	if offset >= len(items) {
+		items = make([]map[string]any, 0)
+	} else {
+		items = items[offset:min(offset+limit, len(items))]
+	}
+
+	return items, meta
 }
 
 //Functions for validating field types

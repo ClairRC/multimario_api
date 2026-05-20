@@ -299,3 +299,18 @@ func GetRaceCategoryIDFromName(database *sql.DB, name string) (int64, error) {
 
 	return id, nil
 }
+
+//Helper to check if a race category contains a game catgeory
+func RaceCatContainsGameCat(database *sql.DB, raceCatName string, gameCatName string) (bool, error) {
+	raceCat, err := GetRaceCategoryByName(database, repository.MakeNullableStr(raceCatName))
+	if err != nil {
+		return false, nil
+	}
+
+	for _, g := range raceCat.GameCategories {
+		if g.Name.Value == gameCatName {
+			return true, nil
+		}
+	}
+	return false, nil
+}

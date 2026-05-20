@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/multimario_api/internal/db"
+	"github.com/multimario_api/internal/repository/races"
 	testutils "github.com/multimario_api/internal/testing"
 	_ "github.com/ncruces/go-sqlite3/driver"
 )
@@ -38,19 +39,19 @@ func initRaceHandlerTestDB(t *testing.T) raceTestDB {
 		StartTime string
 	}
 
-	races := []raceStruct {
+	raceStructs := []raceStruct {
 		{"602", "1000-07-13", "upcoming", "9:00:00"},
 		{"246", "3214-05-16", "upcoming", "9:00:00"},
 		{"sandbox_any%", "1002-10-03", "completed", "9:00:00"},
 		{"1862", "3054-12-25", "upcoming", "02:00:00"},
 		{"sandbox_100%", "4123-01-31", "upcoming", "9:00:00"},
-		{"540", "2025-04-01", "in_progress", "11:00:00"},
-		{"602", "2020-12-12", "upcoming", "3:00:00"},
+		{"540", "2025-04-01", "upcoming", "11:00:00"},
+		{"602", "2020-12-12", "in_progress", "3:00:00"},
 		{"1862", "0000-12-25", "upcoming", "30:00:00"},
 	}
 
 	raceIDs := make([]int64, 0)
-	for _, r := range races {
+	for _, r := range raceStructs {
 		stmt := fmt.Sprintf("INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)",
 			db.TableRaces, db.ColRaceRaceCategoryID, db.ColRaceDate, db.ColRaceStatus, db.ColRaceStartTime)
 		res, err := tdb.Database.Exec(stmt, tdb.RaceCatIDs[r.Category], r.Date, r.Status, r.StartTime)
@@ -62,8 +63,14 @@ func initRaceHandlerTestDB(t *testing.T) raceTestDB {
 		if err != nil {
 			t.Fatalf("unable to init test database: %v", err)
 		}
-
+		
 		raceIDs= append(raceIDs, newRaceID)
+	}
+
+	//Init current race
+	err := races.InitCurrentRace(tdb.Database)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	return raceTestDB{
@@ -98,7 +105,7 @@ func TestUpdateRace(t *testing.T) {
 	tdb := initRaceHandlerTestDB(t)
 	h := &ReqHandler{tdb.testDB.Database}
 
-	tests := racesGetPATCHTests(tdb.raceIDs)
+	tests := racesGetPATCHTests()
 	for _, test := range tests {
 		testutils.CallMutationHandler(t, test, h.UpdateRace)
 	}
@@ -305,7 +312,7 @@ func racesGetPOSTTests() []testutils.MutationHandlerTest {
 		Body: map[string]any {
 			"category": "602",
 			"date": "5421-05-14",
-			"status": "in_progress",
+			"status": "completed",
 			"start_time": "",
 		},
 		RequestType: "POST",
@@ -415,7 +422,7 @@ func racesGetPOSTTests() []testutils.MutationHandlerTest {
 		Body: map[string]any {
 			"category": "602",
 			"date": "1999-01-01",
-			"status": "in_progress",
+			"status": "completed",
 			"start_time": "9am",
 		},
 		RequestType: "POST",
@@ -423,71 +430,118 @@ func racesGetPOSTTests() []testutils.MutationHandlerTest {
 		URL: "/races",
 		ExpectedResponseCode: http.StatusBadRequest,
 		ExpectedSuccess: false,
-	}}
+	}, {
+		TestName: "InvalidRaceAlreadyInProgress",
+		Body: map[string]any {
+			"category": "602",
+			"date": "1999-01-01",
+			"status": "in_progress",
+			"start_time": "9:00:00",
+		},
+		RequestType: "POST",
+		Pattern: "POST /races",
+		URL: "/races",
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedSuccess: false,
+	},
+}
 }
 
 //Helper to create tests for PATCH requests
-func racesGetPATCHTests(raceIDs []int64) []testutils.MutationHandlerTest {
+func racesGetPATCHTests() []testutils.MutationHandlerTest {
 	tests := make([]testutils.MutationHandlerTest, 0)
-
 	//Create tests for each race ID
-	for _, id := range raceIDs {
-		idTests := []testutils.MutationHandlerTest{{
-			TestName: fmt.Sprintf("ID%vValidUpdateAll", id),
-			Body: map[string]any {
-				"date": "0000-11-16",
-				"status": "in_progress",
-				"start_time": "11:00:00",
-			},
-			RequestType: "PATCH",
-			Pattern: "PATCH /races/{race_id}",
-			URL: fmt.Sprintf("/races/%v", id),
-			ExpectedResponseCode: http.StatusOK,
-			ExpectedSuccess: true,
-		}, {
-			TestName: fmt.Sprintf("ID%vInvalidDate", id),
-			Body: map[string]any {
-				"date": "9-15-1222",
-				"status": "upcoming",
-				"start_time": "11:13:12",
-			},
-			RequestType: "PATCH",
-			Pattern: "PATCH /races/{race_id}",
-			URL: fmt.Sprintf("/races/%v", id),
-			ExpectedResponseCode: http.StatusBadRequest,
-			ExpectedSuccess: false,
-		}, {
-			TestName: fmt.Sprintf("ID%vValidNoStatus", id),
-			Body: map[string]any {
-				"status": "completed",
-				"start_time": "11:00:00.01",
-			}, 
-			RequestType: "PATCH",
-			Pattern: "PATCH /races/{race_id}",
-			URL: fmt.Sprintf("/races/%v", id),
-			ExpectedResponseCode: http.StatusOK,
-			ExpectedSuccess: true,
-		}, {
-			TestName: fmt.Sprintf("ID%vValidEmpty", id),
-			Body: make(map[string]any),
-			RequestType: "PATCH",
-			Pattern: "PATCH /races/{race_id}",
-			URL: fmt.Sprintf("/races/%v", id),
-			ExpectedResponseCode: http.StatusOK,
-			ExpectedSuccess: true,
-		}, {
-			TestName: fmt.Sprintf("ID%vInvalidStartTime", id),
-			Body: map[string]any {
-				"start_time": "11am",
-			},
-			RequestType: "PATCH",
-			Pattern: "PATCH /races/{race_id}",
-			URL: fmt.Sprintf("/races/%v", id),
-			ExpectedResponseCode: http.StatusBadRequest,
-			ExpectedSuccess: false,
-		}}
-		tests = append(tests, idTests...)
-	}
+	idTests := []testutils.MutationHandlerTest{{
+		TestName: "ValidUpdateAll",
+		Body: map[string]any {
+			"date": "0000-11-16",
+			"status": "completed",
+			"start_time": "11:00:00",
+		},
+		RequestType: "PATCH",
+		Pattern: "PATCH /races/{race_id}",
+		URL: "/races/2",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "InvalidDate",
+		Body: map[string]any {
+			"date": "9-15-1222",
+			"status": "upcoming",
+			"start_time": "11:13:12",
+		},
+		RequestType: "PATCH",
+		Pattern: "PATCH /races/{race_id}",
+		URL: "/races/2",
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedSuccess: false,
+	}, {
+		TestName:"ValidNoStatus",
+		Body: map[string]any {
+			"status": "completed",
+			"start_time": "11:00:00.01",
+		}, 
+		RequestType: "PATCH",
+		Pattern: "PATCH /races/{race_id}",
+		URL: "/races/6",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidEmpty",
+		Body: make(map[string]any),
+		RequestType: "PATCH",
+		Pattern: "PATCH /races/{race_id}",
+		URL: "/races/6",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "InvalidStartTime",
+		Body: map[string]any {
+			"start_time": "11am",
+		},
+		RequestType: "PATCH",
+		Pattern: "PATCH /races/{race_id}",
+		URL: "/races/2",
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedSuccess: false,
+	}, {
+		TestName: "InvalidRaceAlreadyInProgress",
+		Body: map[string]any {
+			"date": "0000-11-16",
+			"status": "in_progress",
+			"start_time": "11:00:00",
+		},
+		RequestType: "PATCH",
+		Pattern: "PATCH /races/{race_id}",
+		URL: "/races/2",
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedSuccess: false,
+	}, {
+		TestName: "ValidFinishRace",
+		Body: map[string]any {
+			"date": "0000-11-16",
+			"status": "completed",
+			"start_time": "11:00:00",
+		},
+		RequestType: "PATCH",
+		Pattern: "PATCH /races/{race_id}",
+		URL: "/races/7",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, {
+		TestName: "ValidStartRace",
+		Body: map[string]any {
+			"date": "0000-11-16",
+			"status": "in_progress",
+			"start_time": "11:00:00",
+		},
+		RequestType: "PATCH",
+		Pattern: "PATCH /races/{race_id}",
+		URL: "/races/1",
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedSuccess: true,
+	}, }
+	tests = append(tests, idTests...)
 	return tests
 }
 

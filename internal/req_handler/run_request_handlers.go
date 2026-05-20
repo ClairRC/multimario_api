@@ -7,6 +7,7 @@ import (
 	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/gamecategories"
 	"github.com/multimario_api/internal/repository/players"
+	"github.com/multimario_api/internal/repository/racecategories"
 	"github.com/multimario_api/internal/repository/races"
 	"github.com/multimario_api/internal/repository/records"
 	"github.com/multimario_api/internal/repository/records/runs"
@@ -75,9 +76,30 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusBadRequest, "race does not exist")
 		case players.PlayerDoesNotExistErr:
 			writeError(w, http.StatusBadRequest, "player does not exist")
+		case records.RecordDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "no race record for this player in this race")
 		default:
-			writeError(w, http.StatusInternalServerError, "unknown error parsing race record")
+			writeError(w, http.StatusInternalServerError, "unknown error parsing race record: "+err.Error())
 		}
+		return
+	}
+
+	//Make sure that this race includes the requested category
+	//Get Race
+	race, err := races.GetRaceByID(h.DataBase, int64(raceID))
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unable to parse race")
+		return
+	}
+
+	//Check that this race has this game category
+	valid, err := racecategories.RaceCatContainsGameCat(h.DataBase, race.RaceCategory.Name.Value, catName.Value)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unable to determine if race contains this category")
+		return
+	}
+	if !valid {
+		writeError(w, http.StatusBadRequest, "race does not contain this game category")
 		return
 	}
 
@@ -89,8 +111,10 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusBadRequest, "run does not exist")
 		case gamecategories.GameCategoryDoesNotExistErr:
 			writeError(w, http.StatusBadRequest, "game category does not exist")
+		case runs.RunCategoryInvalid:
+			writeError(w, http.StatusBadRequest, "run game category is not in this race category")
 		default:
-			writeError(w, http.StatusInternalServerError, "unknown error fetching run")
+			writeError(w, http.StatusInternalServerError, "unknown error fetching run: "+err.Error())
 		}
 		return
 	}
@@ -102,7 +126,7 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Run is updated
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -111,7 +135,8 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 * ENDPOINT: GET /records/runs
 *
 * OPTIONAL PARAMETERS:
-*	player_name: int //Runs by this player
+*	page_num: int //Page num. Defaults to 1
+*	player_name: string //Runs by this player
 *	game_category: string //Runs of this game category
 *	race_id: int //Runs for this race
 *
@@ -139,6 +164,7 @@ func (h *ReqHandler) GetRuns(w http.ResponseWriter, r *http.Request) {
 	urlPlayerNames := r.URL.Query()["player_name"]
 	urlGameCategories := r.URL.Query()["game_category"]
 	urlRaceIDs := r.URL.Query()["race_id"]
+	urlPageNum := r.URL.Query()["page_num"]
 
 	//Validate race IDs
 	raceIDs := make([]int64, 0)
@@ -151,7 +177,16 @@ func (h *ReqHandler) GetRuns(w http.ResponseWriter, r *http.Request) {
 		raceIDs = append(raceIDs, int64(idNum))
 	}
 
-	//Build query
+	//For names that are twitch names not display names, replace the name with the display name.
+	//TODO: This is many extra DB calls and not really super clean. Worth refactoring
+	for i, name := range urlPlayerNames{
+		player, err := players.GetPlayerByName(h.DataBase, repository.MakeNullableStr(name))
+		if err != nil {
+			continue 
+		} //No player by this name Or twitch name
+		urlPlayerNames[i] = player.Name.Value
+	}
+
 	q := runs.RunQuery{
 		PlayerNames: urlPlayerNames,
 		GameCategories: urlGameCategories,
@@ -161,7 +196,7 @@ func (h *ReqHandler) GetRuns(w http.ResponseWriter, r *http.Request) {
 	//Get runs
 	runs, err := runs.QueryRuns(h.DataBase, q)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "unknown error fetching runs")
+		writeError(w, http.StatusInternalServerError, "unknown error fetching runs: "+err.Error())
 		return
 	}
 
@@ -181,8 +216,19 @@ func (h *ReqHandler) GetRuns(w http.ResponseWriter, r *http.Request) {
 		outRuns = append(outRuns, newRun)
 	}
 
+	//Add pagination logic
+	pageNum, err := getResponsePageNum(urlPageNum)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "page number could not be parsed as int")
+		return
+	}
+	
+	//Get metadata
+	limit := 50
+	outRuns, meta := paginate(outRuns, r.URL, pageNum, limit)
+
 	out["success"] = true
 	out["runs"] = outRuns
 
-	writeJSON(w, http.StatusOK, out)
+	writeJSON(w, http.StatusOK, out, meta)
 }

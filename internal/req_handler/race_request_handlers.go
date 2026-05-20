@@ -88,12 +88,17 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 	//Add the race
 	err = race.Add(h.DataBase)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "error adding new race")
+		switch err {
+		case races.RaceIsInProgressErr:
+			writeError(w, http.StatusBadRequest, "race is already in progress")
+		default:
+			writeError(w, http.StatusInternalServerError, "error adding new race") 
+		}
 		return
 	}
 
 	//All fields validated and race added
-	writeJSON(w, http.StatusOK, map[string]any{"success": true, "id": race.RaceID})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true, "id": race.RaceID}, nil)
 }
 
 /*
@@ -149,7 +154,7 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 	newDate, err := validateDate(w, req, "date", false)
 	if err != nil { return }
 
-	newStatus, err := validateText(w, req, "date", false)
+	newStatus, err := validateText(w, req, "status", false)
 	if err != nil { return }
 
 	newStart, err := validateTime(w, req, "start_time", false)
@@ -159,15 +164,18 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 	err = race.Update(h.DataBase, newDate, newStart, newStatus)
 	if err != nil {
 		switch err {
+		case races.RaceIsInProgressErr:
+			writeError(w, http.StatusBadRequest, "there is already a race in progress")
 		case racecategories.RaceCategoryDoesNotExistErr:
 			writeError(w, http.StatusBadRequest, "new category does not exist")
 		default:
 			writeError(w, http.StatusInternalServerError, "unknown error updating race info")
 		}
+		return
 	}
 
 	//Updated, write success
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -283,7 +291,7 @@ func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 	out["success"] = true
 	out["races"] = outRaces
 
-	writeJSON(w, http.StatusOK, out)
+	writeJSON(w, http.StatusOK, out, nil)
 }
 
 /*

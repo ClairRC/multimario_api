@@ -78,7 +78,7 @@ func (h *ReqHandler) AddRaceCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//All fields are okay
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -164,7 +164,7 @@ func (h *ReqHandler) EditRaceCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//We're updated, write success
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -255,7 +255,7 @@ func (h *ReqHandler) GetRaceCategories(w http.ResponseWriter, r *http.Request) {
 	out["success"] = true
 	out["race_categories"] = outRaceCats
 
-	writeJSON(w, http.StatusOK, out)
+	writeJSON(w, http.StatusOK, out, nil)
 }
 
 // Helper function for parsing array of game categories

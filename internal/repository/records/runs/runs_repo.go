@@ -32,6 +32,7 @@ type RunQuery struct {
 
 //Default Errors
 var RunDoesNotExistErr error = errors.New("run does not exist")
+var RunCategoryInvalid error = errors.New("run category is invalid")
 
 /*
 * Run Constructors
@@ -144,19 +145,21 @@ func QueryRuns(database *sql.DB, runQuery RunQuery) ([]*Run, error) {
 	out := make([]*Run, 0)
 
 	//Build Query
+	//Add table to avoid ambiguous column names
 	cols := []string{
-		db.ColRunGameCategoryID, 
+		db.TableRuns + "." + db.ColRunGameCategoryID, 
 		db.ColRunTime,
-		db.ColRunEstimate,
+		db.TableRuns + "." + db.ColRunEstimate,
 		db.ColRunID,
-		db.ColRaceID,
+		db.TableRaces + "." + db.ColRaceID,
 		db.ColPlayerName,
+		db.ColRunTime,
 	}
 	table := getRunQueryTable()
 	whereCons := getRunWhereCons(runQuery)
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColRunTime)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, err
@@ -167,10 +170,7 @@ func QueryRuns(database *sql.DB, runQuery RunQuery) ([]*Run, error) {
 		return out, nil
 	}
 
-	out, err = parseRunQueryResults(database, res)
-	if err != nil {
-		return nil, err
-	}
+	out = parseRunQueryResults(database, res)
 
 	return out, nil
 }
@@ -242,24 +242,21 @@ func GetRunFromRecordID(database *sql.DB, recordID int64, categoryName repositor
 		return nil, gamecategories.GameCategoryDoesNotExistErr
 	}
 
+	//Need to add the table to GameCatID and Estimate to prevent ambiguous column naming
 	cols := []string {
 		db.ColRunID,
-		db.ColRunGameCategoryID,
+		db.TableRuns + "." + db.ColRunGameCategoryID,
 		db.ColRunTime,
-		db.ColRunEstimate,
-		db.ColPlayerName,
+		db.TableRuns + "." + db.ColRunEstimate,
 	}
 
-	//Join tables to search with category name
+	//Join tables to search with category name. Include races and race categories to get race cat name to verify race category has the game
 	on := db.GetOnClause(db.TableRuns, db.TableGameCategories, db.ColRunGameCategoryID, db.ColGameCategoryID)
 	table := db.JoinTables(db.TableRuns, db.TableGameCategories, on)
 
 	on = db.GetOnClause(db.TableRuns, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID)
 	table = db.JoinTables(table, db.TableRecords, on)
-	
-	on = db.GetOnClause(table, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
-	table = db.JoinTables(table, db.TablePlayers, on)
-	
+
 	whereCon := []db.WhereCondition{{
 		ColName: db.ColGameCategoryName,
 		Op: db.Equals,

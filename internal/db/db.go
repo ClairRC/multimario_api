@@ -330,8 +330,8 @@ func ExecuteQueries(db *sql.DB, statements []SQLStatement) (map[string][]any, er
 	return res, nil
 }
 
-//Builds SQL statement from certain parameters
-func BuildSelectStatement(columns []string, table string, where []WhereCondition) SQLStatement {
+//Builds SQL statement from certain parameters. Takes 0 or more "orderCol" values
+func BuildSelectStatement(columns []string, table string, where []WhereCondition, orderCols ...string) SQLStatement {
 	args := make([]any, 0)
 	stmt := "SELECT DISTINCT"
 	for i, v := range columns {
@@ -357,6 +357,18 @@ func BuildSelectStatement(columns []string, table string, where []WhereCondition
 			args = append(args, o.Value)
 		}
 		stmt += ")" //Add closing parenthesis
+	}
+
+	//Add order by clause if cols is not empty
+	//By default, always order in ascending order. I could change this?
+	if len(orderCols) > 0 {
+		stmt += " ORDER BY "
+		for i, col := range orderCols {
+			if i > 0 {
+				stmt += ", "
+			}
+			stmt += col + " ASC "
+		}
 	}
 
 	return SQLStatement{stmt, args, Select}

@@ -92,7 +92,7 @@ func (h *ReqHandler) AddGameCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Return success
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -185,7 +185,7 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Category updated
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -254,5 +254,5 @@ func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
 	out["game_categories"] = outCats
 	out["success"] = true
 
-	writeJSON(w, http.StatusOK, out)
+	writeJSON(w, http.StatusOK, out, nil)
 }

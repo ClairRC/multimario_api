@@ -139,7 +139,7 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Record is added, return success
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -210,7 +210,7 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Updated, return success
-	writeJSON(w, http.StatusOK, map[string]any{"success": true})
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 /*
@@ -330,7 +330,7 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 	out["success"] = true
 	out["records"] = outRecords
 
-	writeJSON(w, http.StatusOK, out)
+	writeJSON(w, http.StatusOK, out, nil)
 }
 
 /*

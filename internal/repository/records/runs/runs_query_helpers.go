@@ -29,10 +29,12 @@ func getRunWhereCons(query RunQuery) []db.WhereCondition {
 	//Get runs of a list of races
 	raceWherePtr := repository.GetWhereCondition(db.ColRaceID, query.RaceIDs, db.Equals)
 	if raceWherePtr != nil {
+		//TODO: We need to specify table here because of ambiguous column naming.
+		//This is a bandaid solution and I should really find a general solution for this.
+		raceWherePtr.ColName = db.TableRaces + "." + raceWherePtr.ColName
 		out = append(out, *raceWherePtr)
 	}
-	
-	
+
 	return out
 }
 
@@ -48,11 +50,14 @@ func getRunQueryTable() string {
 	on = db.GetOnClause(db.TableRecords, db.TableRaces, db.ColRecordsRaceID, db.ColRaceID)
 	table = db.JoinTables(table, db.TableRaces, on)
 
+	on = db.GetOnClause(db.TableRecords, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
+	table = db.JoinTables(table, db.TablePlayers, on)
+
 	return table
 }
 
 //Parse query request
-func parseRunQueryResults(database *sql.DB, res map[string][]any) ([]*Run, error){
+func parseRunQueryResults(database *sql.DB, res map[string][]any) []*Run{
 	out := make([]*Run, 0)
 
 	//Make runs for each result
@@ -104,5 +109,5 @@ func parseRunQueryResults(database *sql.DB, res map[string][]any) ([]*Run, error
 		out = append(out, newRun)
 	}
 
-	return out, nil
+	return out
 }
