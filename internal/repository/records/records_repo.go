@@ -176,7 +176,7 @@ func QueryRecord(database *sql.DB, recordQuery RecordQuery) ([]*Record, error) {
 	whereCons := getRecordsWhereCons(recordQuery)
 
 	//Execute queries
-	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColRecordsFinishTime)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, err

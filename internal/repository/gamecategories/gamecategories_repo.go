@@ -202,7 +202,7 @@ func QueryGameCategories(database *sql.DB, gamecategoryQuery GameCategoryQuery) 
 	whereCons := getGameCategoryWhereCons(gamecategoryQuery)
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColGameName)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, err

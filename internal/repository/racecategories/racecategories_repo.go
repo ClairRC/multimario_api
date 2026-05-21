@@ -189,7 +189,7 @@ func QueryRaceCategories(database *sql.DB, raceCategoryQuery RaceCategoryQuery) 
 	whereCons := getRaceCategoryWhereCons(raceCategoryQuery)
 
 	//Execute queries
-	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColRaceCategoryName)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, err

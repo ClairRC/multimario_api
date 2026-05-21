@@ -105,7 +105,7 @@ func QueryGames(database *sql.DB, gameQuery GameQuery) ([]*Game, error) {
 	whereCons := getGameWhereCons(gameQuery)
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColGameName)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, err

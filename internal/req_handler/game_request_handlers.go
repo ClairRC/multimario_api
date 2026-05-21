@@ -119,6 +119,7 @@ func (h *ReqHandler) ChangeGameName(w http.ResponseWriter, r *http.Request) {
 * ENDPOINT: GET /games
 *
 * OPTIONAL PARAMETERS
+* page_num: int //page number. Defaults to 1
 * name: string //Name of the game
 *
 * RETURNS
@@ -137,6 +138,7 @@ func (h *ReqHandler) ChangeGameName(w http.ResponseWriter, r *http.Request) {
 func (h *ReqHandler) GetGames(w http.ResponseWriter, r *http.Request) {
 	//Get URL names
 	gameNames := r.URL.Query()["name"]
+	urlPageNum := r.URL.Query()["page_num"]
 
 	//Build query
 	q := games.GameQuery{Names: gameNames}
@@ -156,9 +158,18 @@ func (h *ReqHandler) GetGames(w http.ResponseWriter, r *http.Request) {
 		}
 		outGames = append(outGames, newGame)
 	}
+	
+	//Add pagination logic
+	pageNum, err := getResponsePageNum(urlPageNum)
+	limit := 50
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "unknown error parsing page number")
+		return
+	}
+	outGames, meta := paginate(outGames, r.URL, pageNum, limit)
 
 	out["games"] = outGames
 	out["success"] = true
 
-	writeJSON(w, http.StatusOK, out, nil)
+	writeJSON(w, http.StatusOK, out, meta)
 }

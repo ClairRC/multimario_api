@@ -12,7 +12,7 @@ import (
 /*
 * Edit player's progress for current race
 *
-* ENDPOINT: PATCH /currentrace/{player_id}
+* ENDPOINT: PATCH /currentrace/{player_name}
 *
 * EXPECTED:
 * {
@@ -28,7 +28,7 @@ func (h *ReqHandler) SetPlayerCollectibleCount(w http.ResponseWriter, r *http.Re
 /*
 * Set player's game time for this race
 *
-* ENDPOINT: PATCH /currentrace/{player_id}/{game_name}
+* ENDPOINT: PATCH /currentrace/{player_name}/{category_name}
 *
 * EXPECTED:
 * {
@@ -52,7 +52,7 @@ func (h *ReqHandler) UpdatePlayerGameTime(w http.ResponseWriter, r *http.Request
 * 	standings: -- Array with player id and that player's standing
 *	[
 *		{
-*			player_id: int -- ID of the player
+*			player_name: string -- Display name of the player
 *			num_collectibles: int -- Number of collectibles this player currently has
 *		}
 *	]
@@ -67,7 +67,7 @@ func (h *ReqHandler) GetCurrentRaceStandings(w http.ResponseWriter, r *http.Requ
 /*
 * Get race data of a specified player
 *
-* ENDPOINT: GET /currentrace/{player_id}
+* ENDPOINT: GET /currentrace/{player_name}
 *
 * RETURNS:
 * {

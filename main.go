@@ -12,6 +12,7 @@ import (
 	"os"
 
 	"github.com/multimario_api/internal/db"
+	"github.com/multimario_api/internal/repository/races"
 	"github.com/multimario_api/internal/req_handler"
 	"github.com/multimario_api/internal/routes"
 	"github.com/multimario_api/internal/twitch"
@@ -48,6 +49,12 @@ func main() {
 
 	//Initialize database if it isn't already
 	err = db.DatabaseInit(database)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//Initialize current race cache
+	err = races.InitCurrentRace(database)
 	if err != nil {
 		log.Fatal(err)
 	}

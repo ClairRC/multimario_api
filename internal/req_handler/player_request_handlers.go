@@ -201,6 +201,7 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 * OPTIONAL PARAMETERS:
 *	player_name: string //Returns player with this display name.
 *	twitch_name: string //Returns player with this name on twitch
+*	page_num: int //Page number, defaults to 1
 *
 * Note: For multiple values, include them separately
 *
@@ -227,6 +228,7 @@ func (h *ReqHandler) GetPlayers(w http.ResponseWriter, r *http.Request) {
 	//Get URL parameters
 	playerNames := r.URL.Query()["player_name"]
 	twitchNames := r.URL.Query()["twitch_name"]
+	urlPageNum := r.URL.Query()["page_num"]
 
 	//Get players from query
 	query := players.PlayerQuery{
@@ -250,9 +252,19 @@ func (h *ReqHandler) GetPlayers(w http.ResponseWriter, r *http.Request) {
 		playerInfo = append(playerInfo, info)
 	}
 
+	//Pagination logic
+	pageNum, err := getResponsePageNum(urlPageNum)
+	limit := 50
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "unknown error parsing page number")
+		return
+	}
+
+	playerInfo, meta := paginate(playerInfo, r.URL, pageNum, limit)
+
 	//Write outputs
 	out["players"] = playerInfo
 	out["success"] = true
 
-	writeJSON(w, http.StatusOK, out, nil)
+	writeJSON(w, http.StatusOK, out, meta)
 }

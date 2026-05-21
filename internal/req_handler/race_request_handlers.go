@@ -198,6 +198,7 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 * {
 *	success: bool
 *	error: string //Only if success is false
+	page_num: int //Page number. Defaults to 1
 * 	races: Array of races
 *   [
 *		{
@@ -219,6 +220,7 @@ func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 	urlOnDates := r.URL.Query()["on"]
 	urlRaceCats := r.URL.Query()["category"]
 	urlRaceStatuses := r.URL.Query()["status"]
+	urlPageNum := r.URL.Query()["page_num"]
 
 	//Validate values
 	ids := make([]int64, 0)
@@ -288,10 +290,19 @@ func (h *ReqHandler) GetRaces(w http.ResponseWriter, r *http.Request) {
 		outRaces = append(outRaces, newRaceMap)
 	}
 
+	//Pagination logic
+	pageNum, err := getResponsePageNum(urlPageNum)
+	limit := 50
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "unknown error parsing page number")
+	}
+
+	outRaces, meta := paginate(outRaces, r.URL, pageNum, limit)
+
 	out["success"] = true
 	out["races"] = outRaces
 
-	writeJSON(w, http.StatusOK, out, nil)
+	writeJSON(w, http.StatusOK, out, meta)
 }
 
 /*

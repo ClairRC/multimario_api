@@ -194,10 +194,11 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 * ENDPOINT: GET /gamecategories
 *
 * OPTIONAL PARAMETERS:
+	page_num: int // Page number. Defaults to  1
 *	game: string //Categories including this game
 *	race_category: string //Categories that are apart of these race categories
 *	name: string //To get a specific category
-*
+*	
 *
 * RETURNS:
 * {
@@ -223,6 +224,7 @@ func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
 	catNames := r.URL.Query()["name"]
 	gameNames := r.URL.Query()["game"]
 	raceCatNames := r.URL.Query()["race_category"]
+	urlPageNum := r.URL.Query()["page_num"]
 
 	//Query for categories
 	q := gamecategories.GameCategoryQuery{
@@ -251,8 +253,18 @@ func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
 		outCats = append(outCats, outObj)
 	}
 
+	//Add pagination logic
+	pageNum, err := getResponsePageNum(urlPageNum)
+	limit := 50
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "error parsing page number")
+		return
+	}
+
+	outCats, meta := paginate(outCats, r.URL, pageNum, limit)
+
 	out["game_categories"] = outCats
 	out["success"] = true
 
-	writeJSON(w, http.StatusOK, out, nil)
+	writeJSON(w, http.StatusOK, out, meta)
 }

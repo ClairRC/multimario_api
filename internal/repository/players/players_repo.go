@@ -157,7 +157,7 @@ func QueryPlayers(database *sql.DB, playerQuery PlayerQuery) ([]*Player, error) 
 	}
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColPlayerName)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, err

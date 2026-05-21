@@ -217,6 +217,7 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 * Gets race records
 *
 * OPTIONAL PARAMETERS:
+*	page_num: int //Page number. Defaults to 1
 *	player_name: string -- Returns records just from specific players. Can be multiple.
 *	race_id: int -- Returns records for this race
 *	category: string -- Returns records just of a specific race category
@@ -255,6 +256,7 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 	urlOnDates := r.URL.Query()["on"]
 	urlTimeLower := r.URL.Query()["time_lowerthan"]
 	urlTimeGreater := r.URL.Query()["time_greaterthan"]	
+	urlPageNum := r.URL.Query()["page_num"]
 
 	//Validate inputs
 	raceIDs := make([]int64, 0)
@@ -327,10 +329,21 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 
 		outRecords = append(outRecords, newRecord)
 	}
+
+	//Pagination logic
+	pageNum, err := getResponsePageNum(urlPageNum)
+	limit := 50
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "unknown error parsing page number")
+		return
+	}
+
+	outRecords, meta := paginate(outRecords, r.URL, pageNum, limit)
+
 	out["success"] = true
 	out["records"] = outRecords
 
-	writeJSON(w, http.StatusOK, out, nil)
+	writeJSON(w, http.StatusOK, out, meta)
 }
 
 /*
