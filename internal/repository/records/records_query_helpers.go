@@ -22,7 +22,7 @@ func getRecordsWhereCons(query RecordQuery) []db.WhereCondition {
 	}
 
 	//Get where based on race IDs
-	raceIDWhereConPtr := repository.GetWhereCondition(db.ColRecordsRaceID, query.RaceIDs, db.Equals)
+	raceIDWhereConPtr := repository.GetWhereCondition(db.TableRecords + "." + db.ColRecordsRaceID, query.RaceIDs, db.Equals)
 	if raceIDWhereConPtr != nil {
 		out = append(out, *raceIDWhereConPtr)
 	}

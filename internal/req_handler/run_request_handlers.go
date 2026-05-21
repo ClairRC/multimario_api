@@ -123,6 +123,7 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 	err = run.Update(h.DataBase, newTime, newEstimate, newRunNum)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error updating run")
+		return
 	}
 
 	//Run is updated

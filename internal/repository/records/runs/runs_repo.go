@@ -159,7 +159,7 @@ func QueryRuns(database *sql.DB, runQuery RunQuery) ([]*Run, error) {
 	whereCons := getRunWhereCons(runQuery)
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColRunTime)
+	stmt := db.BuildSelectStatement(cols, table, whereCons, db.TableRuns + "." + db.ColRunGameCategoryID, db.ColRunTime)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, err

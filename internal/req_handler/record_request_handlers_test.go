@@ -188,6 +188,15 @@ func initRecordHandlerTestDB(t *testing.T) recordTestDB {
 			map[string]string{"sm64_120": "3:14:00", "smo_all_moons": "9:13:54", "sms_120": "5:45:34", "smg1_120": "7:17:12", "smg2_242": "1:32:73", "sm3dw_380": "8:33:12",}}, 
 		{6, 6, map[string]string {"sm64_120": "3:10:00", "sms_120": "5:45:34", "smg1_120": "2:13:12", "smg2_242": "6:22:73",}, 
 			map[string]string{"sm64_120": "3:14:00", "sms_120": "5:45:34", "smg1_120": "7:17:12", "smg2_242": "1:32:73"}}, 
+		{5, 0, map[string]string { "sm64_70": "1:10:00", "smo_any%": "1:24:54", "sms_any%": "1:45:34", "smg1_any%": "2:43:12", "smg2_any%": "3:12:43", "sm3dw_any%": "1:43:12", }, 
+			map[string]string{"sm64_70": "2:10:00", "smo_any%": "1:21:55", "sms_any%": "1:15:34", "smg1_any%": "2:43:12", "smg2_any%": "3:12:43", "sm3dw_any%": "1:39:09", }}, 
+		{5, 1, map[string]string { "sm64_70": "2:10:00", "smo_any%": "1:23:54", "sms_any%": "2:45:34", "smg1_any%": "2:43:12", "smg2_any%": "3:12:43", "sm3dw_any%": "1:43:12", }, 
+			map[string]string{"sm64_70": "2:10:00", "smo_any%": "1:23:54", "sms_any%": "1:35:34", "smg1_any%": "2:43:12", "smg2_any%": "3:12:43", "sm3dw_any%": "1:39:09", }}, 
+		{5, 2, map[string]string { "sm64_70": "2:10:00", "smo_any%": "1:13:54", "sms_any%": "1:45:34", "smg1_any%": "2:43:12", "smg2_any%": "3:12:43", "sm3dw_any%": "1:43:12", }, 
+			map[string]string{"sm64_70": "2:10:00", "smo_any%": "1:13:51", "sms_any%": "1:45:34", "smg1_any%": "2:43:12", "smg2_any%": "3:12:43", "sm3dw_any%": "1:39:09", }}, 
+		{5, 3, map[string]string { "sm64_70": "2:10:00", "smo_any%": "1:23:54", "sms_any%": "1:45:34", "smg1_any%": "2:43:12", "smg2_any%": "3:12:43", "sm3dw_any%": "1:43:12", }, 
+			map[string]string{"sm64_70": "2:10:00", "smo_any%": "1:23:54", "sms_any%": "1:45:34", "smg1_any%": "2:43:12", "smg2_any%": "3:12:43", "sm3dw_any%": "1:39:09", }}, 
+
 	}
 
 	return populateTestDB(t, tdb, players, races, records)

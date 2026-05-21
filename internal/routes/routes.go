@@ -22,7 +22,7 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 	//Specifically meant to expose useful behavior during races
 	m.HandleFunc("PATCH /currentrace/{player_name}/{category_name}", h.UpdatePlayerGameTime)
 	m.HandleFunc("PATCH /currentrace/{player_name}", h.SetPlayerCollectibleCount)
-	m.HandleFunc("GET /currentrace/{player_name}", h.GetPlayerProgress)
+	m.HandleFunc("GET /currentrace/{player_name}", h.GetCurrentRaceRuns)
 	m.HandleFunc("GET /currentrace", h.GetCurrentRaceStandings)
 
 	//Race Records Handlers
