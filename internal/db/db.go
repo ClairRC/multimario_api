@@ -63,6 +63,11 @@ const (
 	ColRunTime = "time"
 	ColRunEstimate = "estimate"
 	ColRunNum = "run_num"
+
+	TableAPIKeys = "api_keys"
+	ColAPIKeysKey = "key"
+	ColAPIKeyTwitchID = "twitch_id"
+	ColAPIKeysIsAdmin = "is_adming"
 )
 
 //Operator type and default operators
@@ -203,6 +208,15 @@ var initStatements = []string {
 		platform_user_id TEXT UNIQUE NOT NULL,
 		FOREIGN KEY (player_id) REFERENCES players(player_id)
 			ON DELETE CASCADE
+	)
+	`,
+
+	//Create api_keys table
+	`
+	CREATE TABLE IF NOT EXISTS api_keys(
+		key TEXT NOT NULL PRIMARY KEY,
+		twitch_id TEXT NOT NULL,
+		is_admin INTEGER NOT NULL DEFAULT 0
 	)
 	`,
 }

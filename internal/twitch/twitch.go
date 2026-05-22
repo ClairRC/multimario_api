@@ -17,6 +17,7 @@ import (
 type TwitchAPICaller interface {
 	GetTwitchIDFromName(string) (string, error)
 	GetTwitchNameFromID(string) (string, error)
+	GetTwitchIDFromToken(string) (string, error)
 }
 
 //Struct for twitch API calls
@@ -190,6 +191,87 @@ func (c TwitchClient) GetTwitchNameFromID(twitchID string) (string, error){
 	}
 
 	return twitchUserResp.Data[0].Login, nil
+}
+
+//Get twitch ID from user token
+func (c TwitchClient) GetTwitchIDFromToken(token string) (string, error){
+	//Create request
+	req, err := http.NewRequest("GET", "https://api.twitch.tv/helix/users", nil)
+	if err != nil {
+		return "", err
+	}
+
+	authHeader := fmt.Sprintf("Bearer %s", token)
+	req.Header.Set("Authorization", authHeader)
+	req.Header.Set("Client-Id", clientID)
+
+	//Get response
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	//Check for errors
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New("unknown error getting user info from twitch: " + http.StatusText(resp.StatusCode)) //TODO: Could be more specific based on response code
+	}
+
+	//Parse the response
+	var twitchUserResp TwitchUserResponse
+	err = json.NewDecoder(resp.Body).Decode(&twitchUserResp)
+	if err != nil {
+		return "", errors.New("unknown error parsing twitch response. could not parse as json")
+	}
+
+	if len(twitchUserResp.Data) == 0 {
+		return "", UserCouldNotBeFoundErr
+	}
+
+	return twitchUserResp.Data[0].ID, nil
+}
+
+//Gets user token from Auth code from twitch
+func GetUserTokenFromCode(code string, redirectURI string) (string, error) {
+	//Send POST request to Twitch API to get user token
+	params := url.Values{}
+	params.Set("client_id", clientID)
+	params.Set("client_secret", clientSecret)
+	params.Set("code", code)
+	params.Set("grant_type", "authorization_code")
+	params.Set("redirect_uri", redirectURI)
+	endpoint := "https://id.twitch.tv/oauth2/token?" + params.Encode()
+
+	//Send POST request and parse body into JSON
+	twitchResp, err := http.Post(endpoint, "application/x-www-form-urlencoded", bytes.NewReader(make([]byte, 0)))
+	if err != nil {
+		return "", errors.New("unable to send post request to twitch")
+	}
+	defer twitchResp.Body.Close()
+
+	var resp TwitchTokenResponse
+	err = json.NewDecoder(twitchResp.Body).Decode(&resp)
+	if err != nil {
+		return "", errors.New("unable to decode twitch response as json")
+	}
+
+	//Return the token
+	return resp.AccessToken, nil
+}
+
+//Redirects a user to Twitch to retrieve an access token
+func GetUserTokenRedirectURL(callbackURI string) *url.URL {
+	redirURL, _ := url.Parse("https://id.twitch.tv/oauth2/authorize")
+
+	params := redirURL.Query()
+	params.Set("client_id", clientID)
+	params.Set("redirect_uri", callbackURI)
+	params.Set("response_type", "code")
+	params.Set("scope", "user:read:email") //Gives access to /users endpoint
+
+	redirURL.RawQuery = params.Encode()
+
+	return redirURL
 }
 
 //Gets new access token from twitch

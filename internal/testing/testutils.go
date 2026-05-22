@@ -353,3 +353,8 @@ func (c TestTwitchClient) GetTwitchNameFromID(id string) (string, error) {
 	}
 	return c.ValidTwitchNames[idAsNum], nil
 }
+
+//TODO: This isn't actually needed for the tests I have, but it is necessary to implement the TwitchAPICaller interface since the default client needs this function
+func (c TestTwitchClient) GetTwitchIDFromToken(token string) (string, error) {
+	return "", nil
+}

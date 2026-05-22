@@ -307,42 +307,6 @@ func RecordExistsFromRaceAndPlayer(database *sql.DB, raceID int64, playerName st
 	return len(res[db.ColRecordID]) > 0, nil
 }
 
-func getRunsFromRecordID(database *sql.DB, recordID int64) ([]*runs.Run, error) {
-	//Build select statement
-	cols := []string {db.ColRunID}
-	whereCon := []db.WhereCondition{{
-		ColName: db.ColRunRaceRecordID,
-		Op: db.Equals, 
-		Value: recordID,
-	}}
-
-	stmt := db.BuildSelectStatement(cols, db.TableRuns, whereCon)
-	runsRes, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
-	if err != nil { return nil, err }
-
-	//Make sure there are runs
-	if len(runsRes[db.ColRunID]) == 0 {
-		return nil, RecordDoesNotExistErr
-	}
-
-	//For each run, get the run and add it to the slice
-	out := make([]*runs.Run, 0)
-	for _, v := range runsRes[db.ColRunID] {
-		//Make sure ID is int
-		id, ok := v.(int64)
-		if !ok {
-			return nil, errors.New("unknown error: run id can't be parsed as int")
-		}
-
-		run, err := runs.GetRunFromID(database, id)
-		if err != nil { return nil, err }
-
-		out = append(out, run)
-	}
-
-	return out, nil
-}
-
 func executeRecordInsertStatement(database *sql.DB, record *Record, runs []*runs.Run) error {
 	//Get values for adding new Record
 	cols := []string {
