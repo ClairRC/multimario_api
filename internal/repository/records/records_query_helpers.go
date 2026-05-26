@@ -7,6 +7,7 @@ import (
 	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/players"
 	"github.com/multimario_api/internal/repository/races"
+	"github.com/multimario_api/internal/twitch"
 )
 
 //Helpers for querying race records
@@ -72,6 +73,8 @@ func getRecordQueryTable() string {
 	on := db.GetOnClause(db.TableRecords, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
 	table := db.JoinTables(db.TableRecords, db.TablePlayers, on)
 
+	on = db.GetOnClause(db.TablePlayers, db.TableSocials, db.ColPlayerID, db.ColSocialsPlayerID)
+	table = db.JoinTables(table, db.TableSocials, on)
 
 	on = db.GetOnClause(db.TableRecords, db.TableRaces, db.ColRecordsRaceID, db.ColRaceID)
 	table = db.JoinTables(table, db.TableRaces, on)
@@ -88,14 +91,41 @@ func getRecordQueryTable() string {
 //Helper to parse DB query into records
 func parseRecordQuery(database *sql.DB, res map[string][]any) []*Record {
 	out := make([]*Record, 0) //slice of record IDs to parse runs
+	twitchIDCache := make(map[string]string) //Cache of {id: twich name}
+	twitchIDs := make([]string, 0)
 
-	//Make records for each result
+	//Get twitch IDs for each player
+	for i := range len(res[db.ColRecordID]) {
+		twitchID, ok := res[db.ColSocialsPlatformUserID][i].(string)
+		if !ok {
+			continue
+		}
+		twitchIDs = append(twitchIDs, twitchID)
+	}
+
+	if len(twitchIDs) != 0 {
+		twitchIDCache, _ = twitch.GetTwitchNamesBatched(twitchIDs)
+	}
+
+	//Loop back through results to add stuff
 	for i := range len(res[db.ColRecordID]) {
 		//Parse required values
 		playerName, ok := res[db.ColPlayerName][i].(string)
 		if !ok {
 			continue
 		}
+
+		playerID, ok := res[db.ColPlayerID][i].(int64)
+		if !ok {
+			continue
+		}
+
+		twitchID, ok := res[db.ColSocialsPlatformUserID][i].(string)
+		if !ok {
+			continue
+		}
+
+		twitchName := twitchIDCache[twitchID]
 
 		raceID, ok := res[db.ColRecordsRaceID][i].(int64)
 		if !ok {
@@ -115,12 +145,6 @@ func parseRecordQuery(database *sql.DB, res map[string][]any) []*Record {
 		//Unrequired values
 		finishTime := res[db.ColRecordsFinishTime][i]
 
-		//Get player from name
-		player, err := players.GetPlayerByName(database, repository.MakeNullableStr(playerName))
-		if err != nil {
-			continue
-		}
-
 		//Get race from ID
 		race, err := races.GetRaceByID(database, raceID)
 		if err != nil {
@@ -128,6 +152,11 @@ func parseRecordQuery(database *sql.DB, res map[string][]any) []*Record {
 		}
 
 		//Get new record
+		player := &players.Player{
+			Name: repository.MakeNullableStr(playerName),
+			TwitchName: repository.MakeNullableStr(twitchName),
+			PlayerID: playerID,
+		}
 		record := &Record{
 			Player: player,
 			Race: race,

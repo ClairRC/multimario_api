@@ -148,7 +148,6 @@ func QueryRuns(database *sql.DB, runQuery RunQuery) ([]*Run, error) {
 	//Add table to avoid ambiguous column names
 	cols := []string{
 		db.TableRuns + "." + db.ColRunGameCategoryID, 
-		db.ColRunTime,
 		db.TableRuns + "." + db.ColRunEstimate,
 		db.ColRunID,
 		db.TableRaces + "." + db.ColRaceID,

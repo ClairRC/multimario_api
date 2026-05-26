@@ -53,10 +53,42 @@ func getPlayerWhereCons(playerQuery PlayerQuery, twitchIDCache map[string]string
 func parsePlayerQueryResponse(res map[string][]any, twitchIDCache map[string]string) ([]*Player, error) {
 	out := make([]*Player, 0)
 
-	//Loop through results and create players
+	//Loop through results and fill cache to get missing players
+	newIDQueue := make([]string, 0)
+	for i := range len(res[db.ColPlayerID]) {
+		twitchID, ok := res[db.ColSocialsPlatformUserID][i].(string)
+		if !ok {
+			continue
+		}
+
+		_, cached := twitchIDCache[twitchID] //Check if twitch ID is cached
+		//If not in cache, add it to the newID queue
+		if !cached {
+			newIDQueue = append(newIDQueue, twitchID)
+		}
+	}
+
+	//Fill cache with new values
+	if len(newIDQueue) > 0 {
+		newCachedValues, err := twitch.GetTwitchNamesBatched(newIDQueue)
+		if err != nil {
+			return nil, err
+		}
+
+		for k, v := range newCachedValues{
+			twitchIDCache[k] = v
+		}
+	}
+
+	//Loop back though results to add to the output
 	for i := range len(res[db.ColPlayerID]) {
 		//Make sure values are valid else don't include in the response
 		name, ok := res[db.ColPlayerName][i].(string)
+		if !ok {
+			continue
+		}
+
+		id, ok := res[db.ColPlayerID][i].(int64)
 		if !ok {
 			continue
 		}
@@ -66,25 +98,9 @@ func parsePlayerQueryResponse(res map[string][]any, twitchIDCache map[string]str
 			continue
 		}
 
-		twitchNameStr, cached := twitchIDCache[twitchID] //Check if twitch ID is cached
-		if !cached {
-			alsoTwitchNameStr, err := twitch.Client.GetTwitchNameFromID(twitchID)
-			twitchNameStr = alsoTwitchNameStr //Good name
-			if err != nil {
-				return nil, err
-			} //If not cache, call API for twitch name
-		}
-
-		twitchName := repository.MakeNullableStr(twitchNameStr) //Can be nullable since this is not technically required required
-
-		id, ok := res[db.ColPlayerID][i].(int64)
-		if !ok {
-			continue
-		}
-
 		newPlayer := &Player {
 			Name: repository.MakeNullableStr(name),
-			TwitchName: twitchName,
+			TwitchName: repository.MakeNullableStr(twitchIDCache[twitchID]),
 			PlayerID: id,
 		}
 		out = append(out, newPlayer)

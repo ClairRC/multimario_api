@@ -167,6 +167,8 @@ func QueryRecord(database *sql.DB, recordQuery RecordQuery) ([]*Record, error) {
 	//aren't really good enough for that. So this will work for this scale
 	cols := []string {
 		db.ColPlayerName,
+		db.ColSocialsPlatformUserID,
+		db.TablePlayers + "." + db.ColPlayerID,
 		db.TableRecords + "." + db.ColRecordsRaceID,
 		db.ColRecordsFinishTime,
 		db.ColRecordsNumCollected,
@@ -176,7 +178,7 @@ func QueryRecord(database *sql.DB, recordQuery RecordQuery) ([]*Record, error) {
 	whereCons := getRecordsWhereCons(recordQuery)
 
 	//Execute queries
-	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColRecordsNumCollected, db.ColRecordsFinishTime)
+	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColRecordsFinishTime, db.ColRecordsNumCollected)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, err

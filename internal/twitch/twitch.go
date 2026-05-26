@@ -193,6 +193,70 @@ func (c TwitchClient) GetTwitchNameFromID(twitchID string) (string, error){
 	return twitchUserResp.Data[0].Login, nil
 }
 
+//Gets twitch names from a list of IDs instead of just 1
+//Returns slices of map in format {id: login name}
+func GetTwitchNamesBatched(twitchIDs []string) (map[string]string, error) {
+	//Get number of requests necessary
+	out := make(map[string]string)
+
+	for i := 0; i < len(twitchIDs); i+=100 {
+		params := url.Values{}
+		end := min(i+100, len(twitchIDs))
+    	batch := twitchIDs[i:end]
+		for _, id := range batch {
+			params.Add("id", id)
+		}
+		endpoint := "https://api.twitch.tv/helix/users?" + params.Encode()
+
+		//Create request
+		req, err := http.NewRequest("GET", endpoint, nil)
+		if err != nil {
+			return nil, err
+		}
+		authHeader := fmt.Sprintf("Bearer %s", appAccessToken)
+		req.Header.Set("Authorization", authHeader)
+		req.Header.Set("Client-Id", clientID)
+
+		//Get response
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode == http.StatusUnauthorized {
+			refreshAccessToken()
+			authHeader = fmt.Sprintf("Bearer %s", appAccessToken)
+			req.Header.Set("Authorization", authHeader)
+			resp, err = httpClient.Do(req)
+			if err != nil {
+				return nil, err
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode == http.StatusUnauthorized {
+				return nil, AccessTokenInvalidErr
+			}
+		}
+		if resp.StatusCode == http.StatusBadRequest {
+			return nil, UserCouldNotBeFoundErr
+		}
+
+		//Parse the response
+		var twitchUserResp TwitchUserResponse
+		err = json.NewDecoder(resp.Body).Decode(&twitchUserResp)
+		if err != nil {
+			return nil, errors.New("unknown error parsing twitch response. could not parse as json")
+		}
+
+		for _, user := range twitchUserResp.Data {
+			out[user.ID] = user.Login
+		}
+	}
+
+	return out, nil
+}
+
 //Get twitch ID from user token
 func (c TwitchClient) GetTwitchIDFromToken(token string) (string, error){
 	//Create request

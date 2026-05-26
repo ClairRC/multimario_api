@@ -38,6 +38,18 @@ func (h *ReqHandler) AddGame(w http.ResponseWriter, r *http.Request) {
 	gameName, err := validateText(w, req, "name", true)
 	if err != nil { return }
 
+	//Check game doesn't alradye xist
+	exists, err := games.GameExistsByName(h.DataBase, gameName)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error checking if game exists: "+err.Error())
+		return
+	}
+
+	if exists {
+		writeError(w, http.StatusBadRequest, "error adding game: game already exists")
+		return
+	}
+
 	//Get game and add it
 	game, _ := games.NewGame(gameName)
 	game.Add(h.DataBase)

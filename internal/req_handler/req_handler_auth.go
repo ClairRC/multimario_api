@@ -8,8 +8,6 @@ import (
 	"github.com/multimario_api/internal/twitch"
 )
 
-const accessLogPath = "access_log.json" //Const for where to write log 
-
 /*
 * File for authentication middleware and request handlers
  */
@@ -27,8 +25,8 @@ func (h *ReqHandler) Authenticate(next http.HandlerFunc, level auth.AuthLevel) h
 		}
 
 		valid, err := auth.KeyMeetsLevel(h.DataBase, key, level)
-		if err != nil {
-			writeError(w, http.StatusInternalServerError, "unknown error authenticating API key")
+		if err != nil || !valid {
+			writeError(w, http.StatusBadRequest, "key not present in database")
 			return
 		}
 

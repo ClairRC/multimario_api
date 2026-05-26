@@ -67,7 +67,7 @@ const (
 	TableAPIKeys = "api_keys"
 	ColAPIKeysKey = "key"
 	ColAPIKeyTwitchID = "twitch_id"
-	ColAPIKeysIsAdmin = "is_adming"
+	ColAPIKeysIsAdmin = "is_admin"
 )
 
 //Operator type and default operators
@@ -288,7 +288,7 @@ func ExecuteStatements(db *sql.DB, statements []SQLStatement) ([]int64, error) {
 }
 
 //Execute SQL queries
-//Returns map of {column, []values}
+//Returns map of {column, []values} and the column count
 func ExecuteQueries(db *sql.DB, statements []SQLStatement) (map[string][]any, error) {
 	res := make(map[string][]any)
 
@@ -344,6 +344,7 @@ func ExecuteQueries(db *sql.DB, statements []SQLStatement) (map[string][]any, er
 	return res, nil
 }
 
+
 //Builds SQL statement from certain parameters. Takes 0 or more "orderCol" values
 func BuildSelectStatement(columns []string, table string, where []WhereCondition, orderCols ...string) SQLStatement {
 	args := make([]any, 0)
@@ -381,11 +382,21 @@ func BuildSelectStatement(columns []string, table string, where []WhereCondition
 			if i > 0 {
 				stmt += ", "
 			}
-			stmt += col + " ASC "
+			stmt += col + " ASC NULLS LAST "
 		}
 	}
 
 	return SQLStatement{stmt, args, Select}
+}
+
+//Takes a select statement and adds a limit/offset clause
+func LimitSelectStatement(stmt *SQLStatement, limit int, offset int) {
+	//Nothing to limit if it's not select
+	if stmt.Type != Select{
+		return
+	}
+
+	stmt.Stmt += fmt.Sprintf(" LIMIT %v OFFSET %v ", limit, offset)
 }
 
 func BuildInsertStatement(columns []string, table string, values []any) SQLStatement{

@@ -72,6 +72,8 @@ func getResponsePageNum(urlPageNumParams []string) (int, error) {
 
 //Function to convert items into paginated items. Returns paginated items and metadata
 func paginate(items []map[string]any, url *url.URL, pageNum int, limit int) ([]map[string]any, map[string]any) {
+	//TODO: This function is problematic. My get handlers get al ist of EVER row and THEN it just gets tossed out here
+	//For now we're only looking at like maybe 1-2 seconds of waiting, but it's still very much not ideal.
 	offset := (pageNum - 1) * limit
 
 	//Get metadata for this

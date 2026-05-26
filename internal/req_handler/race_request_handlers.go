@@ -198,7 +198,6 @@ func (h *ReqHandler) UpdateRace(w http.ResponseWriter, r *http.Request) {
 * {
 *	success: bool
 *	error: string //Only if success is false
-	page_num: int //Page number. Defaults to 1
 * 	races: Array of races
 *   [
 *		{
