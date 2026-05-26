@@ -125,7 +125,7 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch err {
 		case players.PlayerDoesNotExistErr:
-			writeError(w, http.StatusBadRequest, "player does not exist")
+			writeError(w, http.StatusBadRequest, "player " + playerName.Value + " does not exist")
 		default:
 			writeError(w, http.StatusInternalServerError, "unknown error creating record")
 		}

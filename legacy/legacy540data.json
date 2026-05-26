@@ -1,0 +1,4783 @@
+{
+    "races": [
+        {
+            "records": [
+                {
+                    "player": "kingjo444",
+                    "final_time": null,
+                    "num_collected": 299,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:07:26",
+                            "time": "01:09:18"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:40:28",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:48",
+                            "time": "01:03:38"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:42:33",
+                            "time": "02:43:36"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:33:36",
+                            "time": "01:31:30"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:24:36",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "midbro_",
+                    "final_time": "12:06:04",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:09",
+                            "time": "01:09:13"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:04:23",
+                            "time": "02:01:09"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:59:48",
+                            "time": "01:03:04"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:37:41",
+                            "time": "02:38:23"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:37:34",
+                            "time": "01:35:30"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:26:53",
+                            "time": "03:34:33"
+                        }
+                    ]
+                },
+                {
+                    "player": "zgamut",
+                    "final_time": "12:38:08",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:13:07",
+                            "time": "01:14:30"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:56:00",
+                            "time": "01:55:29"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:00:36",
+                            "time": "01:05:04"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:49:52",
+                            "time": "02:51:52"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:41:27",
+                            "time": "01:48:20"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:36:21",
+                            "time": "03:37:46"
+                        }
+                    ]
+                },
+                {
+                    "player": "goomba_benny",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:28",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:48:57",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:11:02",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:47:36",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:49:48",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:37:45",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "tackleshift8",
+                    "final_time": "12:57:44",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:10:57",
+                            "time": "01:14:57"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:06:12",
+                            "time": "02:22:25"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:15:16",
+                            "time": "01:18:40"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:36:42",
+                            "time": "02:39:19"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:41:38",
+                            "time": "01:45:01"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:35:02",
+                            "time": "03:34:03"
+                        }
+                    ]
+                },
+                {
+                    "player": "galax_v",
+                    "final_time": "13:02:28",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:10:56",
+                            "time": "01:13:53"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:10:04",
+                            "time": "02:15:08"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:09:30",
+                            "time": "01:18:00"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:31:23",
+                            "time": "02:36:23"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:48:52",
+                            "time": "01:56:06"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:36:25",
+                            "time": "03:40:12"
+                        }
+                    ]
+                },
+                {
+                    "player": "tmvronta",
+                    "final_time": "14:53:19",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:00:28",
+                            "time": "01:02:57"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:06:24",
+                            "time": "02:12:06"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:13:55",
+                            "time": "01:25:06"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:59:14",
+                            "time": "03:10:49"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:57:31",
+                            "time": "02:17:02"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:30:40",
+                            "time": "04:38:58"
+                        }
+                    ]
+                },
+                {
+                    "player": "xylexsr",
+                    "final_time": "16:16:26",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:03:18",
+                            "time": "01:06:11"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:37:46",
+                            "time": "01:47:34"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:21:04",
+                            "time": "01:37:37"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:08:42",
+                            "time": "03:14:28"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:59:29",
+                            "time": "03:11:42"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:42:50",
+                            "time": "05:11:20"
+                        }
+                    ]
+                },
+                {
+                    "player": "forttheo_",
+                    "final_time": "24:30:14",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:27:45",
+                            "time": "01:30:55"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:38:52",
+                            "time": "01:39:49"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:39:58",
+                            "time": "01:25:26"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:39:02",
+                            "time": "02:47:17"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "03:00:00",
+                            "time": "02:22:10"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:32:42",
+                            "time": "03:30:30"
+                        }
+                    ]
+                },
+                {
+                    "player": "costileraphid18",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:31:08",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:55:47",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:20:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:19:45",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "03:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:20:13",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "awesome7285",
+                    "final_time": null,
+                    "num_collected": 163,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:58:21",
+                            "time": "02:01:48"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "06:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:13:25",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:12:35",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:00:30",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:14:38",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "mrhug1",
+                    "final_time": "28:40:00",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "04:00:00",
+                            "time": "02:40:39"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "06:00:00",
+                            "time": "3:15:44"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "02:02:23",
+                            "time": "01:52:36"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:50:08",
+                            "time": "04:03:28"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "03:57:44",
+                            "time": "11:30:42"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "05:16:01",
+                            "time": "05:11:24"
+                        }
+                    ]
+                },
+                {
+                    "player": "m_riss1",
+                    "final_time": null,
+                    "num_collected": 191,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:17:27",
+                            "time": "01:27:57"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "06:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "06:16:25",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "04:33:47",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "05:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "08:19:28",
+                            "time": null
+                        }
+                    ]
+                }
+            ],
+            "date": "2021-09-25",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00"
+        },
+        {
+            "date": "2022-03-26",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00",
+            "records": [
+                {
+                    "player": "zgamut",
+                    "final_time": "11:38:21",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:08:27",
+                            "time": "01:10:15"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:44:59",
+                            "time": "01:47:10"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:34",
+                            "time": "01:02:32"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:38:28",
+                            "time": "02:36:17"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:30:38",
+                            "time": "01:36:58"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:23:11",
+                            "time": "03:22:17"
+                        }
+                    ]
+                },
+                {
+                    "player": "midbro_",
+                    "final_time": null,
+                    "num_collected": 127,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:07:51",
+                            "time": "01:08:43"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:54:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:56:55",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:33:03",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:30:29",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:26:22",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "fizz64",
+                    "final_time": "11:52:01",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:08:08",
+                            "time": "01:13:21"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:14",
+                            "time": "01:54:57"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:52:11",
+                            "time": "00:58:04"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:39:45",
+                            "time": "02:40:50"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:26:18",
+                            "time": "01:30:41"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:31:23",
+                            "time": "03:33:02"
+                        }
+                    ]
+                },
+                {
+                    "player": "frozeno",
+                    "final_time": "12:02:45",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:10:49",
+                            "time": "01:12:32"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:45:46",
+                            "time": "01:46:03"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:56:22",
+                            "time": "01:01:17"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:45:00",
+                            "time": "02:48:13"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:30:10",
+                            "time": "01:34:31"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:22:06",
+                            "time": "03:36:59"
+                        }
+                    ]
+                },
+                {
+                    "player": "expreli_",
+                    "final_time": "12:09:12",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:22",
+                            "time": "1:11:58"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:58:03",
+                            "time": "2:01:22"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:58:31",
+                            "time": "01:02:52"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:39:32",
+                            "time": "02:40:39"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:30:31",
+                            "time": "01:39:06"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:28:43",
+                            "time": "03:31:34"
+                        }
+                    ]
+                },
+                {
+                    "player": "galax_v",
+                    "final_time": "12:11:53",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:34",
+                            "time": "01:09:36"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:04:15",
+                            "time": "02:02:30"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:04:00",
+                            "time": "01:06:46"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:31:23",
+                            "time": "02:36:55"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:37:40",
+                            "time": "01:40:13"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:26:42",
+                            "time": "03:33:57"
+                        }
+                    ]
+                },
+                {
+                    "player": "luca4735",
+                    "final_time": "12:08:04",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:07",
+                            "time": "01:11:07"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:53:39",
+                            "time": "01:51:35"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:03:57",
+                            "time": "01:08:20"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:42:10",
+                            "time": "02:44:40"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:30:39",
+                            "time": "01:33:10"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:35:39",
+                            "time": "03:36:26"
+                        }
+                    ]
+                },
+                {
+                    "player": "tackleshift8",
+                    "final_time": "12:34:08",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:10:57",
+                            "time": "01:12:08"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:06:12",
+                            "time": "02:07:12"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:14:28",
+                            "time": "01:14:31"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:31:26",
+                            "time": "02:34:15"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:38:13",
+                            "time": "01:50:21"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:26:42",
+                            "time": "03:32:42"
+                        }
+                    ]
+                },
+                {
+                    "player": "agge40",
+                    "final_time": null,
+                    "num_collected": 354,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:32",
+                            "time": "01:10:40"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:13:13",
+                            "time": "02:16:12"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:58",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:39:39",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:33:50",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:51:27",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "butter101_",
+                    "final_time": "13:26:15",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:14:37",
+                            "time": "01:14:23"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:41",
+                            "time": "01:52:04"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:08:15",
+                            "time": "01:18:10"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:56:47",
+                            "time": "02:59:36"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:35:27",
+                            "time": "01:48:19"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:49:14",
+                            "time": "03:54:50"
+                        }
+                    ]
+                },
+                {
+                    "player": "costileraphid18",
+                    "final_time": "13:24:46",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:24:55",
+                            "time": "01:25:03"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:11",
+                            "time": "01:50:11"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:10:25",
+                            "time": "01:10:47"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:55:21",
+                            "time": "02:54:33"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:59:33",
+                            "time": "02:18:43"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:01:38",
+                            "time": "03:42:30"
+                        }
+                    ]
+                },
+                {
+                    "player": "juegariel",
+                    "final_time": "14:23:34",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:25:48",
+                            "time": "01:29:32"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:05:27",
+                            "time": "01:58:51"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:25:35",
+                            "time": "01:39:36"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:37:16",
+                            "time": "03:05:38"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:59:16",
+                            "time": "02:12:37"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:46:38",
+                            "time": "03:42:52"
+                        }
+                    ]
+                },
+                {
+                    "player": "jeman155",
+                    "final_time": null,
+                    "num_collected": 294,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "04:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:58:18",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:37:18",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:13:01",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "05:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:34:42",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "mrhug1",
+                    "final_time": "25:27:34",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "02:40:39",
+                            "time": "02:02:37"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "03:15:44",
+                            "time": "02:36:19"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:52:36",
+                            "time": "01:41:26"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:50:08",
+                            "time": "03:40:09"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "03:57:44",
+                            "time": "02:32:56"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "05:11:24",
+                            "time": "05:06:10"
+                        }
+                    ]
+                },
+                {
+                    "player": "m_riss1",
+                    "final_time": null,
+                    "num_collected": 199,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:17:27",
+                            "time": "01:21:30"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "06:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "06:16:25",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "04:33:37",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "05:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "06:17:12",
+                            "time": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2022-09-17",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00",
+            "records": [
+                {
+                    "player": "clairdss",
+                    "final_time": "10:54:14",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:14:00",
+                            "time": "01:13:39"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:39:40",
+                            "time": "01:43:24"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:51:47",
+                            "time": "00:58:25"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:25:14",
+                            "time": "02:27:04"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:20:49",
+                            "time": "01:23:02"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:00:10",
+                            "time": "03:05:06"
+                        }
+                    ]
+                },
+                {
+                    "player": "zgamut",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:07:22",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:39:16",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:55:46",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:32:37",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:28:58",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:14:11",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "rodillo_",
+                    "final_time": "11:16:36",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "00:59:57",
+                            "time": "01:03:18"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:46:33",
+                            "time": "01:49:25"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:54:43",
+                            "time": "00:57:34"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:28:46",
+                            "time": "02:30:45"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:33:23",
+                            "time": "01:39:04"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:15:08",
+                            "time": "03:13:25"
+                        }
+                    ]
+                },
+                {
+                    "player": "sailo93",
+                    "final_time": "11:13:45",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:00:23",
+                            "time": "01:01:58"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:51:28",
+                            "time": "01:52:23"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:44",
+                            "time": "01:00:43"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:21:43",
+                            "time": "02:23:44"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:32:46",
+                            "time": "01:35:55"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:18:22",
+                            "time": "03:17:43"
+                        }
+                    ]
+                },
+                {
+                    "player": "frozeno",
+                    "final_time": null,
+                    "num_collected": 329,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:29",
+                            "time": "01:13:00"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:37:44",
+                            "time": "01:42:54"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:56:22",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:35:28",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:30:10",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:16:52",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "luca4735",
+                    "final_time": "12:08:46",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:07",
+                            "time": "01:10:48"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:49:56",
+                            "time": "01:49:57"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:03:57",
+                            "time": "01:09:50"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:42:10",
+                            "time": "02:39:07"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:30:39",
+                            "time": "01:38:28"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:26:53",
+                            "time": "03:38:05"
+                        }
+                    ]
+                },
+                {
+                    "player": "tackleshift8",
+                    "final_time": "12:12:57",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:10:57",
+                            "time": "01:13:20"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:55:59",
+                            "time": "01:58:19"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:03:45",
+                            "time": "01:07:47"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:31:26",
+                            "time": "02:36:05"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:37:09",
+                            "time": "01:36:02"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:26:42",
+                            "time": "03:38:08"
+                        }
+                    ]
+                },
+                {
+                    "player": "cubic3107_",
+                    "final_time": "15:09:13",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:18:28",
+                            "time": "01:27:00"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:12",
+                            "time": "01:56:17"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:20:00",
+                            "time": "01:26:18"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:01:16",
+                            "time": "03:23:44"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:47:05",
+                            "time": "03:08:13"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:36:11",
+                            "time": "03:40:36"
+                        }
+                    ]
+                },
+                {
+                    "player": "sheilaslays",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:15:34",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:42:18",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:09:55",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:06:09",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:56:50",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:55:43",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "pokemario2401",
+                    "final_time": "14:59:42",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:17:13",
+                            "time": "01:22:58"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:54:42",
+                            "time": "02:00:55"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:45:34",
+                            "time": "01:30:11"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:23:19",
+                            "time": "03:14:32"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:50:16",
+                            "time": "02:38:37"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:24:53",
+                            "time": "04:05:12"
+                        }
+                    ]
+                },
+                {
+                    "player": "switch_runner",
+                    "final_time": "36:15:33",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:55",
+                            "time": "01:11:03"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "03:01:57",
+                            "time": "02:52:24"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:29:09",
+                            "time": "07:46:31"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:34:05",
+                            "time": "03:24:54"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:50:59",
+                            "time": "02:07:18"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "05:41:10",
+                            "time": "05:40:54"
+                        }
+                    ]
+                },
+                {
+                    "player": "salmonburt",
+                    "final_time": null,
+                    "num_collected": 365,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:01:14",
+                            "time": "01:02:22"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "06:00:00",
+                            "time": "03:54:50"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "03:30:28",
+                            "time": "02:50:38"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "04:21:37",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:11:43",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:18:40",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "m_riss1",
+                    "final_time": null,
+                    "num_collected": 465,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:17:27",
+                            "time": "01:20:50"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "04:41:43",
+                            "time": "04:21:19"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "04:02:17",
+                            "time": "06:44:47"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "04:14:12",
+                            "time": "05:28:33"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "05:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "06:17:12",
+                            "time": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2023-03-25",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00",
+            "records": [
+                {
+                    "player": "odme_",
+                    "final_time": "10:16:01",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "00:59:53",
+                            "time": "01:01:58"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:39:51",
+                            "time": "01:38:57"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:49:53",
+                            "time": "00:51:27"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:21:34",
+                            "time": "02:21:01"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:16:54",
+                            "time": "01:18:18"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:02:37",
+                            "time": "03:03:29"
+                        }
+                    ]
+                },
+                {
+                    "player": "rodillo_",
+                    "final_time": "10:43:21",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "00:59:57",
+                            "time": "01:02:18"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:44:32",
+                            "time": "01:47:33"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:53:03",
+                            "time": "00:55:31"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:19:41",
+                            "time": "02:21:52"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:23:13",
+                            "time": "01:28:59"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:03:58",
+                            "time": "03:05:26"
+                        }
+                    ]
+                },
+                {
+                    "player": "tymondo_",
+                    "final_time": "11:21:51",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:00:35",
+                            "time": "01:02:37"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:41:29",
+                            "time": "01:41:05"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:55:22",
+                            "time": "00:57:07"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:38:38",
+                            "time": "02:41:06"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:24:17",
+                            "time": "01:25:59"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:20:28",
+                            "time": "03:31:45"
+                        }
+                    ]
+                },
+                {
+                    "player": "bloodderg",
+                    "final_time": null,
+                    "num_collected": 385,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:07:40",
+                            "time": "01:09:36"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:45:58",
+                            "time": "01:44:57"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:59:41",
+                            "time": "01:02:10"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:36:30",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:28:32",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:19:17",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "tackleshift8",
+                    "final_time": "11:39:33",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:10:57",
+                            "time": "01:12:57"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:55:59",
+                            "time": "01:52:30"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:01:36",
+                            "time": "01:02:30"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:28:32",
+                            "time": "02:31:20"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:29:44",
+                            "time": "01:33:14"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:19:20",
+                            "time": "03:24:33"
+                        }
+                    ]
+                },
+                {
+                    "player": "cubic3107_",
+                    "final_time": null,
+                    "num_collected": 212,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:11:30",
+                            "time": "01:14:58"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:44:36",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:08:27",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:44:36",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:39:13",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:19:23",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "cinemayoshi",
+                    "final_time": "12:55:39",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:10:58",
+                            "time": "01:14:09"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:46:27",
+                            "time": "01:51:34"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:59:39",
+                            "time": "01:12:53"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:46:42",
+                            "time": "02:52:14"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:29:55",
+                            "time": "01:34:42"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:44:27",
+                            "time": "03:57:39"
+                        }
+                    ]
+                },
+                {
+                    "player": "rox_",
+                    "final_time": null,
+                    "num_collected": 434,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:08:52",
+                            "time": "01:11:22"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:53:28",
+                            "time": "01:57:15"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:09:52",
+                            "time": "01:22:29"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:58:36",
+                            "time": "03:14:08"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:46:49",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:12:03",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "mdcactus",
+                    "final_time": "12:36:57",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:04:51",
+                            "time": "01:08:32"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:28:36",
+                            "time": "01:31:29"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:11:43",
+                            "time": "01:13:36"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:44:24",
+                            "time": "02:51:02"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:34:08",
+                            "time": "01:44:22"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:19:55",
+                            "time": "04:04:27"
+                        }
+                    ]
+                },
+                {
+                    "player": "ryderstarshine",
+                    "final_time": null,
+                    "num_collected": 260,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:26:58",
+                            "time": "01:30:27"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:39:06",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:17:30",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:48:51",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:16:05",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:43:43",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "sayharry",
+                    "final_time": "14:13:31",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:20:01",
+                            "time": "01:20:09"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:37",
+                            "time": "02:00:29"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:01:44",
+                            "time": "01:07:42"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:11:08",
+                            "time": "03:10:17"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:06:24",
+                            "time": "02:14:35"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:02:43",
+                            "time": "04:14:10"
+                        }
+                    ]
+                },
+                {
+                    "player": "salmonburt",
+                    "final_time": "14:24:47",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:00:38",
+                            "time": "01:01:53"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:16:07",
+                            "time": "02:03:20"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:26:19",
+                            "time": "01:30:18"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:15:56",
+                            "time": "03:21:28"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:11:43",
+                            "time": "02:13:19"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:13:30",
+                            "time": "04:10:34"
+                        }
+                    ]
+                },
+                {
+                    "player": "bushnan464",
+                    "final_time": "14:58:34",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:24:17",
+                            "time": "01:23:59"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:33:44",
+                            "time": "02:06:22"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:25:21",
+                            "time": "01:37:10"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:07:38",
+                            "time": "03:08:33"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:08:43",
+                            "time": "02:23:05"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:32:24",
+                            "time": "04:14:50"
+                        }
+                    ]
+                },
+                {
+                    "player": "bluemlittlem1",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:21:57",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:52",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:21:16",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:03:54",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "04:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "06:00:00",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "timkariocs",
+                    "final_time": "16:48:17",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "04:00:00",
+                            "time": "02:39:03"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:52:06",
+                            "time": "02:26:22"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:43:33",
+                            "time": "01:46:01"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:02:09",
+                            "time": "03:09:22"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "03:02:45",
+                            "time": "02:47:48"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:57:46",
+                            "time": "03:54:24"
+                        }
+                    ]
+                },
+                {
+                    "player": "snitch_smo",
+                    "final_time": "29:51:02",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:04:17",
+                            "time": "01:07:16"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:29:13",
+                            "time": "02:38:18"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:34:56",
+                            "time": "02:05:09"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "05:22:51",
+                            "time": "04:07:29"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "03:46:19",
+                            "time": "02:49:57"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "06:46:23",
+                            "time": "04:49:25"
+                        }
+                    ]
+                },
+                {
+                    "player": "jojwyd",
+                    "final_time": "17:43:30",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:30:34",
+                            "time": "01:40:47"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "04:00:00",
+                            "time": "02:36:13"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:59:50",
+                            "time": "01:17:05"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:28:45",
+                            "time": "03:50:48"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "03:03:28",
+                            "time": "02:54:15"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "10:00:00",
+                            "time": "04:55:55"
+                        }
+                    ]
+                },
+                {
+                    "player": "spezysr",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:01:08",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "04:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "04:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:40:04",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "05:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "10:00:00",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "metalpipe_",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "05:53:48",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "06:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "04:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:53:41",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "05:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "10:00:00",
+                            "time": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2023-09-30",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00",
+            "records": [
+                {
+                    "player": "odme_",
+                    "final_time": null,
+                    "num_collected": 231,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "00:59:53",
+                            "time": "01:01:13"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:36:35",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:49:46",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:17:43",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:16:54",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:00:57",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "sailo93",
+                    "final_time": "10:39:50",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:00:23",
+                            "time": "01:00:54"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:40:44",
+                            "time": "01:42:36"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:44",
+                            "time": "01:01:10"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:16:34",
+                            "time": "02:18:28"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:26:46",
+                            "time": "01:27:53"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:03:36",
+                            "time": "03:06:45"
+                        }
+                    ]
+                },
+                {
+                    "player": "hexspeedruns",
+                    "final_time": "10:57:43",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:06:18",
+                            "time": "01:07:02"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:37:57",
+                            "time": "01:39:52"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:51",
+                            "time": "00:58:50"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:25:00",
+                            "time": "02:28:45"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:23:47",
+                            "time": "01:28:02"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:09:24",
+                            "time": "03:11:49"
+                        }
+                    ]
+                },
+                {
+                    "player": "tymondo_",
+                    "final_time": null,
+                    "num_collected": 127,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:00:35",
+                            "time": "01:05:26"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:39:55",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:54:44",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:34:22",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:23:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:18:52",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "thebreadghost",
+                    "final_time": null,
+                    "num_collected": 384,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:12:12",
+                            "time": "01:16:16"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:59",
+                            "time": "01:56:00"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:55:50",
+                            "time": "00:58:06"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:24:01",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:19:53",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:10:18",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "jjsrl",
+                    "final_time": "11:22:24",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:08:10",
+                            "time": "01:11:51"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:42:36",
+                            "time": "01:44:44"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:48:49",
+                            "time": "00:49:55"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:31:26",
+                            "time": "02:37:56"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:13:08",
+                            "time": "01:17:49"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:41:16",
+                            "time": "03:38:35"
+                        }
+                    ]
+                },
+                {
+                    "player": "cubic3107_",
+                    "final_time": null,
+                    "num_collected": 466,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:10:56",
+                            "time": "01:13:27"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:39:47",
+                            "time": "01:44:56"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:03:43",
+                            "time": "01:09:12"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:35:05",
+                            "time": "02:45:59"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:35:34",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:18:44",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "themine2001",
+                    "final_time": "12:45:07",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:45",
+                            "time": "01:09:45"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:43:12",
+                            "time": "01:49:49"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:11:43",
+                            "time": "01:15:17"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:38:19",
+                            "time": "02:45:49"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:39:01",
+                            "time": "02:06:24"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:31:21",
+                            "time": "03:31:03"
+                        }
+                    ]
+                },
+                {
+                    "player": "druzspeedruns",
+                    "final_time": "12:21:57",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:12:37",
+                            "time": "01:14:10"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:56:34",
+                            "time": "01:52:54"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:53:25",
+                            "time": "00:59:13"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:52:03",
+                            "time": "02:59:15"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:42:34",
+                            "time": "01:41:29"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:30:44",
+                            "time": "03:28:14"
+                        }
+                    ]
+                },
+                {
+                    "player": "timkariocs",
+                    "final_time": "14:06:37",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:23:09",
+                            "time": "01:32:37"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:07:04",
+                            "time": "02:14:06"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:12:18",
+                            "time": "01:24:14"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:49:14",
+                            "time": "02:55:44"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:58:24",
+                            "time": "01:59:54"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:46:31",
+                            "time": "03:56:25"
+                        }
+                    ]
+                },
+                {
+                    "player": "bushnan464",
+                    "final_time": "13:42:07",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:20:58",
+                            "time": "01:23:33"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:02:21",
+                            "time": "02:02:06"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:15:06",
+                            "time": "01:18:18"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:55:41",
+                            "time": "02:54:35"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:51:32",
+                            "time": "01:57:39"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:56:38",
+                            "time": "04:02:46"
+                        }
+                    ]
+                },
+                {
+                    "player": "pokemario2401",
+                    "final_time": "13:49:01",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:14:34",
+                            "time": "01:16:55"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:45:14",
+                            "time": "01:49:07"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:25:57",
+                            "time": "01:24:08"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:10:20",
+                            "time": "03:09:43"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:23:08",
+                            "time": "02:09:05"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:58:57",
+                            "time": "03:55:16"
+                        }
+                    ]
+                },
+                {
+                    "player": "snrobi",
+                    "final_time": null,
+                    "num_collected": 407,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:39:02",
+                            "time": "01:37:51"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:03:00",
+                            "time": "02:00:22"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:50:06",
+                            "time": "01:37:39"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:59:02",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:33:12",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:32:47",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "swagh007",
+                    "final_time": "13:51:14",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:23:12",
+                            "time": "01:19:29"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:02:58",
+                            "time": "01:55:38"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:58:54",
+                            "time": "01:01:39"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:59:56",
+                            "time": "03:11:29"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:48:11",
+                            "time": "01:51:44"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "10:00:00",
+                            "time": "04:24:47"
+                        }
+                    ]
+                },
+                {
+                    "player": "cape90",
+                    "final_time": null,
+                    "num_collected": 425,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:13:47",
+                            "time": "01:18:51"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "06:00:00",
+                            "time": "03:27:24"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:19:56",
+                            "time": "02:58:30"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "08:00:00",
+                            "time": "04:02:54"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:44:07",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "10:00:00",
+                            "time": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2024-03-23",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00",
+            "records": [
+                {
+                    "player": "rodillo_",
+                    "final_time": "10:32:08",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "00:59:46",
+                            "time": "01:01:56"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:35:31",
+                            "time": "01:42:52"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:50:19",
+                            "time": "00:52:05"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:19:41",
+                            "time": "02:22:46"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:21:08",
+                            "time": "01:23:44"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "02:59:34",
+                            "time": "03:06:48"
+                        }
+                    ]
+                },
+                {
+                    "player": "kronesg_",
+                    "final_time": "11:11:19",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:03:38",
+                            "time": "01:06:08"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:41:04",
+                            "time": "01:42:17"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:54:39",
+                            "time": "00:56:43"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:27:57",
+                            "time": "02:29:08"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:25:45",
+                            "time": "01:30:20"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:24:56",
+                            "time": "03:23:15"
+                        }
+                    ]
+                },
+                {
+                    "player": "source28",
+                    "final_time": "11:27:23",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:01:17",
+                            "time": "01:02:35"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:44:30",
+                            "time": "01:50:44"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:59:55",
+                            "time": "01:09:36"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:26:28",
+                            "time": "02:31:47"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:28:46",
+                            "time": "01:28:09"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:22:21",
+                            "time": "03:22:53"
+                        }
+                    ]
+                },
+                {
+                    "player": "tackleshift8",
+                    "final_time": null,
+                    "num_collected": 364,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:08:58",
+                            "time": "01:11:26"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:46:47",
+                            "time": "01:54:04"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:55",
+                            "time": "01:00:53"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:23:26",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:28:49",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:18:19",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "cubic3107_",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:07:54",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:39:47",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:58:10",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:35:05",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:28:29",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:18:44",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "druzspeedruns",
+                    "final_time": null,
+                    "num_collected": 455,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:12:37",
+                            "time": "01:16:55"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:54",
+                            "time": "02:00:24"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:52:12",
+                            "time": "00:57:14"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:41:40",
+                            "time": "02:43:04"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:33:29",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:19:20",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "swagh007",
+                    "final_time": "11:52:07",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:19:07",
+                            "time": "01:23:29"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:49:57",
+                            "time": "01:49:59"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:56:54",
+                            "time": "00:57:53"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:30:45",
+                            "time": "02:33:54"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:32:21",
+                            "time": "01:33:37"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:29:24",
+                            "time": "03:28:42"
+                        }
+                    ]
+                },
+                {
+                    "player": "ryderstarshine",
+                    "final_time": "12:26:23",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:14:07",
+                            "time": "01:16:04"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:36:41",
+                            "time": "01:40:01"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:04:10",
+                            "time": "01:16:34"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:36:20",
+                            "time": "02:42:00"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:38:07",
+                            "time": "01:48:54"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:38:03",
+                            "time": "03:39:40"
+                        }
+                    ]
+                },
+                {
+                    "player": "kudo64_",
+                    "final_time": "12:56:02",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:19:39",
+                            "time": "01:17:48"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:54:41",
+                            "time": "01:59:02"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:53:55",
+                            "time": "00:57:22"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:45:32",
+                            "time": "02:50:45"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:57:13",
+                            "time": "02:03:52"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:47:23",
+                            "time": "03:42:21"
+                        }
+                    ]
+                },
+                {
+                    "player": "sa1102smo",
+                    "final_time": null,
+                    "num_collected": 226,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:02:42",
+                            "time": "01:08:20"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:53:06",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:21:14",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:00:40",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:44:44",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:47:03",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "bushnan464",
+                    "final_time": null,
+                    "num_collected": 458,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:16:07",
+                            "time": "01:16:33"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:59:51",
+                            "time": "01:58:59"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:15:06",
+                            "time": "01:15:02"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:50:51",
+                            "time": "02:55:12"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:44:10",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:56:38",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "snrobi",
+                    "final_time": "13:33:32",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:18:48",
+                            "time": "01:18:49"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:56:51",
+                            "time": "01:55:16"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:29:02",
+                            "time": "01:31:58"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:59:02",
+                            "time": "02:51:49"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:03:02",
+                            "time": "02:08:42"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:30:31",
+                            "time": "03:35:48"
+                        }
+                    ]
+                },
+                {
+                    "player": "forttheo_",
+                    "final_time": null,
+                    "num_collected": 370,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:35:00",
+                            "time": "01:31:07"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:50:00",
+                            "time": "01:44:55"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:25:00",
+                            "time": "01:23:37"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:45:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:15:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:30:00",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "lucinesr",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:05:45",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:57:59",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:59:55",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:56:03",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:58:49",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:21:32",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "snitch_smo",
+                    "final_time": "13:49:41",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:04:17",
+                            "time": "01:06:21"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:03:17",
+                            "time": "02:08:10"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:15:10",
+                            "time": "01:18:07"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:11:46",
+                            "time": "03:10:10"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:49:25",
+                            "time": "01:46:21"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:15:00",
+                            "time": "04:17:53"
+                        }
+                    ]
+                },
+                {
+                    "player": "raneetti",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:14:54",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:21:11",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:03:52",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:11:22",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:59:54",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:57:57",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "the_needlemouse",
+                    "final_time": "14:40:43",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:23:49",
+                            "time": "01:47:01"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:45:17",
+                            "time": "01:48:10"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:56:34",
+                            "time": "01:01:26"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:57:38",
+                            "time": "03:04:47"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:53:48",
+                            "time": "02:12:01"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:52:13",
+                            "time": "04:36:55"
+                        }
+                    ]
+                },
+                {
+                    "player": "emilythekoopa",
+                    "final_time": "33:24:20",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:25:31",
+                            "time": "01:25:09"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:56:53",
+                            "time": "02:06:55"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:14:12",
+                            "time": "01:21:36"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:01:09",
+                            "time": "03:10:32"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:12:22",
+                            "time": "02:53:13"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:15:10",
+                            "time": "04:01:19"
+                        }
+                    ]
+                },
+                {
+                    "player": "aurelia400",
+                    "final_time": null,
+                    "num_collected": 326,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:12:16",
+                            "time": "01:13:03"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "04:20:25",
+                            "time": "03:54:50"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:07:14",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "04:09:19",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:47:30",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "06:08:46",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "michaelsspeedruns",
+                    "final_time": null,
+                    "num_collected": 365,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:17:37",
+                            "time": "01:28:31"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "06:00:00",
+                            "time": "08:07:42"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:07:14",
+                            "time": "01:07:49"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:56:40",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "03:10:46",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "06:57:50",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "cheesy_tv",
+                    "final_time": null,
+                    "num_collected": 442,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:36:35",
+                            "time": "01:47:50"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:49:42",
+                            "time": "01:55:38"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:58:25",
+                            "time": "01:09:03"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:49:40",
+                            "time": "03:34:09"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "05:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "10:00:00",
+                            "time": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2024-09-28",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00",
+            "records": [
+                {
+                    "player": "swagh007",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:14:42",
+                            "time": "01:16:31"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:49:57",
+                            "time": "01:49:11"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:54:00",
+                            "time": "00:58:27"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:24:37",
+                            "time": "02:23:56"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:30:34",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:14:58",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "sa1102smo",
+                    "final_time": "24:26:40",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:02:42",
+                            "time": "01:04:20"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:42:27",
+                            "time": "01:49:24"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:01:24",
+                            "time": "01:04:41"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:34:19",
+                            "time": "02:41:45"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:33:14",
+                            "time": "01:42:27"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:38:45",
+                            "time": "03:32:37"
+                        }
+                    ]
+                },
+                {
+                    "player": "cheesysrc",
+                    "final_time": "12:32:02",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:25:57",
+                            "time": "01:30:04"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:49:42",
+                            "time": "01:55:09"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:56:12",
+                            "time": "00:58:45"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:42:35",
+                            "time": "02:42:13"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:39:49",
+                            "time": "01:42:00"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:41:01",
+                            "time": "03:41:36"
+                        }
+                    ]
+                },
+                {
+                    "player": "snrobi",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:15:31",
+                            "time": "01:17:14"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:50:29",
+                            "time": "01:53:29"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:08:06",
+                            "time": "01:14:41"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:48:24",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:49:52",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:25:06",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "the_needlemouse",
+                    "final_time": "13:31:58",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:23:47",
+                            "time": "01:53:11"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:44:16",
+                            "time": "01:47:35"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:56:34",
+                            "time": "01:00:50"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:48:45",
+                            "time": "02:53:02"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:47:43",
+                            "time": "01:59:31"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:38:05",
+                            "time": "03:55:40"
+                        }
+                    ]
+                },
+                {
+                    "player": "sayharry",
+                    "final_time": "12:27:53",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:20:01",
+                            "time": "01:18:21"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:37",
+                            "time": "01:55:44"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:58:43",
+                            "time": "01:00:53"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:44:15",
+                            "time": "02:42:40"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:47:31",
+                            "time": "01:42:06"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:47:53",
+                            "time": "03:41:02"
+                        }
+                    ]
+                },
+                {
+                    "player": "emilythekoopa",
+                    "final_time": "14:04:54",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:24:14",
+                            "time": "01:24:57"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:56:53",
+                            "time": "02:03:24"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:10:58",
+                            "time": "01:19:09"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:56:17",
+                            "time": "02:59:14"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:47:17",
+                            "time": "01:43:49"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:45:07",
+                            "time": "03:50:34"
+                        }
+                    ]
+                },
+                {
+                    "player": "raneetti",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:14:54",
+                            "time": "01:19:06"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:13:49",
+                            "time": "02:09:58"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:00:03",
+                            "time": "01:08:25"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:57:46",
+                            "time": "03:11:26"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:39:42",
+                            "time": "01:57:44"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:54:58",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "calumj28",
+                    "final_time": "13:44:13",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:23:45",
+                            "time": "01:25:57"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:20:08",
+                            "time": "02:12:06"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:04:47",
+                            "time": "01:11:44"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:52:08",
+                            "time": "02:55:09"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:43:34",
+                            "time": "01:54:53"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:46:40",
+                            "time": "03:58:11"
+                        }
+                    ]
+                },
+                {
+                    "player": "snitch_smo",
+                    "final_time": "13:25:46",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:04:06",
+                            "time": "01:06:29"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:03:12",
+                            "time": "01:59:53"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:09:50",
+                            "time": "01:06:38"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:10:10",
+                            "time": "03:14:16"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:40:42",
+                            "time": "01:50:08"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:15:00",
+                            "time": "04:05:15"
+                        }
+                    ]
+                },
+                {
+                    "player": "zakart_qc",
+                    "final_time": "15:14:37",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:16:00",
+                            "time": "01:26:02"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:16:51",
+                            "time": "02:06:51"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:17:39",
+                            "time": "01:34:48"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:55:20",
+                            "time": "03:00:35"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:54:29",
+                            "time": "02:09:16"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:03:42",
+                            "time": "04:30:01"
+                        }
+                    ]
+                },
+                {
+                    "player": "aurelia400",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:09:41",
+                            "time": "01:11:13"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:52:09",
+                            "time": "02:52:09"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:46",
+                            "time": "01:02:12"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:56:07",
+                            "time": "03:56:07"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "02:16:15",
+                            "time": "02:34:35"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "06:08:46",
+                            "time": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2025-03-29",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00",
+            "records": [
+                {
+                    "player": "kasualplayz",
+                    "final_time": "11:27:15",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:04:47",
+                            "time": "01:05:28"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:43:05",
+                            "time": "01:47:35"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:53:58",
+                            "time": "00:55:33"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:34:13",
+                            "time": "02:34:39"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:29:01",
+                            "time": "01:31:54"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:22:33",
+                            "time": "03:27:18"
+                        }
+                    ]
+                },
+                {
+                    "player": "sayharry",
+                    "final_time": "12:11:30",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:16:45",
+                            "time": "01:16:32"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:37",
+                            "time": "01:59:26"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:58:42",
+                            "time": "01:02:19"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:36:52",
+                            "time": "02:39:44"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:40:30",
+                            "time": "01:36:12"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:41:02",
+                            "time": "03:32:25"
+                        }
+                    ]
+                },
+                {
+                    "player": "calumj28",
+                    "final_time": "12:21:24",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:15:15",
+                            "time": "01:16:39"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:54:53",
+                            "time": "01:56:56"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:02:47",
+                            "time": "01:04:59"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:48:14",
+                            "time": "02:46:33"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:35:35",
+                            "time": "01:38:37"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:36:09",
+                            "time": "03:34:53"
+                        }
+                    ]
+                },
+                {
+                    "player": "pinshark2112",
+                    "final_time": "12:52:11",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:16:40",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:00:30",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:04:56",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:43:39",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:41:17",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:39:53",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "raneetti",
+                    "final_time": null,
+                    "num_collected": 0,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:14:54",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:01:13",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:59:45",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:44:06",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:37:36",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:54:58",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "snitch_smo",
+                    "final_time": "12:51:59",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:02:37",
+                            "time": "01:03:44"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:59:53",
+                            "time": "01:55:26"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:06:38",
+                            "time": "01:10:31"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:59:57",
+                            "time": "03:04:27"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:37:52",
+                            "time": "01:40:34"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:53:03",
+                            "time": "03:54:39"
+                        }
+                    ]
+                },
+                {
+                    "player": "emilythekoopa",
+                    "final_time": "13:44:39",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:24:03",
+                            "time": "01:26:24"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:56:52",
+                            "time": "01:56:38"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:10:46",
+                            "time": "01:11:08"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:56:17",
+                            "time": "02:57:48"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:39:57",
+                            "time": "01:37:35"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:45:07",
+                            "time": "03:47:53"
+                        }
+                    ]
+                },
+                {
+                    "player": "weird_2h",
+                    "final_time": null,
+                    "num_collected": 356,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:22:02",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:59:47",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:40:24",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:56:11",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "05:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:43:17",
+                            "time": null
+                        }
+                    ]
+                },
+                {
+                    "player": "gemoflol",
+                    "final_time": null,
+                    "num_collected": 370,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "03:08:21",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "06:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:04:56",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "04:15:53",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:50:46",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "06:32:15",
+                            "time": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2025-09-27",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00",
+            "records": [
+                {
+                    "player": "sa1102smo",
+                    "final_time": "11:10:37",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "00:59:57",
+                            "time": "01:01:25"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:38:42",
+                            "time": "01:38:36"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:59:08",
+                            "time": "01:00:48"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:31:09",
+                            "time": "02:31:41"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:29:33",
+                            "time": "01:29:35"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:17:42",
+                            "time": "03:25:37"
+                        }
+                    ]
+                },
+                {
+                    "player": "kasualplayz",
+                    "final_time": "11:35:04",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:04:24",
+                            "time": "01:05:27"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:39:52",
+                            "time": "01:46:44"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:53:58",
+                            "time": "01:00:39"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:34:13",
+                            "time": "02:37:56"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:29:01",
+                            "time": "01:34:00"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:19:05",
+                            "time": "03:25:59"
+                        }
+                    ]
+                },
+                {
+                    "player": "cheesysrc",
+                    "final_time": "11:38:29",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:08:26",
+                            "time": "01:12:32"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:47:06",
+                            "time": "01:53:23"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:54:29",
+                            "time": "00:58:49"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:29:00",
+                            "time": "02:32:39"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:28:11",
+                            "time": "01:33:31"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:18:51",
+                            "time": "03:25:07"
+                        }
+                    ]
+                },
+                {
+                    "player": "calumj28",
+                    "final_time": "12:07:14",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:13:52",
+                            "time": "01:15:02"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:52:15",
+                            "time": "01:52:57"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:02:47",
+                            "time": "01:05:06"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:43:58",
+                            "time": "02:43:13"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:33:47",
+                            "time": "01:35:54"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:26:57",
+                            "time": "03:31:51"
+                        }
+                    ]
+                },
+                {
+                    "player": "the_h_pandin",
+                    "final_time": "12:35:44",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "00:57:59",
+                            "time": "01:00:24"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:41:14",
+                            "time": "01:48:08"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:52:10",
+                            "time": "01:06:14"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "03:13:41",
+                            "time": "03:00:44"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:19:36",
+                            "time": "01:31:58"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:04:24",
+                            "time": "04:03:24"
+                        }
+                    ]
+                },
+                {
+                    "player": "aurelia400",
+                    "final_time": null,
+                    "num_collected": 277,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:06:04",
+                            "time": null
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:00:00",
+                            "time": null
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:26",
+                            "time": null
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:57:45",
+                            "time": null
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:35:43",
+                            "time": null
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:15:34",
+                            "time": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2026-03-21",
+            "category": "540",
+            "status": "completed",
+            "start_time": "09:00:00",
+            "records": [
+                {
+                    "player": "cheesysrc",
+                    "final_time": "10:57:56",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:05:43",
+                            "time": "01:07:21"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:42:49",
+                            "time": "01:41:13"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:54:12",
+                            "time": "00:55:41"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:27:04",
+                            "time": "02:26:39"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:26:42",
+                            "time": "01:28:01"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:17:13",
+                            "time": "03:16:33"
+                        }
+                    ]
+                },
+                {
+                    "player": "bloodderg",
+                    "final_time": "12:48:13",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:06:52",
+                            "time": "01:08:29"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:39:42",
+                            "time": "01:41:58"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:58:42",
+                            "time": "01:06:50"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:33:59",
+                            "time": "02:36:21"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:27:49",
+                            "time": "01:29:52"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:15:49",
+                            "time": "03:18:23"
+                        }
+                    ]
+                },
+                {
+                    "player": "calumj28",
+                    "final_time": "11:54:20",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:11:37",
+                            "time": "01:11:22"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "01:48:13",
+                            "time": "01:51:18"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "01:01:32",
+                            "time": "01:05:43"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:39:50",
+                            "time": "02:41:23"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:28:24",
+                            "time": "01:33:41"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "03:22:26",
+                            "time": "03:28:08"
+                        }
+                    ]
+                },
+                {
+                    "player": "aurelia400",
+                    "final_time": "16:46:15",
+                    "num_collected": 540,
+                    "runs": [
+                        {
+                            "category": "smo_any%",
+                            "estimate": "01:05:23",
+                            "time": "01:05:58"
+                        },
+                        {
+                            "category": "sm3dw_any%",
+                            "estimate": "02:00:00",
+                            "time": "02:06:34"
+                        },
+                        {
+                            "category": "sm64_70",
+                            "estimate": "00:57:26",
+                            "time": "00:59:33"
+                        },
+                        {
+                            "category": "smg1_any%",
+                            "estimate": "02:52:49",
+                            "time": "02:46:13"
+                        },
+                        {
+                            "category": "sms_any%",
+                            "estimate": "01:35:43",
+                            "time": "01:45:03"
+                        },
+                        {
+                            "category": "smg2_any%",
+                            "estimate": "04:15:34",
+                            "time": "04:05:43"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
