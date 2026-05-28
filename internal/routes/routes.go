@@ -30,7 +30,7 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 	m.HandleFunc("POST /records", h.Authenticate(h.CreateRecord, auth.AuthAdmin))
 	m.HandleFunc("PATCH /records/{race_id}/{player_name}", h.Authenticate(h.UpdateRecord, auth.AuthAdmin))
 	m.HandleFunc("GET /records", h.GetRaceRecords)
-	m.HandleFunc("DELETE /records", h.Authenticate(h.DeleteRaceRecord, auth.AuthAdmin))
+	m.HandleFunc("DELETE /records/{race_id}/{player_name}", h.Authenticate(h.DeleteRaceRecord, auth.AuthAdmin))
 
 	//Games Handlers
 	m.HandleFunc("POST /games", h.Authenticate(h.AddGame, auth.AuthAdmin))

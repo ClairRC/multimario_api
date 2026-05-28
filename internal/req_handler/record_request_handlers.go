@@ -62,7 +62,7 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 	//Input validation
 	req, err := parseReqJSON(r) //Parse request into map
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "error parsing request") //Write error if unable to parse JSON for some reason
+		writeError(w, http.StatusInternalServerError, "error parsing request: " + err.Error()) //Write error if unable to parse JSON for some reason
 		return
 	}
 
@@ -347,21 +347,50 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-* Deletes a race record. Really should only be used if a player like cheated or something
-* Note this also deletes all the runs from this record.
+* Deletes a race record.
+* ENDPOINT: DELETE /records/{race_id}/{player_name}
 *
-* ENDPOINT: DELETE /records
-*
-* EXPECTS
+* RETURNS:
 * {
-*	player_id: int //REQUIRED -- ID of the player the record belongs to
-*	race_id: int //REQUIRED -- ID of the race this record belongs to
+*	success: boolean 
+*	error: string //Only if success is false
 * }
 *
  */
 
 func (h *ReqHandler) DeleteRaceRecord(w http.ResponseWriter, r *http.Request) {
-	//TODO: Implement
+	//Get path values
+	playerName := repository.MakeNullableStr(r.PathValue("player_name"))
+	raceIDStr := r.PathValue("race_id")
+
+	raceID, err := strconv.Atoi(raceIDStr)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "error getting race id: " + err.Error())
+		return
+	}
+
+	//Get record for race/player pair
+	record, err := records.GetRecord(h.DataBase, repository.MakeNullableInt(raceID), playerName)
+	if err != nil {
+		switch err {
+		case players.PlayerDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "player does not exist")
+		case races.RaceDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "race does not exist")
+		case records.RecordDoesNotExistErr:
+			writeError(w, http.StatusBadRequest, "race record does not exist")
+		default:
+			writeError(w, http.StatusInternalServerError, "unknown error getting race record")
+		}
+		return
+	}
+	err = record.Delete(h.DataBase)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error deleting record: "+err.Error())
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }
 
 // Helper function to get runs list

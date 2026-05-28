@@ -157,6 +157,28 @@ func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, 
 	return err
 }
 
+//Deletes record
+func (r *Record) Delete(database *sql.DB) error {
+	//Make sure record exists
+	if r.RecordID == 0 {
+		return RecordDoesNotExistErr
+	}
+
+	//Get delete statement
+	table := db.TableRecords
+	whereCon := []db.WhereCondition{{
+		ColName: db.ColRecordID,
+		Op: db.Equals,
+		Value: r.RecordID,
+	}}
+
+	//Get statement and execute it
+	deleteStmt := db.BuildDeleteStatement(table, whereCon)
+	_, err := db.ExecuteStatements(database, []db.SQLStatement{deleteStmt})
+
+	return err
+}
+
 /*
 * Records Helpers
 */

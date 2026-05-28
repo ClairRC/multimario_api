@@ -14,9 +14,9 @@ import (
 )
 
 /*
-* Add new Run
+* Edit Run
 *
-* ENDPOINT: PATCH records/{race_id}/{player_name}/runs/{category_name}
+* ENDPOINT: PATCH records/{race_id}/{player_name}/runs/{game_category}
 *
 * EXPECTED:
 * {
@@ -38,7 +38,7 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 	//Get path values
 	playerName := repository.MakeNullableStr(r.PathValue("player_name"))
 	raceIDStr := r.PathValue("race_id")
-	catName := repository.MakeNullableStr(r.PathValue("category_name"))
+	catName := repository.MakeNullableStr(r.PathValue("game_category"))
 
 	//Get request
 	req, err := parseReqJSON(r) //Parse request into map
@@ -99,7 +99,7 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !valid {
-		writeError(w, http.StatusBadRequest, "race does not contain this game category")
+		writeError(w, http.StatusBadRequest, "race category " + race.RaceCategory.Name.Value + " does not contain this game category: " + catName.Value)
 		return
 	}
 

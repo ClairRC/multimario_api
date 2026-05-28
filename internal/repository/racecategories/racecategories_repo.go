@@ -304,7 +304,7 @@ func GetRaceCategoryIDFromName(database *sql.DB, name string) (int64, error) {
 func RaceCatContainsGameCat(database *sql.DB, raceCatName string, gameCatName string) (bool, error) {
 	raceCat, err := GetRaceCategoryByName(database, repository.MakeNullableStr(raceCatName))
 	if err != nil {
-		return false, nil
+		return false, err
 	}
 
 	for _, g := range raceCat.GameCategories {

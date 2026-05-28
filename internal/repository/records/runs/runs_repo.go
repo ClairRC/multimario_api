@@ -260,6 +260,10 @@ func GetRunFromRecordID(database *sql.DB, recordID int64, categoryName repositor
 		ColName: db.ColGameCategoryName,
 		Op: db.Equals,
 		Value: categoryName.Value,
+	}, {
+		ColName: db.TableRuns + "." + db.ColRunRaceRecordID,
+		Op: db.Equals,
+		Value: recordID,
 	}}
 
 	//Execute statement
@@ -273,6 +277,7 @@ func GetRunFromRecordID(database *sql.DB, recordID int64, categoryName repositor
 	if len(res[db.ColRunID]) == 0 {
 		return nil, RunDoesNotExistErr
 	}
+
 	runID, ok := res[db.ColRunID][0].(int64)
 	if !ok || runID == 0 {
 		return nil, RunDoesNotExistErr

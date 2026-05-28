@@ -38,7 +38,7 @@ func (h *ReqHandler) CreateRace(w http.ResponseWriter, r *http.Request) {
 	//Input validation
 	req, err := parseReqJSON(r) //Parse request into map
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "error parsing request") //Write error if unable to parse JSON for some reason
+		writeError(w, http.StatusInternalServerError, "error parsing request: " + err.Error()) //Write error if unable to parse JSON for some reason
 		return
 	}
 

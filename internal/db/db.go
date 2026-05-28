@@ -288,7 +288,7 @@ func ExecuteStatements(db *sql.DB, statements []SQLStatement) ([]int64, error) {
 }
 
 //Execute SQL queries
-//Returns map of {column, []values} and the column count
+//Returns map of {column, []values}
 func ExecuteQueries(db *sql.DB, statements []SQLStatement) (map[string][]any, error) {
 	res := make(map[string][]any)
 
