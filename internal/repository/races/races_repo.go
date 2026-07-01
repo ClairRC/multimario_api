@@ -172,6 +172,14 @@ func (r *Race) Update(database *sql.DB, newDate repository.NullableStr,
 			currentRace.mu.Unlock()
 		}
 
+		//If we are setting a race from in_progress to upcoming, set the current race to be 0
+		if newStatus.Value == "upcoming" && r.Status.Value == "in_progress" {
+			//Lock mutex and update the race ID
+			currentRace.mu.Lock()
+			currentRace.id = 0
+			currentRace.mu.Unlock()
+		}
+
 		//Build Update statement parameters
 		cols := make([]string, 0)
 		vals := make([]any, 0)

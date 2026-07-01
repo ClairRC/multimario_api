@@ -12,6 +12,8 @@ import (
 * File for authentication middleware and request handlers
  */
 
+const twitchCallBackURI = "http://localhost:3000/auth/twitch/callback"
+
 //Middleware that authenticates user api  key
 func (h *ReqHandler) Authenticate(next http.HandlerFunc, level auth.AuthLevel) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +46,7 @@ func (h *ReqHandler) Authenticate(next http.HandlerFunc, level auth.AuthLevel) h
 //Handler that a user calls to create an API key
 func (h *ReqHandler) CreateAPIKey(w http.ResponseWriter, r *http.Request) {
 	//Get Twitch redirect parameters
-	rURL := twitch.GetUserTokenRedirectURL("http://localhost:8080/auth/twitch/callback") //TODO: Put the URI somewhere else thats easier to change
+	rURL := twitch.GetUserTokenRedirectURL(twitchCallBackURI)
 
 	http.Redirect(w, r, rURL.String(), http.StatusTemporaryRedirect)
 }
@@ -64,7 +66,7 @@ func (h *ReqHandler) TwitchCallback(w http.ResponseWriter, r *http.Request) {
 	//Get code and swap it for token
 	code := urlCode[0]
 
-	token, err := twitch.GetUserTokenFromCode(code, "http://localhost:8080/auth/twitch/callback")
+	token, err := twitch.GetUserTokenFromCode(code, twitchCallBackURI)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "error: " + err.Error())
 		return

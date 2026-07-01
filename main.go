@@ -25,7 +25,7 @@ type Settings struct {
 	DBPath string `json:"database_path"`
 }
 
-const port = ":8080" //Port the server listens on
+const port = ":3000" //Port the server listens on
 
 func main() {
 	//Load settings

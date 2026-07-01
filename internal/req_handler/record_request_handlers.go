@@ -323,6 +323,7 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 	for _, r := range records {
 		newRecord := make(map[string]any)
 		newRecord["player_name"] = r.Player.Name.Value
+		newRecord["twitch_name"] = r.Player.TwitchName.Value
 		newRecord["race_id"] = r.Race.RaceID
 		newRecord["time"] = r.FinishTime.NullableValue()
 		newRecord["num_collected"] = r.NumCollected.Value
