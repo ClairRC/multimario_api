@@ -181,16 +181,16 @@ func GetRunFromID(database *sql.DB, runID int64) (*Run, error) {
 
 	//Get run values from DB
 	cols := []string {
-		db.ColRunGameCategoryID,
-		db.ColRunTime,
-		db.ColRunEstimate,
-		db.ColRecordID,
+		db.TableRuns + "." + db.ColRunGameCategoryID,
+		db.TableRuns + "." + db.ColRunTime,
+		db.TableRuns + "." + db.ColRunEstimate,
+		db.TableRuns + "." + db.ColRecordID,
 	}
 
 	on := db.GetOnClause(db.TableRuns, db.TableRecords, db.ColRunRaceRecordID, db.ColRecordID)
 	table := db.JoinTables(db.TableRuns, db.TableRecords, on)
 
-	on = db.GetOnClause(table, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
+	on = db.GetOnClause(db.TableRecords, db.TablePlayers, db.ColRecordsPlayerID, db.ColPlayerID)
 	table = db.JoinTables(table, db.TablePlayers, on)
 
 	whereCon := []db.WhereCondition{{
@@ -296,4 +296,54 @@ func GetRunFromRecordID(database *sql.DB, recordID int64, categoryName repositor
 		Estimate: repository.MakeNullableStr(res[db.ColRunEstimate][0]),
 		RunID: runID,
 	}, nil
+}
+
+func GetAllRunsFromRecordID(database *sql.DB, recordID int64) ([]*Run, error) {
+	//Build query
+	if recordID == 0 {
+		return nil, RunDoesNotExistErr
+	}
+
+	//Need to add the table to GameCatID and Estimate to prevent ambiguous column naming
+	cols := []string {
+		db.ColRunID,
+		db.TableRuns + "." + db.ColRunGameCategoryID,
+		db.ColRunTime,
+		db.TableRuns + "." + db.ColRunEstimate,
+	}
+
+	table := db.TableRuns
+
+	whereCon := []db.WhereCondition{
+		{
+			ColName: db.TableRuns + "." + db.ColRunRaceRecordID,
+			Op: db.Equals,
+			Value: recordID,
+		},
+	}
+
+
+	//Execute statement
+	stmt := db.BuildSelectStatement(cols, table, whereCon)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]*Run, 0)
+	//Get information for each run
+	for i := range len(res[db.ColRunID]) {
+		id, ok := res[db.ColRunID][i].(int64)
+		if !ok {
+			return nil, errors.New("at least one run has non-int id")
+		}
+		run, err := GetRunFromID(database, id)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, run)
+	}
+
+	//Return run
+	return out, nil
 }

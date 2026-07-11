@@ -4,3 +4,4 @@ log.txt
 .env
 __pycache__
 __pycache__/*
+profanity_whitelist.txt

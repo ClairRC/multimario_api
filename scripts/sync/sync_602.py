@@ -20,7 +20,7 @@ spreadsheetId = "1ludkWzuN0ZzMh9Bv1gq9oQxMypttiXkg6AEFvxy_gZk"
 dataRange = "A6:E"
 
 ip = "http://localhost"
-port = ":8080"
+port = ":3000"
 
 json_out = models.ImportableJSON()
 

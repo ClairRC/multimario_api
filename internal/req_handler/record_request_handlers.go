@@ -154,6 +154,14 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 * {
 * 	finish_time: string //OPTIONAL -- hh:mm:ss format. Updates the total time that this player got in this race
 *	num_collected: int //OPTIONAL -- Updates the number of collectibles for this record
+	delta_collected: int //OPTIONAL -- Adds this number to the current number collected. Num_collected takes precendence over this
+* }
+*
+* RETURNS: 
+* {
+*	success: boolean
+*	error: string //Only if success is false
+*	num_collected: int //Only if success is true
 * }
 *
  */
@@ -202,15 +210,18 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 	newNumCollected, err := validateNumber(w, req, "num_collected", false)
 	if err != nil { return }
 
+	deltaNumCollected, err := validateNumber(w, req, "delta_collected", false)
+	if err != nil { return }
+
 	//Update record with new values
-	err = record.Update(h.DataBase, newFinishTime, newNumCollected)
+	err = record.Update(h.DataBase, newFinishTime, newNumCollected, deltaNumCollected)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error updating record")
 		return
 	}
 
-	//Updated, return success
-	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
+	//Updated, return success and new num collected
+	writeJSON(w, http.StatusOK, map[string]any{"success": true, "num_collected": record.NumCollected.Value}, nil)
 }
 
 /*
@@ -240,6 +251,7 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 *			race_id: int //ID of the race this record belongs to
 *			time: string //hh:mm:ss The time that was gotten by this player in this race. NULL if unfinished
 *			num_collected: int //Number of collectibles this player got. If the race was finished, this should be the number of collectibles in the category
+			estimate: string //Sum of individual game estimates. hh:mm:ss format
 *		}
 *	]
 * }

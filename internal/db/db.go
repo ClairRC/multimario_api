@@ -85,6 +85,7 @@ type StatementType string
 
 const Insert StatementType = "INSERT"
 const Update StatementType = "UPDATE"
+const Delta StatementType = "DELTA"
 const Delete StatementType = "DELETE"
 const Select StatementType = "SELECT"
 
@@ -452,6 +453,35 @@ func BuildUpdateStatement(columns[]string, newVals []any, table string, where []
 	}
 
 	return SQLStatement{stmt, args, Update}, nil
+}
+
+func BuildIncrementStatement(columns[]string, newVals []any, table string, where []WhereCondition) (SQLStatement, error) {
+	if len(columns) != len(newVals) {
+		return SQLStatement{}, errors.New("unknown error: columns and values length dont match in update statement")
+	}
+ 
+	args := make([]any, 0)
+	stmt := fmt.Sprintf("UPDATE %s", table)
+
+	stmt += " SET "
+	for i, v := range columns {
+		if i > 0 {
+			stmt += ","
+		}
+		stmt += fmt.Sprintf(" %s=%s+?",v, v)
+		args = append(args, newVals[i])
+	}
+
+	for i, w := range where {
+		if i == 0 {
+			stmt += fmt.Sprintf(" WHERE %s %s ?", w.ColName, w.Op)
+		} else {
+			stmt += fmt.Sprintf(" AND %s %s ?", w.ColName, w.Op)
+		}
+		args = append(args, w.Value)
+	}
+
+	return SQLStatement{stmt, args, Delta}, nil
 }
 
 func BuildDeleteStatement(table string, where []WhereCondition) SQLStatement {

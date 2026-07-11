@@ -117,7 +117,7 @@ func (r *Record) Add(database *sql.DB, runs []*runs.Run) error {
 }
 
 //Updates record
-func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, newNumCollected repository.NullableInt) error {
+func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, newNumCollected repository.NullableInt, deltaNumCollected repository.NullableInt) error {
 	//Make sure record exists
 	if r.RecordID == 0 {
 		return RecordDoesNotExistErr
@@ -138,23 +138,71 @@ func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, 
 		vals = append(vals, newFinishTime.Value)
 	}
 
+	//If we want to increment the numCollected, set this value to true
+	incrementNum := false
 	if newNumCollected.Valid {
 		cols = append(cols, db.ColRecordsNumCollected)
 		vals = append(vals, newNumCollected.Value)
+	} else if deltaNumCollected.Valid {
+		incrementNum = true
 	}
 
-	//If cols/vals is empty, no updates necessary
-	if len(cols) == 0 {
+	//If cols/vals is empty (and we don't need to increment the numCollected), no updates necessary
+	if len(cols) == 0 && !incrementNum {
 		return nil
 	}
 
+	//TODO:
+	//Technically this isn't entirely atomic because we are sending three separate statements
+
 	//Get statement and execute it
-	updateStmt, err := db.BuildUpdateStatement(cols, vals, db.TableRecords, whereCon)
+	if len(cols) != 0 {
+		updateStmt, err := db.BuildUpdateStatement(cols, vals, db.TableRecords, whereCon)
+		if err != nil { return err }
+
+		_, err = db.ExecuteStatements(database, []db.SQLStatement{updateStmt})
+		if err != nil { return err }
+	}
+
+	//If we are adding to this record, also send that to db
+	if incrementNum {
+		incCols := []string{db.ColRecordsNumCollected} //We are only updating this column
+		incVals := []any{deltaNumCollected.Value} //This is the only number we are using to increment
+
+		incrementStmt, err := db.BuildIncrementStatement(incCols, incVals, db.TableRecords, whereCon) //Where condition is the same
+		if err != nil {return err}
+
+		_, err = db.ExecuteStatements(database, []db.SQLStatement{incrementStmt}) //Execute
+		if err != nil {return err}
+	}
+
+	//Get the updated record values becaue the endpoint actually will return these.
+	//Note: This should probably be done with other repository layer abstractions, but it really only matters for this one right now
+	
+	//Build query
+	qCols := []string{db.ColRecordsNumCollected}
+	qWhereCons := []db.WhereCondition{{
+		ColName: db.ColRecordID,
+		Op: db.Equals,
+		Value: r.RecordID,
+	}}
+	qStmt := db.BuildSelectStatement(qCols, db.TableRecords, qWhereCons)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{qStmt})
 	if err != nil { return err }
 
-	_, err = db.ExecuteStatements(database, []db.SQLStatement{updateStmt})
+	//Make sure record exists. Shouldn't be an issue but ya
+	if len(res[db.ColRecordsNumCollected]) == 0 {
+		return RecordDoesNotExistErr
+	}
 
-	return err
+	//Make sure numCollected can be parsed as int. This shouldn't fail but it's to avoid a potential panic
+	updatedNumCollected, ok := res[db.ColRecordsNumCollected][0].(int64)
+	if !ok {
+		return errors.New("unknown error: number collected in record can't be parsed as int")
+	}
+	r.NumCollected = repository.MakeNullableInt(updatedNumCollected)
+
+	return nil
 }
 
 //Deletes record

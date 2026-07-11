@@ -8,9 +8,12 @@ package req_handler
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/multimario_api/internal/repository"
 )
@@ -248,4 +251,53 @@ func validateArray(w http.ResponseWriter, req map[string]any, key string, requir
 	}
 
 	return req[key].([]any), nil
+}
+
+//Gets the sum of two strings that represent time in the format hh:mm:ss
+func AddTimeStrings(a, b string) (string, error) {
+    secondsA, err := timeStringToSeconds(a)
+    if err != nil {
+        return "", err
+    }
+
+    secondsB, err := timeStringToSeconds(b)
+    if err != nil {
+        return "", err
+    }
+
+    return secondsToTimeString(secondsA + secondsB), nil
+}
+
+func timeStringToSeconds(s string) (int, error) {
+    parts := strings.Split(s, ":")
+    if len(parts) != 3 {
+        return 0, errors.New("expected format hh:mm:ss")
+    }
+
+    hours, err := strconv.Atoi(parts[0])
+    if err != nil {
+        return 0, err
+    }
+    minutes, err := strconv.Atoi(parts[1])
+    if err != nil {
+        return 0, err
+    }
+    seconds, err := strconv.Atoi(parts[2])
+    if err != nil {
+        return 0, err
+    }
+
+    if minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59 {
+        return 0, err
+    }
+
+    return hours*3600 + minutes*60 + seconds, nil
+}
+
+func secondsToTimeString(totalSeconds int) string {
+    hours := totalSeconds / 3600
+    minutes := (totalSeconds % 3600) / 60
+    seconds := totalSeconds % 60
+
+    return fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds)
 }

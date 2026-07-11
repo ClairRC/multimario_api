@@ -24,16 +24,18 @@ import (
 *
 * EXPECTED:
 * {
-*	num_collected: int //REQUIRED: Number of collectibles this player's count should be updated to
+*	num_collected: int //OPTIONAL: Number of collectibles this player's count should be updated to
+	delta_collected: int //OPTIONAL: Number to increment this player's collectibles by. num_collected takes precedence
 * }
 *
 * RETURNS:
 * {
 *	success: true //boolean
 *	error: string //Only if success is false
+*	num_collected: int //Updated num collected. Only if success is true
 * }
 *
- */
+*/
 
 func (h *ReqHandler) SetPlayerCollectibleCount(w http.ResponseWriter, r *http.Request) {
 	//Check to make sure there's a race in progress
@@ -69,19 +71,22 @@ func (h *ReqHandler) SetPlayerCollectibleCount(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	//Validate new value
-	newNumCollected, err := validateNumber(w, req, "num_collected", true)
+	//Validate new values
+	newNumCollected, err := validateNumber(w, req, "num_collected", false)
+	if err != nil { return }
+
+	deltaNumCollected, err := validateNumber(w, req, "delta_collected", false)
 	if err != nil { return }
 
 	//Update the record
-	err = record.Update(h.DataBase, repository.NULLStr, newNumCollected)
+	err = record.Update(h.DataBase, repository.NULLStr, newNumCollected, deltaNumCollected)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error updating record")
 		return
 	}
 
 	//Write success
-	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
+	writeJSON(w, http.StatusOK, map[string]any{"success": true, "num_collected": record.NumCollected.Value}, nil)
 }
 
 /*

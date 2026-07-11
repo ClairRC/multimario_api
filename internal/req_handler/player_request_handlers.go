@@ -3,6 +3,7 @@ package req_handler
 import (
 	"net/http"
 
+	goaway "github.com/TwiN/go-away"
 	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/repository/players"
 )
@@ -39,6 +40,14 @@ func (h *ReqHandler) AddPlayer(w http.ResponseWriter, r *http.Request) {
 	//Validate inputs
 	name, err := validateText(w, req, "display_name", false)
 	if err != nil { return }
+
+	//We do NOT allow profanity in these parts!!!
+	if name.Valid {
+		if goaway.IsProfane(name.Value) {
+			writeError(w, http.StatusBadRequest, "requested username includes profanity. no changes have been made.")
+			return
+		}
+	}
 
 	twitchName, err := validateText(w, req, "twitch_name", true)
 	if err != nil { return }
@@ -142,6 +151,14 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 	//Validate player name and ID
 	name, err := validateText(w, req, "display_name", false)
 	if err != nil { return }
+
+	//We do NOT allow profanity in these parts!!!
+	if name.Valid {
+		if goaway.IsProfane(name.Value) {
+			writeError(w, http.StatusBadRequest, "requested username includes profanity. no changes have been made.")
+			return
+		}
+	}
 
 	twitchName, err := validateText(w, req, "twitch_name", false)
 	if err != nil { return }

@@ -12,6 +12,7 @@ import (
 	"os"
 
 	"github.com/multimario_api/internal/db"
+	profanityfilter "github.com/multimario_api/internal/profanity_filter"
 	"github.com/multimario_api/internal/repository/races"
 	"github.com/multimario_api/internal/req_handler"
 	"github.com/multimario_api/internal/routes"
@@ -30,6 +31,12 @@ const port = ":3000" //Port the server listens on
 func main() {
 	//Load settings
 	settings, err := loadSettings("settings.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//Load profanity list so people can't update their names to something crude
+	err = profanityfilter.InitProfanityFilter()
 	if err != nil {
 		log.Fatal(err)
 	}

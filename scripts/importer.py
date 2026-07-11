@@ -12,7 +12,7 @@ import os
 load_dotenv()
 
 ip = "http://localhost"
-port = ":8080"
+port = ":3000"
 backend_api_key = os.getenv("MULTIMARIO_API_KEY")
 
 def main():
