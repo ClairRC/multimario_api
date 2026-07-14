@@ -123,6 +123,20 @@ func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, 
 		return RecordDoesNotExistErr
 	}
 
+	//Make sure that the number of things collected doesn't exceed the number of collectibles for the category
+	maxNumCollected := 0
+	for _, g := range r.Race.RaceCategory.GameCategories {
+		maxNumCollected += g.NumCollectibles.Value
+	}
+	if newNumCollected.Valid {
+		newNumCollected.Value = min(newNumCollected.Value, maxNumCollected)
+		newNumCollected.Value = max(newNumCollected.Value, 0)
+	}
+	if deltaNumCollected.Valid {
+		deltaNumCollected.Value = min(deltaNumCollected.Value, maxNumCollected - r.NumCollected.Value)
+		deltaNumCollected.Value = max(deltaNumCollected.Value, (-1*r.NumCollected.Value))
+	}
+
 	//Get update statement
 	cols := make([]string, 0)
 	vals := make([]any, 0)
