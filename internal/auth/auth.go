@@ -16,6 +16,7 @@ const (
 	AuthNone AuthLevel = -1
 	AuthVerified AuthLevel = 0
 	AuthAdmin AuthLevel = 1
+	AuthSuperAdmin AuthLevel = 2
 )
 
 func KeyMeetsLevel(database *sql.DB, key string, level AuthLevel) (bool, error) {
@@ -87,7 +88,7 @@ func getAPIKeyLevel(database *sql.DB, key string) (AuthLevel, error) {
 	//Get the key from DB
 	col := []string{
 		db.ColAPIKeysKey,
-		db.ColAPIKeysIsAdmin,
+		db.ColAPIKeysAuthLevel,
 	}
 	table := db.TableAPIKeys
 	whereCon := []db.WhereCondition{{
@@ -108,15 +109,11 @@ func getAPIKeyLevel(database *sql.DB, key string) (AuthLevel, error) {
 		return AuthNone, nil
 	}
 
-	//Check the "is_admin" col
-	adminLevel, ok := res[db.ColAPIKeysIsAdmin][0].(int64)
+	//Check the "auth_level" col
+	adminLevel, ok := res[db.ColAPIKeysAuthLevel][0].(int64)
 	if !ok {
 		return AuthNone, errors.New("unable to parse adming status from database")
 	}
 
-	if adminLevel == 1 {
-		return AuthAdmin, nil
-	} else {
-		return AuthVerified, nil
-	}
+	return AuthLevel(int(adminLevel)), nil
 }

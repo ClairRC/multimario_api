@@ -67,8 +67,7 @@ const (
 	TableAPIKeys = "api_keys"
 	ColAPIKeysKey = "key"
 	ColAPIKeyTwitchID = "twitch_id"
-	ColAPIKeysIsAdmin = "is_admin"
-	ColAPIKeysIsBlacklisted = "is_blacklisted"
+	ColAPIKeysAuthLevel = "auth_level"
 )
 
 //Operator type and default operators
@@ -220,10 +219,9 @@ var initStatements = []string {
 	CREATE TABLE IF NOT EXISTS api_keys(
 		key TEXT NOT NULL PRIMARY KEY,
 		twitch_id TEXT NOT NULL,
-		is_admin INTEGER NOT NULL DEFAULT 0,
-		is_blacklisted INTEGER NOT NULL DEFAULT 0
+		auth_level INTEGER NOT NULL DEFAULT 0
 	)
-	`, 
+	`,
 }
 
 
