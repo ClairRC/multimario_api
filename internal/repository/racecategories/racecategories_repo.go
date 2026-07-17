@@ -176,8 +176,8 @@ func (c *RaceCategory) Update(database *sql.DB, newName repository.NullableStr, 
 * RaceCategory Helpers
 */
 
-//Queries race categories
-func QueryRaceCategories(database *sql.DB, raceCategoryQuery RaceCategoryQuery) ([]*RaceCategory, error) {
+//Queries race categories and gets total count of result
+func QueryRaceCategories(database *sql.DB, raceCategoryQuery RaceCategoryQuery, limit int, offset int) ([]*RaceCategory, int64, error) {
 	//Set up request
 	//TODO: Table needs to be specified to avoid ambiguous column names
 	cols := []string {
@@ -189,25 +189,32 @@ func QueryRaceCategories(database *sql.DB, raceCategoryQuery RaceCategoryQuery) 
 	whereCons := getRaceCategoryWhereCons(raceCategoryQuery)
 
 	//Execute queries
-	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColRaceCategoryName)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.ColRaceCategoryName)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
-		return nil, err
+		return nil, -1, err
+	}
+
+	//Get count
+	stmt = db.BuildCountStatement(cols, table, whereCons)
+	count, err := db.ExecuteCountStatement(database, stmt)
+	if err != nil {
+		return nil, -1, err
 	}
 
 	out := make([]*RaceCategory, 0)
 
 	//If results are empty, return empty slice
 	if len(res[db.ColRaceCategoryID]) == 0 {
-		return out, nil
+		return out, count, nil
 	}
 
 	out, err = parseRaceCategoryQueryResults(database, res)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
-	return out, nil
+	return out, count, nil
 }
 
 // Get race category

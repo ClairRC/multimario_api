@@ -195,7 +195,19 @@ func (h *ReqHandler) GetRuns(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Get runs
-	runs, err := runs.QueryRuns(h.DataBase, q)
+	//Get response page number
+	pageNum, err := getResponsePageNum(urlPageNum)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "page number could not be parsed as int")
+		return
+	}
+
+	//Query stuff
+	limit := 50
+	offset := limit * (pageNum - 1)
+
+	//Get runs
+	runRecords, count, err := runs.QueryRuns(h.DataBase, q, limit, offset)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error fetching runs: "+err.Error())
 		return
@@ -205,31 +217,23 @@ func (h *ReqHandler) GetRuns(w http.ResponseWriter, r *http.Request) {
 	out := make(map[string]any)
 	outRuns := make([]map[string]any, 0)
 
-	for _, r := range runs {
+	for _, rr := range runRecords {
 		newRun := make(map[string]any)
-		newRun["id"] = r.RunID
-		newRun["player_name"] = r.PlayerName
-		newRun["race_id"] = r.RaceID
-		newRun["game_category"] = r.Category.Name.Value
-		newRun["estimate"] = r.Estimate.Value
-		newRun["time"] = r.Time.NullableValue()
+		newRun["id"] = rr.RunID
+		newRun["player_name"] = rr.PlayerName
+		newRun["race_id"] = rr.RaceID
+		newRun["game_category"] = rr.Category.Name.Value
+		newRun["estimate"] = rr.Estimate.Value
+		newRun["time"] = rr.Time.NullableValue()
 
 		outRuns = append(outRuns, newRun)
 	}
 
-	//Add pagination logic
-	pageNum, err := getResponsePageNum(urlPageNum)
-	if err != nil {
-		writeError(w, http.StatusBadRequest, "page number could not be parsed as int")
-		return
-	}
-	
-	//Get metadata
-	limit := 50
-	outRuns, meta := paginate(outRuns, r.URL, pageNum, limit)
-
 	out["success"] = true
 	out["runs"] = outRuns
+	
+	//Get metadata
+	meta := getPaginationMetadata(count, r.URL, pageNum, limit)
 
 	writeJSON(w, http.StatusOK, out, meta)
 }

@@ -13,9 +13,9 @@ import (
 type AuthLevel int
 
 const (
-	AuthNone AuthLevel = 0
-	AuthVerified AuthLevel = 1
-	AuthAdmin AuthLevel = 2
+	AuthNone AuthLevel = -1
+	AuthVerified AuthLevel = 0
+	AuthAdmin AuthLevel = 1
 )
 
 func KeyMeetsLevel(database *sql.DB, key string, level AuthLevel) (bool, error) {

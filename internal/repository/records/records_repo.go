@@ -245,8 +245,8 @@ func (r *Record) Delete(database *sql.DB) error {
 * Records Helpers
 */
 
-//Queries records. Returns slice of records or error
-func QueryRecord(database *sql.DB, recordQuery RecordQuery) ([]*Record, error) {
+//Queries records. Returns slice of records and count of results or error
+func QueryRecord(database *sql.DB, recordQuery RecordQuery, limit int, offset int) ([]*Record, int64, error) {
 	//Get record information first and then query for the runs. It can probably be done in 1 SQL statement, but my abstractions 
 	//aren't really good enough for that. So this will work for this scale
 	cols := []string {
@@ -262,21 +262,28 @@ func QueryRecord(database *sql.DB, recordQuery RecordQuery) ([]*Record, error) {
 	whereCons := getRecordsWhereCons(recordQuery)
 
 	//Execute queries
-	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColRecordsFinishTime, db.ColRecordsNumCollected)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.ColRecordsFinishTime, db.ColRecordsNumCollected)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
-		return nil, err
+		return nil, -1, err
+	}
+
+	//Get count
+	stmt = db.BuildCountStatement(cols, table, whereCons)
+	count, err := db.ExecuteCountStatement(database, stmt)
+	if err != nil {
+		return nil, -1, err
 	}
 
 	//Parse results
 	out := make([]*Record, 0)
 	if len(res[db.ColRecordID]) == 0 {
-		return out, nil
+		return out, count, nil
 	}
 
 	out = parseRecordQuery(database, res)
 
-	return out, nil
+	return out, count, nil
 }
 
 //Gets record from race ID and player name

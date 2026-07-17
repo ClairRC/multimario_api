@@ -70,13 +70,17 @@ func getResponsePageNum(urlPageNumParams []string) (int, error) {
 			pageNum = parsed
 		}
 	}
+
+	//Add logic that this can't be less than 1
+	if pageNum < 1 {
+		pageNum = 1
+	}
+
 	return pageNum, nil
 }
 
-//Function to convert items into paginated items. Returns paginated items and metadata
-func paginate(items []map[string]any, url *url.URL, pageNum int, limit int) ([]map[string]any, map[string]any) {
-	//TODO: This function is problematic. My get handlers get al ist of EVER row and THEN it just gets tossed out here
-	//For now we're only looking at like maybe 1-2 seconds of waiting, but it's still very much not ideal.
+//Function to convert items into paginated items. Returns metadata for this query
+func getPaginationMetadata(totalResultCount int64, url *url.URL, pageNum int, limit int) (map[string]any) {
 	offset := (pageNum - 1) * limit
 
 	//Get metadata for this
@@ -91,7 +95,7 @@ func paginate(items []map[string]any, url *url.URL, pageNum int, limit int) ([]m
 		meta["prev_url"] = nil
 	}
 
-	if offset + limit < len(items) {
+	if offset + limit < int(totalResultCount) {
 		urlCopy := *url
 		q := urlCopy.Query()
 		q.Set("page_num", strconv.Itoa(pageNum + 1))
@@ -100,16 +104,9 @@ func paginate(items []map[string]any, url *url.URL, pageNum int, limit int) ([]m
 	} else {
 		meta["next_url"] = nil
 	}
-	meta["total_items"] = len(items)
+	meta["total_items"] = totalResultCount
 
-	//Set items to only be between the two limits
-	if offset >= len(items) {
-		items = make([]map[string]any, 0)
-	} else {
-		items = items[offset:min(offset+limit, len(items))]
-	}
-
-	return items, meta
+	return meta
 }
 
 //Functions for validating field types

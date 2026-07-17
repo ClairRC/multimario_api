@@ -181,15 +181,10 @@ func (c *GameCategory) Update(
 * Helpers
 */
 
-//Queries game categories from GET request
-func QueryGameCategories(database *sql.DB, gamecategoryQuery GameCategoryQuery) ([]*GameCategory, error) {
+//Queries game categories and total count of query results from GET request
+func QueryGameCategories(database *sql.DB, gamecategoryQuery GameCategoryQuery, limit int, offset int) ([]*GameCategory, int64, error) {
 	//Set up request
 
-	/*
-	* TODO: Currently we have to add table.column here since the joined table has multiple "game_category_id"s.
-	*		There is probably a better solution so this happens automatically, but since this is only sometimes a problem,
-	*		for now I'll handle it on a case-by-case basis
-	*/
 	cols := []string {
 		db.TableGameCategories + "." + db.ColGameCategoryID,
 		db.ColGameCategoryName,
@@ -202,22 +197,29 @@ func QueryGameCategories(database *sql.DB, gamecategoryQuery GameCategoryQuery) 
 	whereCons := getGameCategoryWhereCons(gamecategoryQuery)
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColGameName)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.ColGameName)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
-		return nil, err
+		return nil, -1, err
+	}
+
+	//Get count
+	stmt = db.BuildCountStatement(cols, table, whereCons)
+	count, err := db.ExecuteCountStatement(database, stmt)
+	if err != nil {
+		return nil, -1, err
 	}
 
 	//Output
 	out := make([]*GameCategory, 0)
 	if len(res[db.ColGameCategoryID]) == 0 {
-		return out, nil
+		return out, count, nil
 	} //No results, return empty
 
 	//Parse results
 	out = parseGameCategoryQueryResults(res)
 
-	return out, nil
+	return out, count, nil
 }
 
 // Get game category

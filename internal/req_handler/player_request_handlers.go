@@ -252,7 +252,19 @@ func (h *ReqHandler) GetPlayers(w http.ResponseWriter, r *http.Request) {
 		Names: playerNames,
 		TwitchNames: twitchNames,
 	}
-	players, err := players.QueryPlayers(h.DataBase, query)
+
+	//Get response page number
+	pageNum, err := getResponsePageNum(urlPageNum)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "page number could not be parsed as int")
+		return
+	}
+
+	//Query stuff
+	limit := 50
+	offset := limit * (pageNum - 1)
+
+	players, count, err := players.QueryPlayers(h.DataBase, query, limit, offset)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error fetching players from db: " + err.Error())
 		return
@@ -270,14 +282,7 @@ func (h *ReqHandler) GetPlayers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Pagination logic
-	pageNum, err := getResponsePageNum(urlPageNum)
-	limit := 50
-	if err != nil {
-		writeError(w, http.StatusBadRequest, "unknown error parsing page number")
-		return
-	}
-
-	playerInfo, meta := paginate(playerInfo, r.URL, pageNum, limit)
+	meta := getPaginationMetadata(count, r.URL, pageNum, limit)
 
 	//Write outputs
 	out["players"] = playerInfo

@@ -140,8 +140,8 @@ func (r *Run) Update(database *sql.DB, newTime repository.NullableStr, newEstima
 * Run Helpers
 */
 
-//Query runs
-func QueryRuns(database *sql.DB, runQuery RunQuery) ([]*Run, error) {
+//Query runs. Returns slice of runs, total run count for the query, and error
+func QueryRuns(database *sql.DB, runQuery RunQuery, limit int, offset int) ([]*Run, int64, error) {
 	out := make([]*Run, 0)
 
 	//Build Query
@@ -158,20 +158,27 @@ func QueryRuns(database *sql.DB, runQuery RunQuery) ([]*Run, error) {
 	whereCons := getRunWhereCons(runQuery)
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons, db.TableRuns + "." + db.ColRunGameCategoryID, db.ColRunTime)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.TableRuns + "." + db.ColRunGameCategoryID, db.ColRunTime)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
-		return nil, err
+		return nil, -1, err
+	}
+
+	//Get total count for metadata purposes
+	stmt = db.BuildCountStatement(cols, table, whereCons)
+	count, err := db.ExecuteCountStatement(database, stmt)
+	if err != nil {
+		return nil, -1, err
 	}
 
 	//If results empty, return empty slice
 	if len(res[db.ColRunID]) == 0 {
-		return out, nil
+		return out, count, nil
 	}
 
 	out = parseRunQueryResults(database, res)
 
-	return out, nil
+	return out, count, nil
 }
 
 func GetRunFromID(database *sql.DB, runID int64) (*Run, error) {

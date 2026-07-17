@@ -231,8 +231,8 @@ func (r *Race) Update(database *sql.DB, newDate repository.NullableStr,
 * Race Helpers
 */
 
-//Query races
-func QueryRaces(database *sql.DB, raceQuery RaceQuery) ([]*Race, error) {
+//Query races and total query count
+func QueryRaces(database *sql.DB, raceQuery RaceQuery, limit int, offset int) ([]*Race, int64, error) {
 	out := make([]*Race, 0)
 	
 	//Get query info
@@ -248,22 +248,29 @@ func QueryRaces(database *sql.DB, raceQuery RaceQuery) ([]*Race, error) {
 	whereCons := getRaceWhereCons(raceQuery)
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
-		return nil, err
+		return nil, -1 ,err
+	}
+
+	//Get count
+	stmt = db.BuildCountStatement(cols, table, whereCons)
+	count, err := db.ExecuteCountStatement(database, stmt)
+	if err != nil {
+		return nil, -1, err
 	}
 
 	if len(res[db.ColRaceID]) == 0 {
-		return out, nil
+		return out, count, nil
 	} //No results, return empty slice
 
 	out, err = parseRaceQueryResponse(database, res)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
-	return out, nil
+	return out, count, nil
 }
 
 // Get race

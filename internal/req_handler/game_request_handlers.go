@@ -155,8 +155,19 @@ func (h *ReqHandler) GetGames(w http.ResponseWriter, r *http.Request) {
 	//Build query
 	q := games.GameQuery{Names: gameNames}
 
+	//Get response page number
+	pageNum, err := getResponsePageNum(urlPageNum)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "page number could not be parsed as int")
+		return
+	}
+
+	//Query stuff
+	limit := 50
+	offset := limit * (pageNum - 1)
+
 	//Get games
-	g, err := games.QueryGames(h.DataBase, q)
+	g, count, err := games.QueryGames(h.DataBase, q, limit, offset)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error finding games")
 	}
@@ -171,17 +182,10 @@ func (h *ReqHandler) GetGames(w http.ResponseWriter, r *http.Request) {
 		outGames = append(outGames, newGame)
 	}
 	
-	//Add pagination logic
-	pageNum, err := getResponsePageNum(urlPageNum)
-	limit := 50
-	if err != nil {
-		writeError(w, http.StatusBadRequest, "unknown error parsing page number")
-		return
-	}
-	outGames, meta := paginate(outGames, r.URL, pageNum, limit)
-
 	out["games"] = outGames
 	out["success"] = true
+
+	meta := getPaginationMetadata(count, r.URL, pageNum, limit)
 
 	writeJSON(w, http.StatusOK, out, meta)
 }

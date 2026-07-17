@@ -92,8 +92,8 @@ func (g *Game) Update(database *sql.DB, newName repository.NullableStr) error {
 * Game Helpers
 */
 
-//Gets games based on game query
-func QueryGames(database *sql.DB, gameQuery GameQuery) ([]*Game, error) {
+//Gets games and total count based on game query
+func QueryGames(database *sql.DB, gameQuery GameQuery, limit int, offset int) ([]*Game, int64, error) {
 	out := make([]*Game, 0)
 
 	//Get SQL query values
@@ -105,18 +105,25 @@ func QueryGames(database *sql.DB, gameQuery GameQuery) ([]*Game, error) {
 	whereCons := getGameWhereCons(gameQuery)
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColGameName)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.ColGameName)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
-		return nil, err
+		return nil, -1, err
+	}
+
+	//Get count
+	stmt = db.BuildCountStatement(cols, table, whereCons)
+	count, err := db.ExecuteCountStatement(database, stmt)
+	if err != nil {
+		return nil, -1, err
 	}
 
 	if len(res[db.ColGameID]) == 0 {
-		return out, nil
+		return out, count, nil
 	} //No results, return empty
 
 	//Parse results and return them
-	return parseQueryResponse(res), nil
+	return parseQueryResponse(res), count, nil
 }
 
 //Gets game by name

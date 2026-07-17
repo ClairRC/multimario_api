@@ -68,6 +68,7 @@ const (
 	ColAPIKeysKey = "key"
 	ColAPIKeyTwitchID = "twitch_id"
 	ColAPIKeysIsAdmin = "is_admin"
+	ColAPIKeysIsBlacklisted = "is_blacklisted"
 )
 
 //Operator type and default operators
@@ -88,6 +89,7 @@ const Update StatementType = "UPDATE"
 const Delta StatementType = "DELTA"
 const Delete StatementType = "DELETE"
 const Select StatementType = "SELECT"
+const Count StatementType = "COUNT"
 
 //SQL statement
 type SQLStatement struct {
@@ -207,6 +209,7 @@ var initStatements = []string {
 		player_id INTEGER NOT NULL,
 		platform_name TEXT NOT NULL,
 		platform_user_id TEXT UNIQUE NOT NULL,
+		platform_username TEXT,
 		FOREIGN KEY (player_id) REFERENCES players(player_id)
 			ON DELETE CASCADE
 	)
@@ -217,9 +220,10 @@ var initStatements = []string {
 	CREATE TABLE IF NOT EXISTS api_keys(
 		key TEXT NOT NULL PRIMARY KEY,
 		twitch_id TEXT NOT NULL,
-		is_admin INTEGER NOT NULL DEFAULT 0
+		is_admin INTEGER NOT NULL DEFAULT 0,
+		is_blacklisted INTEGER NOT NULL DEFAULT 0
 	)
-	`,
+	`, 
 }
 
 
@@ -341,8 +345,29 @@ func ExecuteQueries(db *sql.DB, statements []SQLStatement) (map[string][]any, er
 		return nil, err
 	}
 
-	//No error, return
 	return res, nil
+}
+
+//Execute SQL queries
+//Returns number of results for the included statement
+func ExecuteCountStatement(db *sql.DB, statement SQLStatement) (int64, error) {
+	//Make sure the statement is a count statement
+	if statement.Type != Count {
+		return -1, errors.New("one or more query is wrong type. expected type of Count")
+	}
+
+	res, err := ExecuteQueries(db, []SQLStatement{statement})
+	if err != nil {
+		return 0, err
+	}
+	for _, vals := range res {
+		if len(vals) > 0 {
+			if v, ok := vals[0].(int64); ok {
+				return v, nil
+			}
+		}
+	}
+	return 0, errors.New("count query returned no rows")
 }
 
 
@@ -390,14 +415,52 @@ func BuildSelectStatement(columns []string, table string, where []WhereCondition
 	return SQLStatement{stmt, args, Select}
 }
 
-//Takes a select statement and adds a limit/offset clause
-func LimitSelectStatement(stmt *SQLStatement, limit int, offset int) {
-	//Nothing to limit if it's not select
-	if stmt.Type != Select{
-		return
+//Builds SQL statement from certain parameters. Takes 0 or more "orderCol" values and a limit and offset value
+func BuildSelectStatementWithLimitAndOffset(columns []string, table string, where []WhereCondition, limit int, offset int, orderCols ...string) SQLStatement {
+	args := make([]any, 0)
+	stmt := "SELECT DISTINCT"
+	for i, v := range columns {
+		if i > 0 {
+			stmt += ","
+		}
+		stmt += fmt.Sprintf(" %s", v)
 	}
 
-	stmt.Stmt += fmt.Sprintf(" LIMIT %v OFFSET %v ", limit, offset)
+	stmt += fmt.Sprintf(" FROM %s", table)
+
+	for i, w := range where {
+		if i == 0 {
+			stmt += fmt.Sprintf(" WHERE (%s %s ?", w.ColName, w.Op)
+		} else {
+			stmt += fmt.Sprintf(" AND (%s %s ?", w.ColName, w.Op)
+		}
+		args = append(args, w.Value)
+
+		//Add or conditions
+		for _, o := range w.Ors {
+			stmt += fmt.Sprintf(" OR %s %s ?", w.ColName, o.Op)
+			args = append(args, o.Value)
+		}
+		stmt += ")" //Add closing parenthesis
+	}
+
+	//Add order by clause if cols is not empty
+	//By default, always order in ascending order. I could change this?
+	if len(orderCols) > 0 {
+		stmt += " ORDER BY "
+		for i, col := range orderCols {
+			if i > 0 {
+				stmt += ", "
+			}
+			stmt += col + " ASC NULLS LAST "
+		}
+	}
+
+	//Add limit and offset to the end
+	stmt += fmt.Sprintf(" LIMIT %v OFFSET %v", limit, offset)
+
+
+	return SQLStatement{stmt, args, Select}
 }
 
 func BuildInsertStatement(columns []string, table string, values []any) SQLStatement{
@@ -498,6 +561,13 @@ func BuildDeleteStatement(table string, where []WhereCondition) SQLStatement {
 	}
 
 	return SQLStatement{stmt, args, Delete}
+}
+
+//Gets a SQL statement that just returns the count of a query for deriving metadata
+func BuildCountStatement(columns []string, table string, where []WhereCondition) SQLStatement {
+	inner := BuildSelectStatement(columns, table, where) //reuse existing logic, no orderCols
+	stmt := fmt.Sprintf("SELECT COUNT(*) FROM (%s)", inner.Stmt)
+	return SQLStatement{stmt, inner.Args, Count}
 }
 
 //Gets the ON clause to prevent very messy string stuff

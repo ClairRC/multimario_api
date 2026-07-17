@@ -5,3 +5,4 @@ log.txt
 __pycache__
 __pycache__/*
 profanity_whitelist.txt
+bash.exe.stackdump

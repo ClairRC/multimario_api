@@ -138,8 +138,8 @@ func (p *Player) Update(database *sql.DB, newName repository.NullableStr, newTwi
 * Player Helpers
 */
 
-//Queries DB for players
-func QueryPlayers(database *sql.DB, playerQuery PlayerQuery) ([]*Player, error) {
+//Queries DB for players and total result count
+func QueryPlayers(database *sql.DB, playerQuery PlayerQuery, limit int, offset int) ([]*Player, int64, error) {
 	//Build queries
 	//Similar to game category, table needs to be specified to avoid ambiguity
 	cols := []string {
@@ -153,14 +153,21 @@ func QueryPlayers(database *sql.DB, playerQuery PlayerQuery) ([]*Player, error) 
 	twitchIDCache := make(map[string]string) //Maps ID to Name to avoid redundant Twitch API calls
 	whereCons, err := getPlayerWhereCons(playerQuery, twitchIDCache)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
 	//Execute query
-	stmt := db.BuildSelectStatement(cols, table, whereCons, db.ColPlayerName)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.ColPlayerName)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
-		return nil, err
+		return nil, -1, err
+	}
+
+	//Get count
+	stmt = db.BuildCountStatement(cols, table, whereCons)
+	count, err := db.ExecuteCountStatement(database, stmt)
+	if err != nil {
+		return nil, -1, err
 	}
 
 	//Output
@@ -168,16 +175,16 @@ func QueryPlayers(database *sql.DB, playerQuery PlayerQuery) ([]*Player, error) 
 
 	//If results are empty, return nothing
 	if len(res[db.ColPlayerID]) == 0 {
-		return out, nil
+		return out, count, nil
 	}
 
 	//Parse response
 	out, err = parsePlayerQueryResponse(res, twitchIDCache)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
-	return out, nil
+	return out, count, nil
 }
 
 //Gets player by name

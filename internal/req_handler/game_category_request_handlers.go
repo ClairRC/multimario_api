@@ -232,7 +232,19 @@ func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
 		RaceCategories: raceCatNames,
 		Names: catNames,
 	}
-	gameCats, err := gamecategories.QueryGameCategories(h.DataBase, q)
+
+	//Get response page number
+	pageNum, err := getResponsePageNum(urlPageNum)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "page number could not be parsed as int")
+		return
+	}
+
+	//Query stuff
+	limit := 50
+	offset := limit * (pageNum - 1)
+
+	gameCats, count, err := gamecategories.QueryGameCategories(h.DataBase, q, limit, offset)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error fetching game categories: " + err.Error())
 		return
@@ -253,15 +265,7 @@ func (h *ReqHandler) GetGameCategories(w http.ResponseWriter, r *http.Request) {
 		outCats = append(outCats, outObj)
 	}
 
-	//Add pagination logic
-	pageNum, err := getResponsePageNum(urlPageNum)
-	limit := 50
-	if err != nil {
-		writeError(w, http.StatusBadRequest, "error parsing page number")
-		return
-	}
-
-	outCats, meta := paginate(outCats, r.URL, pageNum, limit)
+	meta := getPaginationMetadata(count, r.URL, pageNum, limit)
 
 	out["game_categories"] = outCats
 	out["success"] = true
