@@ -37,6 +37,7 @@ const (
 	ColSocialsPlayerID = "player_id"
 	ColSocialsPlatformName = "platform_name"
 	ColSocialsPlatformUserID = "platform_user_id"
+	ColSocialsPlatformUsername = "platform_username"
 
 	TableRaceCatGameCat = "race_cat_game_cat"
 	ColRaceCatGameCatRaceCategoryID = "race_category_id"

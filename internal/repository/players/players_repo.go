@@ -67,7 +67,7 @@ func (p *Player) Add(database *sql.DB) error {
 	}
 
 	//Add values to the DB
-	err = executeInsertStatements(database, p.Name.Value, pTwitchID)
+	err = executeInsertStatements(database, p.Name.Value, pTwitchID, p.TwitchName.Value)
 	return err
 }
 
@@ -100,11 +100,13 @@ func (p *Player) Update(database *sql.DB, newName repository.NullableStr, newTwi
 			db.ColSocialsPlayerID,
 			db.ColSocialsPlatformName,
 			db.ColSocialsPlatformUserID,
+			db.ColSocialsPlatformUsername,
 		}
 		vals := []any {
 			p.PlayerID,
 			"twitch",
 			newTwitchID,
+			newTwitchName.Value,
 		}
 		twitchAdd := db.BuildInsertStatement(cols, db.TableSocials, vals)
 		stmts = append(stmts, twitchAdd)
@@ -193,51 +195,26 @@ func GetPlayerByName(database *sql.DB, name repository.NullableStr) (*Player, er
 		return nil, repository.StringIsNullErr
 	}
 
-	//Query database for this player
-	col := []string {db.ColPlayerName, db.ColPlayerID}
-	table := db.TablePlayers
-	where := []db.WhereCondition{
-		{ColName: db.ColPlayerName, Op: db.Equals, Value: name.Value},
-	}
-
-	stmt := db.BuildSelectStatement(col, table, where)
-	player, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	//Get player from the query. If there's no names, check for twitch name as a fallback
+	player, err := findPlayerByInternalName(database, name)
 	if err != nil {
 		return nil, err
 	}
-
-	//Get player from the query. If there's no names, check for twitch name as a fallback
-
 	names, exists := player[db.ColPlayerName]
 	
+	nameIsTwitchName := false
 	//Search for player based on twitch name and update variables
 	if len(names) == 0 {
-		//Check if twitch name is valid
-		twitchID, err := twitch.Client.GetTwitchIDFromName(name.Value)
-		if err != nil {
-			return nil, PlayerDoesNotExistErr
-		} //If invalid, player doesn't exist
-
-		//TODO: Similarly with game categories, table needs to be specified to avoid abiguity
-		col := []string {
-			db.ColPlayerName, 
-			db.TablePlayers + "." + db.ColPlayerID}		
-
-		on := db.GetOnClause(db.TablePlayers, db.TableSocials, db.ColPlayerID, db.ColSocialsPlayerID)
-		table = db.JoinTables(db.TablePlayers, db.TableSocials, on)
-		where = []db.WhereCondition{{
-			ColName: db.ColSocialsPlatformUserID,
-			Op: db.Equals,
-			Value: twitchID,
-		}}
-
-		stmt = db.BuildSelectStatement(col, table, where)
-		player, err = db.ExecuteQueries(database, []db.SQLStatement{stmt})
+		player, err = findPlayerByTwitchName(database, name)
 		if err != nil {
 			return nil, err
 		}
-
-		names, exists = player[db.ColPlayerName] //Update variables for the rest of the function
+		names, exists = player[db.ColPlayerName]
+		
+		//Twitch user was found, so this name is their twitch name
+		if exists {
+			nameIsTwitchName = true
+		}
 	}
 
 	if !exists {
@@ -255,33 +232,36 @@ func GetPlayerByName(database *sql.DB, name repository.NullableStr) (*Player, er
 	}
 
 	//Get player twitch name
-	col = []string{db.ColSocialsPlatformUserID}
-	table = db.TableSocials
-	where = []db.WhereCondition{{
-		ColName: db.ColSocialsPlayerID,
-		Op: db.Equals,
-		Value: pID,
-	}}
-	stmt = db.BuildSelectStatement(col, table, where)
-	socials, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
-	if err != nil {
-		return nil, err
-	}
+	var twitchName string
+	if !nameIsTwitchName {
+		col := []string{db.ColSocialsPlatformUserID}
+		table := db.TableSocials
+		where := []db.WhereCondition{{
+			ColName: db.ColSocialsPlayerID,
+			Op: db.Equals,
+			Value: pID,
+		}}
+		stmt := db.BuildSelectStatement(col, table, where)
+		socials, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+		if err != nil {
+			return nil, err
+		}
 
-	if len(socials[db.ColSocialsPlatformUserID]) == 0 {
-		return nil, errors.New("unknown error: player doesn't have a twitch registered")
-	} //Avoids a panic in rare edge case
+		if len(socials[db.ColSocialsPlatformUserID]) == 0 {
+			return nil, errors.New("unknown error: player doesn't have a twitch registered")
+		} //Avoids a panic in rare edge case
 
-	twitchID, ok := socials[db.ColSocialsPlatformUserID][0].(string)
-	if !ok {
-		return nil, errors.New("unknown error getting twitch information: unable to parse twitch id")
-	}
+		twitchID, ok := socials[db.ColSocialsPlatformUserID][0].(string)
+		if !ok {
+			return nil, errors.New("unknown error getting twitch information: unable to parse twitch id")
+		}
 
-	//Get name from id
-	twitchName, err := twitch.Client.GetTwitchNameFromID(twitchID)
-	if err != nil {
-		return nil, err
-	}
+		//Get name from id
+		twitchName, err = twitch.Client.GetTwitchNameFromID(twitchID)
+		if err != nil {
+			return nil, err
+		}
+	} else {twitchName = name.Value}
 
 	return &Player{Name: repository.MakeNullableStr(pName), TwitchName: repository.MakeNullableStr(twitchName), PlayerID: pID}, nil
 }
@@ -320,8 +300,107 @@ func TwitchInUseByName(database *sql.DB, name repository.NullableStr) (bool, err
 	return exists, nil
 }
 
+//Helpers for finding player from DB
+func findPlayerByInternalName(database *sql.DB, name repository.NullableStr) (map[string][]any, error){
+	//Query database for this player
+	col := []string {db.ColPlayerName, db.ColPlayerID}
+	table := db.TablePlayers
+	where := []db.WhereCondition{
+		{ColName: db.ColPlayerName, Op: db.Equals, Value: name.Value},
+	}
+
+	stmt := db.BuildSelectStatement(col, table, where)
+	player, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	return player, nil
+}
+
+func findPlayerByTwitchName(database *sql.DB, name repository.NullableStr) (map[string][]any, error) {
+	//Check if there's a player in this database with this Twitch name
+	col := []string{db.ColPlayerName, db.TablePlayers + "." + db.ColPlayerID}
+	on := db.GetOnClause(db.TablePlayers, db.TableSocials, db.ColPlayerID, db.ColSocialsPlayerID)
+	table := db.JoinTables(db.TablePlayers, db.TableSocials, on)
+	where := []db.WhereCondition{{
+		ColName: db.TableSocials + "." + db.ColSocialsPlatformUsername,
+		Op: db.Equals,
+		Value: name.Value,
+	}}
+
+	stmt := db.BuildSelectStatement(col, table, where)
+	player, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	names := player[db.ColPlayerName]
+
+	//Player still doesn't exist, now get twitch ID and search based on twitch ID
+	if (len(names) == 0) {
+		player, err = findPlayerByTwitchID(database, name)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return player, nil
+}
+
+func findPlayerByTwitchID(database *sql.DB, name repository.NullableStr) (map[string][]any, error) {
+	id, err := twitch.Client.GetTwitchIDFromName(name.Value)
+	if err != nil {
+		//Error other than no user
+		if err != twitch.UserCouldNotBeFoundErr {
+			return nil, err
+		}
+	}
+
+	//ID exists, check if they're in our DB
+	col := []string{db.ColPlayerName, db.TablePlayers + "." + db.ColPlayerID}
+	on := db.GetOnClause(db.TablePlayers, db.TableSocials, db.ColPlayerID, db.ColSocialsPlayerID)
+	table := db.JoinTables(db.TablePlayers, db.TableSocials, on)
+	where := []db.WhereCondition{{
+		ColName: db.ColSocialsPlatformUserID,
+		Op: db.Equals,
+		Value: id,
+	}}
+	stmt := db.BuildSelectStatement(col, table, where)
+
+	player, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	//Update name and exists
+	names := player[db.ColPlayerName]
+
+	//If this player DOES exist, finally, update their twitch username
+	if len(names) > 0 {
+		col = []string{db.ColSocialsPlatformUsername}
+		newVals := []any{name.Value}
+		where = []db.WhereCondition{{
+			ColName: db.ColSocialsPlatformUserID,
+			Op: db.Equals,
+			Value: id,
+		}}
+		stmt, err = db.BuildUpdateStatement(col, newVals, db.TableSocials, where)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err := db.ExecuteStatements(database, []db.SQLStatement{stmt})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return player, nil
+}
+
 //Adds player and their twitch to DB atomically
-func executeInsertStatements(database *sql.DB, playerName string, playerTwitchID string) error {
+func executeInsertStatements(database *sql.DB, playerName string, playerTwitchID string, playerTwitchName string) error {
 	//Build SQL statements
 	playerStmt := db.BuildInsertStatement([]string{db.ColPlayerName}, db.TablePlayers, []any{playerName})
 
@@ -346,12 +425,14 @@ func executeInsertStatements(database *sql.DB, playerName string, playerTwitchID
 		db.ColSocialsPlayerID,
 		db.ColSocialsPlatformName,
 		db.ColSocialsPlatformUserID,
+		db.ColSocialsPlatformUsername,
 	}
 	table := db.TableSocials
 	vals := []any {
 		playerID,
 		"twitch",
 		playerTwitchID,
+		playerTwitchName, 
 	}
 	socialsStmt := db.BuildInsertStatement(cols, table, vals)
 	_, err = tx.Exec(socialsStmt.Stmt, socialsStmt.Args...)

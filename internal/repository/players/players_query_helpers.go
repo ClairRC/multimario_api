@@ -1,6 +1,9 @@
 package players
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/multimario_api/internal/db"
 	"github.com/multimario_api/internal/repository"
 	"github.com/multimario_api/internal/twitch"
@@ -17,14 +20,20 @@ func getPlayerWhereCons(playerQuery PlayerQuery, twitchIDCache map[string]string
 		out = append(out, *nameWherePtr)
 	}
 
+	//Get Twitch IDs for each player
+	idMap, err := twitch.GetTwitchIDsBatched(playerQuery.TwitchNames)
+	if err != nil {
+		return nil, err
+	}
+
 	//Get twitch name where conditions
 	//This caches twitch IDs so the logic is too specific for the general GetWhereCondition helper
 	var twitchIDWherePtr *db.WhereCondition
 	for i, twitchName := range playerQuery.TwitchNames {
 		//Get twitch ID from the name
-		id, err := twitch.Client.GetTwitchIDFromName(twitchName)
-		if err != nil {
-			return nil, err
+		id, exists := idMap[strings.ToLower(twitchName)]
+		if !exists {
+			return nil, errors.New("unknown error trying to get twitch ids.")
 		}
 		twitchIDCache[id] = twitchName //Add ID to cache
 

@@ -231,7 +231,7 @@ func (h *ReqHandler) EditPlayer(w http.ResponseWriter, r *http.Request) {
 *	players: //Array of players
 *	[
 *		{
-*			name: string //Player's name
+*			player_name: string //Player's name
 *			twitch_name: string //Twitch name. NULL if player doesn't have associated Twitch
 *		}
 *	]
