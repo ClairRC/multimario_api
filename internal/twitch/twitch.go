@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -69,6 +70,7 @@ func SetTwitchParams(twitchClientID string, twitchClientSecret string) error {
 
 	responseCode := twitchResp.StatusCode
 	if responseCode > 299 {
+		log.Print(twitchResp.Request.Response.Status)
 		return errors.New("client_id or client_secret is invalid")
 	}
 
