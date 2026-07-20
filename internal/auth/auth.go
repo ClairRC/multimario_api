@@ -112,7 +112,7 @@ func getAPIKeyLevel(database *sql.DB, key string) (AuthLevel, error) {
 	//Check the "auth_level" col
 	adminLevel, ok := res[db.ColAPIKeysAuthLevel][0].(int64)
 	if !ok {
-		return AuthNone, errors.New("unable to parse adming status from database")
+		return AuthNone, errors.New("unable to parse admin status from database")
 	}
 
 	return AuthLevel(int(adminLevel)), nil

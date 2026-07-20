@@ -233,6 +233,22 @@ func DatabaseInit(db *sql.DB) error {
 		return err
 	}
 
+	//WAL for better concurrency
+	_, err = db.Exec("PRAGMA journal_mode = WAL;")
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("PRAGMA busy_timeout = 5000;")
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("PRAGMA synchronous = NORMAL;")
+	if err != nil {
+		return err
+	}
+
 	//Create transaction
 	tx, err := db.Begin()
 	if err != nil {
