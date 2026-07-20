@@ -12,7 +12,7 @@ import (
 * File for authentication middleware and request handlers
  */
 
-const twitchCallBackURI = "http://localhost:3000/auth/twitch/callback"
+const twitchCallBackURI = "https://multimario.app/auth/twitch/callback"
 
 //Middleware that authenticates user api  key
 func (h *ReqHandler) Authenticate(next http.HandlerFunc, level auth.AuthLevel) http.HandlerFunc {

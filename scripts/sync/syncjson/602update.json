@@ -1,7 +1,65 @@
 {
+    "update-runs": [
+        {
+            "player_name": "fizz64",
+            "race_date": "2026-07-25",
+            "race_category": "602",
+            "category": "smg1_120",
+            "time": null,
+            "estimate": "5:28:16"
+        },
+        {
+            "player_name": "anordinaryperson",
+            "race_date": "2026-07-25",
+            "race_category": "602",
+            "category": "smg2_242",
+            "time": null,
+            "estimate": "10:07:35"
+        },
+        {
+            "player_name": "kasualplayz",
+            "race_date": "2026-07-25",
+            "race_category": "602",
+            "category": "smg1_120",
+            "time": null,
+            "estimate": "6:01:11"
+        },
+        {
+            "player_name": "pinshark2112",
+            "race_date": "2026-07-25",
+            "race_category": "602",
+            "category": "sm64_120",
+            "time": null,
+            "estimate": "2:14:06"
+        },
+        {
+            "player_name": "calumj28",
+            "race_date": "2026-07-25",
+            "race_category": "602",
+            "category": "smg1_120",
+            "time": null,
+            "estimate": "6:12:31"
+        },
+        {
+            "player_name": "dnvic",
+            "race_date": "2026-07-25",
+            "race_category": "602",
+            "category": "smg1_120",
+            "time": null,
+            "estimate": "8:01:07"
+        },
+        {
+            "player_name": "dnvic",
+            "race_date": "2026-07-25",
+            "race_category": "602",
+            "category": "smg2_242",
+            "time": null,
+            "estimate": "13:07:18"
+        }
+    ],
     "post-records": [
         {
-            "player_name": "bert_milar",
+            "player_name": "smojoycon_",
             "race_date": "2026-07-25",
             "race_category": "602",
             "finish_time": null,
@@ -10,27 +68,27 @@
                 {
                     "category_name": "sm64_120",
                     "time": null,
-                    "estimate": "1:58:24"
+                    "estimate": "2:02:21"
                 },
                 {
                     "category_name": "smg1_120",
                     "time": null,
-                    "estimate": "5:13:50"
+                    "estimate": "5:51:59"
                 },
                 {
                     "category_name": "sms_120",
                     "time": null,
-                    "estimate": "3:09:34"
+                    "estimate": "3:52:31"
                 },
                 {
                     "category_name": "smg2_242",
                     "time": null,
-                    "estimate": "8:59:34"
+                    "estimate": "9:53:46"
                 }
             ]
         },
         {
-            "player_name": "zakartqc",
+            "player_name": "snitch_smo",
             "race_date": "2026-07-25",
             "race_category": "602",
             "finish_time": null,
@@ -39,27 +97,27 @@
                 {
                     "category_name": "sm64_120",
                     "time": null,
-                    "estimate": "2:29:41"
+                    "estimate": "2:22:01"
                 },
                 {
                     "category_name": "smg1_120",
                     "time": null,
-                    "estimate": "5:50:51"
+                    "estimate": "7:00:33"
                 },
                 {
                     "category_name": "sms_120",
                     "time": null,
-                    "estimate": "4:39:53"
+                    "estimate": "4:32:04"
                 },
                 {
                     "category_name": "smg2_242",
                     "time": null,
-                    "estimate": "10:40:34"
+                    "estimate": "11:37:50"
                 }
             ]
         },
         {
-            "player_name": "weird_2h",
+            "player_name": "awesome7285",
             "race_date": "2026-07-25",
             "race_category": "602",
             "finish_time": null,
@@ -68,27 +126,27 @@
                 {
                     "category_name": "sm64_120",
                     "time": null,
-                    "estimate": "3:26:01"
+                    "estimate": "2:21:14"
                 },
                 {
                     "category_name": "smg1_120",
                     "time": null,
-                    "estimate": "7:36:48"
+                    "estimate": "6:53:30"
                 },
                 {
                     "category_name": "sms_120",
                     "time": null,
-                    "estimate": "5:11:10"
+                    "estimate": "5:07:09"
                 },
                 {
                     "category_name": "smg2_242",
                     "time": null,
-                    "estimate": "14:20:37"
+                    "estimate": "11:39:15"
                 }
             ]
         },
         {
-            "player_name": "mrhug1",
+            "player_name": "cobiscobby",
             "race_date": "2026-07-25",
             "race_category": "602",
             "finish_time": null,
@@ -97,27 +155,27 @@
                 {
                     "category_name": "sm64_120",
                     "time": null,
-                    "estimate": "3:17:48"
+                    "estimate": "2:47:35"
                 },
                 {
                     "category_name": "smg1_120",
                     "time": null,
-                    "estimate": "7:55:34"
+                    "estimate": "7:35:24"
                 },
                 {
                     "category_name": "sms_120",
                     "time": null,
-                    "estimate": "6:05:12"
+                    "estimate": "5:09:15"
                 },
                 {
                     "category_name": "smg2_242",
                     "time": null,
-                    "estimate": "14:39:53"
+                    "estimate": "12:42:11"
                 }
             ]
         },
         {
-            "player_name": "jjdoesbadspeedruns",
+            "player_name": "xxthebigbearxx",
             "race_date": "2026-07-25",
             "race_category": "602",
             "finish_time": null,
@@ -126,12 +184,12 @@
                 {
                     "category_name": "sm64_120",
                     "time": null,
-                    "estimate": "4:49:42"
+                    "estimate": "7:28:08"
                 },
                 {
                     "category_name": "smg1_120",
                     "time": null,
-                    "estimate": "9:32:42"
+                    "estimate": "12:03:52"
                 },
                 {
                     "category_name": "sms_120",
@@ -141,72 +199,19 @@
                 {
                     "category_name": "smg2_242",
                     "time": null,
-                    "estimate": "20:00:00"
+                    "estimate": "17:55:30"
                 }
             ]
         }
     ],
-    "update-runs": [
-        {
-            "player_name": "fizz64",
-            "race_date": "2026-07-25",
-            "race_category": "602",
-            "category": "smg2_242",
-            "time": null,
-            "estimate": "9:06:02"
-        },
-        {
-            "player_name": "serving_hunter",
-            "race_date": "2026-07-25",
-            "race_category": "602",
-            "category": "sms_120",
-            "time": null,
-            "estimate": "3:33:48"
-        },
-        {
-            "player_name": "cheesysrc",
-            "race_date": "2026-07-25",
-            "race_category": "602",
-            "category": "smg1_120",
-            "time": null,
-            "estimate": "5:42:12"
-        },
-        {
-            "player_name": "pinshark2112",
-            "race_date": "2026-07-25",
-            "race_category": "602",
-            "category": "sm64_120",
-            "time": null,
-            "estimate": "2:25:17"
-        },
-        {
-            "player_name": "pinshark2112",
-            "race_date": "2026-07-25",
-            "race_category": "602",
-            "category": "smg1_120",
-            "time": null,
-            "estimate": "5:48:27"
-        },
-        {
-            "player_name": "pinshark2112",
-            "race_date": "2026-07-25",
-            "race_category": "602",
-            "category": "smg2_242",
-            "time": null,
-            "estimate": "10:08:01"
-        },
-        {
-            "player_name": "nostalgia64runs",
-            "race_date": "2026-07-25",
-            "race_category": "602",
-            "category": "smg1_120",
-            "time": null,
-            "estimate": "6:26:38"
-        }
-    ],
     "delete-records": [
         {
-            "player_name": "galax_v",
+            "player_name": "michaelsspeedruns",
+            "race_date": "2026-07-25",
+            "race_category": "602"
+        },
+        {
+            "player_name": "jjdoesbadspeedruns",
             "race_date": "2026-07-25",
             "race_category": "602"
         }
