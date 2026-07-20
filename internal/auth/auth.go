@@ -19,10 +19,12 @@ const (
 	AuthSuperAdmin AuthLevel = 2
 )
 
+var NoKeyPresent error = errors.New("key not present in database")
+
 func KeyMeetsLevel(database *sql.DB, key string, level AuthLevel) (bool, error) {
 	//Get the key auth level from DB
 	authLevel, err := getAPIKeyLevel(database, key)
-	if err != nil {
+	if err != nil && err != NoKeyPresent {
 		return false, err
 	}
 
@@ -106,7 +108,7 @@ func getAPIKeyLevel(database *sql.DB, key string) (AuthLevel, error) {
 
 	//Check if this API key exists
 	if len(res[db.ColAPIKeysKey]) == 0 {
-		return AuthNone, nil
+		return AuthNone, NoKeyPresent
 	}
 
 	//Check the "auth_level" col

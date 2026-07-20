@@ -1,6 +1,7 @@
 package req_handler
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -27,8 +28,8 @@ func (h *ReqHandler) Authenticate(next http.HandlerFunc, level auth.AuthLevel) h
 		}
 
 		valid, err := auth.KeyMeetsLevel(h.DataBase, key, level)
-		if err != nil || !valid {
-			writeError(w, http.StatusBadRequest, "key not present in database")
+		if err != nil && err != auth.NoKeyPresent {
+			writeError(w, http.StatusBadRequest, fmt.Sprint(err))
 			return
 		}
 
