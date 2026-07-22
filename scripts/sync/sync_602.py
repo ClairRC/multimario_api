@@ -16,7 +16,7 @@ import models
 load_dotenv()
 
 sheets_api_key = os.getenv("GSHEETS_API_KEY")
-spreadsheetId = "12AMjeih-qYQHEdSrf1cFXtKrBcxkfPii326wfI75Vek"
+spreadsheetId = "1ludkWzuN0ZzMh9Bv1gq9oQxMypttiXkg6AEFvxy_gZk"
 dataRange = "A6:E"
 
 ip = "http://localhost"
