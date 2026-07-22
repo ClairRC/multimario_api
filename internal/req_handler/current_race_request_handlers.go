@@ -79,7 +79,7 @@ func (h *ReqHandler) SetPlayerCollectibleCount(w http.ResponseWriter, r *http.Re
 	if err != nil { return }
 
 	//Update the record
-	err = record.Update(h.DataBase, repository.NULLStr, newNumCollected, deltaNumCollected)
+	err = record.Update(h.DataBase, repository.NULLStr, repository.NULLStr, newNumCollected, deltaNumCollected)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error updating record")
 		return

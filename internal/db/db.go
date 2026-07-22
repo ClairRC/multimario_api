@@ -55,6 +55,7 @@ const (
 	ColRecordsRaceID = "race_id"
 	ColRecordsPlayerID = "player_id"
 	ColRecordsFinishTime = "finish_time"
+	ColRecordsEstimate = "estimate"
 	ColRecordsNumCollected = "num_collected"
 
 	TableRuns = "runs"
@@ -91,6 +92,12 @@ const Delete StatementType = "DELETE"
 const Select StatementType = "SELECT"
 const Count StatementType = "COUNT"
 
+//Add options for ordering
+type OrderDirection string
+
+const Ascending OrderDirection = "ASC"
+const Descending OrderDirection = "DESC"
+
 //SQL statement
 type SQLStatement struct {
 	Stmt string
@@ -110,6 +117,11 @@ type WhereCondition struct {
 type OrCondition struct {
 	Op Operator
 	Value any
+}
+
+type Order struct {
+	ColName string
+	Direction OrderDirection
 }
 
 // Table initializations
@@ -180,6 +192,7 @@ var initStatements = []string {
 		race_id INTEGER NOT NULL,
 		player_id INTEGER NOT NULL,
 		finish_time TEXT,
+		estimate TEXT,
 		num_collected INTEGER NOT NULL,
 		FOREIGN KEY (race_id) REFERENCES races(race_id)
 			ON DELETE CASCADE,
@@ -387,7 +400,7 @@ func ExecuteCountStatement(db *sql.DB, statement SQLStatement) (int64, error) {
 
 
 //Builds SQL statement from certain parameters. Takes 0 or more "orderCol" values
-func BuildSelectStatement(columns []string, table string, where []WhereCondition, orderCols ...string) SQLStatement {
+func BuildSelectStatement(columns []string, table string, where []WhereCondition, sortingOrder ...Order) SQLStatement {
 	args := make([]any, 0)
 	stmt := "SELECT DISTINCT"
 	for i, v := range columns {
@@ -417,13 +430,13 @@ func BuildSelectStatement(columns []string, table string, where []WhereCondition
 
 	//Add order by clause if cols is not empty
 	//By default, always order in ascending order. I could change this?
-	if len(orderCols) > 0 {
+	if len(sortingOrder) > 0 {
 		stmt += " ORDER BY "
-		for i, col := range orderCols {
+		for i, order := range sortingOrder {
 			if i > 0 {
 				stmt += ", "
 			}
-			stmt += col + " ASC NULLS LAST "
+			stmt += order.ColName + fmt.Sprintf(" %s NULLS LAST ", order.Direction)
 		}
 	}
 
@@ -431,7 +444,7 @@ func BuildSelectStatement(columns []string, table string, where []WhereCondition
 }
 
 //Builds SQL statement from certain parameters. Takes 0 or more "orderCol" values and a limit and offset value
-func BuildSelectStatementWithLimitAndOffset(columns []string, table string, where []WhereCondition, limit int, offset int, orderCols ...string) SQLStatement {
+func BuildSelectStatementWithLimitAndOffset(columns []string, table string, where []WhereCondition, limit int, offset int, sortingOrder ...Order) SQLStatement {
 	args := make([]any, 0)
 	stmt := "SELECT DISTINCT"
 	for i, v := range columns {
@@ -461,13 +474,13 @@ func BuildSelectStatementWithLimitAndOffset(columns []string, table string, wher
 
 	//Add order by clause if cols is not empty
 	//By default, always order in ascending order. I could change this?
-	if len(orderCols) > 0 {
+	if len(sortingOrder) > 0 {
 		stmt += " ORDER BY "
-		for i, col := range orderCols {
+		for i, order := range sortingOrder {
 			if i > 0 {
 				stmt += ", "
 			}
-			stmt += col + " ASC NULLS LAST "
+			stmt += order.ColName + fmt.Sprintf(" %s NULLS LAST ", order.Direction)
 		}
 	}
 

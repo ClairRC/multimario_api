@@ -15,6 +15,7 @@ type Record struct {
 	Player *players.Player
 	Race *races.Race
 	FinishTime repository.NullableStr
+	Estimate repository.NullableStr
 	NumCollected repository.NullableInt
 	RecordID int64 //Record ID. Defaults to 0
 }
@@ -39,7 +40,8 @@ var RecordDoesNotExistErr error = errors.New("race record does not exist")
 
 //Creates new Record and returns a pointer to it
 func NewRecord(database *sql.DB, raceID repository.NullableInt, 
-	playerName repository.NullableStr, finishTime repository.NullableStr, numCollected repository.NullableInt) (*Record, error) {
+	playerName repository.NullableStr, finishTime repository.NullableStr, 
+	estimate repository.NullableStr, numCollected repository.NullableInt) (*Record, error) {
 		//Make sure required fields exist
 		if !raceID.Valid {
 			return nil, errors.New("race is invalid")
@@ -65,7 +67,7 @@ func NewRecord(database *sql.DB, raceID repository.NullableInt,
 		}
 
 		//Created, return new record
-		return &Record{Race: race, Player: player, FinishTime: finishTime, NumCollected: numCollected}, nil
+		return &Record{Race: race, Player: player, FinishTime: finishTime, Estimate: estimate, NumCollected: numCollected}, nil
 	}
 
 /*
@@ -117,7 +119,7 @@ func (r *Record) Add(database *sql.DB, runs []*runs.Run) error {
 }
 
 //Updates record
-func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, newNumCollected repository.NullableInt, deltaNumCollected repository.NullableInt) error {
+func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, newEstimate repository.NullableStr, newNumCollected repository.NullableInt, deltaNumCollected repository.NullableInt) error {
 	//Make sure record exists
 	if r.RecordID == 0 {
 		return RecordDoesNotExistErr
@@ -150,6 +152,11 @@ func (r *Record) Update(database *sql.DB, newFinishTime repository.NullableStr, 
 	if newFinishTime.Valid {
 		cols = append(cols, db.ColRecordsFinishTime)
 		vals = append(vals, newFinishTime.Value)
+	}
+
+	if newEstimate.Valid {
+		cols = append(cols, db.ColRecordsEstimate)
+		vals = append(vals, newEstimate.Value)
 	}
 
 	//If we want to increment the numCollected, set this value to true
@@ -255,14 +262,20 @@ func QueryRecord(database *sql.DB, recordQuery RecordQuery, limit int, offset in
 		db.TablePlayers + "." + db.ColPlayerID,
 		db.TableRecords + "." + db.ColRecordsRaceID,
 		db.ColRecordsFinishTime,
+		db.TableRecords + "." + db.ColRecordsEstimate,
 		db.ColRecordsNumCollected,
 		db.ColRecordID,
 	}
 	table := getRecordQueryTable()
 	whereCons := getRecordsWhereCons(recordQuery)
+	order := []db.Order{
+		{ColName: db.ColRecordsFinishTime, Direction: db.Ascending}, 
+		{ColName: db.ColRecordsNumCollected, Direction: db.Descending},
+		{ColName: db.ColRecordsEstimate, Direction: db.Ascending},
+	}
 
 	//Execute queries
-	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.ColRecordsFinishTime, db.ColRecordsNumCollected)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, order...)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, -1, err
@@ -306,6 +319,7 @@ func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repos
 	//Get race values from DB
 	cols := []string {
 		db.ColRecordsFinishTime,
+		db.ColRecordsEstimate,
 		db.ColRecordsNumCollected,
 		db.ColRecordID,
 	}
@@ -343,6 +357,14 @@ func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repos
 		recordFinishTime = repository.MakeNullableStr(finishTimeStr)
 	}
 
+	estimateStr, ok := res[db.ColRecordsEstimate][0].(string)
+	var recordEstimate repository.NullableStr
+	if !ok {
+		recordEstimate = repository.NULLStr
+	} else {
+		recordEstimate = repository.MakeNullableStr(estimateStr)
+	}
+
 	numCollected, ok := res[db.ColRecordsNumCollected][0].(int64)
 	if !ok {
 		return nil, errors.New("unknown error: number collected in record can't be parsed as int")
@@ -353,6 +375,7 @@ func GetRecord(database *sql.DB, raceID repository.NullableInt, playerName repos
 		Player: player,
 		Race: race,
 		FinishTime: recordFinishTime,
+		Estimate: recordEstimate,
 		NumCollected: repository.MakeNullableInt(numCollected),
 		RecordID: recordID,
 	}
@@ -409,10 +432,15 @@ func executeRecordInsertStatement(database *sql.DB, record *Record, runs []*runs
 	}
 	vals := []any {record.Race.RaceID, record.Player.PlayerID, record.NumCollected.Value}
 
-	//Also add finish time if that is a valid value
+	//Also add finish time and estimate if they are valid values
 	if record.FinishTime.Valid {
 		cols = append(cols, db.ColRecordsFinishTime)
 		vals = append(vals, record.FinishTime.Value)
+	}
+
+	if record.Estimate.Valid {
+		cols = append(cols, db.ColRecordsEstimate)
+		vals = append(vals, record.Estimate.Value)
 	}
 	
 	recordStmt := db.BuildInsertStatement(cols, db.TableRecords, vals)

@@ -157,9 +157,10 @@ func QueryPlayers(database *sql.DB, playerQuery PlayerQuery, limit int, offset i
 	if err != nil {
 		return nil, -1, err
 	}
+	order := db.Order{ColName: db.ColPlayerName, Direction: db.Ascending}
 
 	//Execute query
-	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.ColPlayerName)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, order)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, -1, err

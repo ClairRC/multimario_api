@@ -120,8 +120,21 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//Add up the estimates for each run to get total estimate
+	runEstimates := make([]repository.NullableStr, 0)
+	for _, r := range recordRuns {
+		runEstimates = append(runEstimates, r.Estimate)
+	}
+
+	//Get added estimate
+	sumEstimate, err := addTimes(runEstimates)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "unknown error calculating record estimate")
+		return
+	}
+
 	//Create new record and add it
-	record, err := records.NewRecord(h.DataBase, raceID, playerName, finishTime, numCollected)
+	record, err := records.NewRecord(h.DataBase, raceID, playerName, finishTime, sumEstimate, numCollected)
 	if err != nil {
 		switch err {
 		case players.PlayerDoesNotExistErr:
@@ -134,7 +147,7 @@ func (h *ReqHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 
 	err = record.Add(h.DataBase, recordRuns)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "uknown error adding record")
+		writeError(w, http.StatusInternalServerError, "unknown error adding record")
 		return
 	}
 
@@ -214,7 +227,7 @@ func (h *ReqHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 	if err != nil { return }
 
 	//Update record with new values
-	err = record.Update(h.DataBase, newFinishTime, newNumCollected, deltaNumCollected)
+	err = record.Update(h.DataBase, newFinishTime, repository.NULLStr, newNumCollected, deltaNumCollected)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "unknown error updating record")
 		return
@@ -349,6 +362,7 @@ func (h *ReqHandler) GetRaceRecords(w http.ResponseWriter, r *http.Request) {
 		newRecord["twitch_name"] = r.Player.TwitchName.Value
 		newRecord["race_id"] = r.Race.RaceID
 		newRecord["time"] = r.FinishTime.NullableValue()
+		newRecord["estimate"] = r.Estimate.NullableValue()
 		newRecord["num_collected"] = r.NumCollected.Value
 
 		outRecords = append(outRecords, newRecord)

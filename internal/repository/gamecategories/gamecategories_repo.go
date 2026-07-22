@@ -195,9 +195,10 @@ func QueryGameCategories(database *sql.DB, gamecategoryQuery GameCategoryQuery, 
 	}
 	table := getGameCategoryQueryTable()
 	whereCons := getGameCategoryWhereCons(gamecategoryQuery)
+	order := db.Order{ColName: db.ColGameName, Direction: db.Ascending}
 
 	//Execute query
-	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.ColGameName)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, order)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, -1, err

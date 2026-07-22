@@ -126,6 +126,36 @@ func (h *ReqHandler) EditRun(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//After updating run, update this record's estimate to match the new estimate if the estimate is valid
+	//TODO: This does more database calls instead of just doing the time math naiively. Unnecessary but not a big deal since
+	//we already have the record ID
+	//Additionally, this isn't atomic since we're doing run.Update and Record.update, but estimates aren't that important at the end of the day.
+
+	if newEstimate.Valid {
+		allRuns, err := runs.GetAllRunsFromRecordID(h.DataBase, record.RecordID)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "unknown error updating record estimate with new run")
+			return
+		}
+
+		runEstimates := make([]repository.NullableStr, 0)
+		for _, r := range allRuns {
+			runEstimates = append(runEstimates, r.Estimate)
+		}
+
+		runEstimateSum, err := addTimes(runEstimates)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "unknown error calculating new record estimate")
+			return
+		}
+
+		err = record.Update(h.DataBase, repository.NULLStr, runEstimateSum, repository.NULLInt, repository.NULLInt)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "unknown error updating record estimate with new run")
+			return
+		}
+	}
+	
 	//Run is updated
 	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
 }

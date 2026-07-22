@@ -298,3 +298,55 @@ func secondsToTimeString(totalSeconds int) string {
 
     return fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds)
 }
+
+//Adds up all the times passed in for calculating run estimates
+func addTimes(times []repository.NullableStr) (repository.NullableStr, error) {
+	var totalSeconds int64
+
+	//If times is empty, just return 00:00:00 immediately
+	if len(times) == 0 {
+		return repository.MakeNullableStr("00:00:00"), nil
+	}
+
+	//Flag to check if the sum is NULL for any reason
+	nullSum := true
+	for _, tStr := range times {
+		if !tStr.Valid {
+			continue //Skip NULL strings
+		}
+
+		//At least 1 time is valid, so the sum is not null
+		nullSum = false
+
+		t := tStr.Value
+		parts := strings.Split(t, ":")
+		if len(parts) != 3 {
+			return repository.NULLStr, fmt.Errorf("invalid time format: %q (expected hh:mm:ss)", t)
+		}
+
+		var h, m, s int
+		_, err := fmt.Sscanf(t, "%d:%d:%d", &h, &m, &s)
+		if err != nil {
+			return repository.NULLStr, fmt.Errorf("invalid time format: %q: %w", t, err)
+		}
+
+		if m < 0 || m > 59 || s < 0 || s > 59 {
+			return repository.NULLStr, fmt.Errorf("invalid time value: %q (minutes/seconds out of range)", t)
+		}
+
+		totalSeconds += int64(h)*3600 + int64(m)*60 + int64(s)
+	}
+
+	//If none of the times were non-null, return null string
+	if nullSum {
+		return repository.NULLStr, nil
+	}
+
+	//Otherwise, calculate actual result
+	
+	hours := totalSeconds / 3600
+	minutes := (totalSeconds % 3600) / 60
+	seconds := totalSeconds % 60
+
+	return repository.MakeNullableStr(fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds)), nil
+}

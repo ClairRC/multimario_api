@@ -144,6 +144,7 @@ func parseRecordQuery(database *sql.DB, res map[string][]any) []*Record {
 
 		//Unrequired values
 		finishTime := res[db.ColRecordsFinishTime][i]
+		estimate := res[db.ColRecordsEstimate][i]
 
 		//Get race from ID
 		race, err := races.GetRaceByID(database, raceID)
@@ -161,6 +162,7 @@ func parseRecordQuery(database *sql.DB, res map[string][]any) []*Record {
 			Player: player,
 			Race: race,
 			FinishTime: repository.MakeNullableStr(finishTime),
+			Estimate: repository.MakeNullableStr(estimate),
 			NumCollected: repository.MakeNullableInt(numCollected),
 			RecordID: recordID,
 		}

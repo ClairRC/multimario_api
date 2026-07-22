@@ -187,9 +187,10 @@ func QueryRaceCategories(database *sql.DB, raceCategoryQuery RaceCategoryQuery, 
 	}
 	table := getRaceCategoryQueryTable()
 	whereCons := getRaceCategoryWhereCons(raceCategoryQuery)
+	order := db.Order{ColName: db.ColRaceCategoryName, Direction: db.Ascending}
 
 	//Execute queries
-	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.ColRaceCategoryName)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, order)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, -1, err

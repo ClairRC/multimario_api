@@ -156,9 +156,13 @@ func QueryRuns(database *sql.DB, runQuery RunQuery, limit int, offset int) ([]*R
 	}
 	table := getRunQueryTable()
 	whereCons := getRunWhereCons(runQuery)
+	order := []db.Order{
+		{ColName: db.TableRuns + "." + db.ColRunGameCategoryID, Direction: db.Ascending}, 
+		{ColName: db.ColRunTime, Direction: db.Ascending},
+	}
 
 	//Execute query
-	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, db.TableRuns + "." + db.ColRunGameCategoryID, db.ColRunTime)
+	stmt := db.BuildSelectStatementWithLimitAndOffset(cols, table, whereCons, limit, offset, order...)
 	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
 	if err != nil {
 		return nil, -1, err
