@@ -1,0 +1,212 @@
+{
+    "post-races": [
+        {
+            "category": "540",
+            "date": "2026-08-15",
+            "status": "upcoming",
+            "start_time": "13:00:00"
+        }
+    ],
+    "post-records": [
+        {
+            "player_name": "cheesysrc",
+            "race_date": "2026-08-15",
+            "race_category": "540",
+            "finish_time": null,
+            "num_collected": null,
+            "runs": [
+                {
+                    "category_name": "sm64_70",
+                    "time": null,
+                    "estimate": "0:53:42"
+                },
+                {
+                    "category_name": "smg1_any%",
+                    "time": null,
+                    "estimate": "2:23:18"
+                },
+                {
+                    "category_name": "sms_any%",
+                    "time": null,
+                    "estimate": "1:24:34"
+                },
+                {
+                    "category_name": "smg2_any%",
+                    "time": null,
+                    "estimate": "3:15:15"
+                },
+                {
+                    "category_name": "smo_any%",
+                    "time": null,
+                    "estimate": "1:05:20"
+                },
+                {
+                    "category_name": "sm3dw_any%",
+                    "time": null,
+                    "estimate": "1:37:21"
+                }
+            ]
+        },
+        {
+            "player_name": "sa1102smo",
+            "race_date": "2026-08-15",
+            "race_category": "540",
+            "finish_time": null,
+            "num_collected": null,
+            "runs": [
+                {
+                    "category_name": "sm64_70",
+                    "time": null,
+                    "estimate": "0:57:51"
+                },
+                {
+                    "category_name": "smg1_any%",
+                    "time": null,
+                    "estimate": "2:31:09"
+                },
+                {
+                    "category_name": "sms_any%",
+                    "time": null,
+                    "estimate": "1:23:20"
+                },
+                {
+                    "category_name": "smg2_any%",
+                    "time": null,
+                    "estimate": "3:17:42"
+                },
+                {
+                    "category_name": "smo_any%",
+                    "time": null,
+                    "estimate": "0:58:38"
+                },
+                {
+                    "category_name": "sm3dw_any%",
+                    "time": null,
+                    "estimate": "1:32:22"
+                }
+            ]
+        },
+        {
+            "player_name": "bloodderg",
+            "race_date": "2026-08-15",
+            "race_category": "540",
+            "finish_time": null,
+            "num_collected": null,
+            "runs": [
+                {
+                    "category_name": "sm64_70",
+                    "time": null,
+                    "estimate": "0:58:42"
+                },
+                {
+                    "category_name": "smg1_any%",
+                    "time": null,
+                    "estimate": "2:33:59"
+                },
+                {
+                    "category_name": "sms_any%",
+                    "time": null,
+                    "estimate": "1:27:49"
+                },
+                {
+                    "category_name": "smg2_any%",
+                    "time": null,
+                    "estimate": "3:15:49"
+                },
+                {
+                    "category_name": "smo_any%",
+                    "time": null,
+                    "estimate": "1:06:40"
+                },
+                {
+                    "category_name": "sm3dw_any%",
+                    "time": null,
+                    "estimate": "1:39:42"
+                }
+            ]
+        },
+        {
+            "player_name": "snitch_smo",
+            "race_date": "2026-08-15",
+            "race_category": "540",
+            "finish_time": null,
+            "num_collected": null,
+            "runs": [
+                {
+                    "category_name": "sm64_70",
+                    "time": null,
+                    "estimate": "1:04:23"
+                },
+                {
+                    "category_name": "smg1_any%",
+                    "time": null,
+                    "estimate": "2:59:57"
+                },
+                {
+                    "category_name": "sms_any%",
+                    "time": null,
+                    "estimate": "1:36:30"
+                },
+                {
+                    "category_name": "smg2_any%",
+                    "time": null,
+                    "estimate": "3:53:03"
+                },
+                {
+                    "category_name": "smo_any%",
+                    "time": null,
+                    "estimate": "1:00:25"
+                },
+                {
+                    "category_name": "sm3dw_any%",
+                    "time": null,
+                    "estimate": "1:55:26"
+                }
+            ]
+        },
+        {
+            "player_name": "violetseaside",
+            "race_date": "2026-08-15",
+            "race_category": "540",
+            "finish_time": null,
+            "num_collected": null,
+            "runs": [
+                {
+                    "category_name": "sm64_70",
+                    "time": null,
+                    "estimate": "1:12:38"
+                },
+                {
+                    "category_name": "smg1_any%",
+                    "time": null,
+                    "estimate": "2:40:09"
+                },
+                {
+                    "category_name": "sms_any%",
+                    "time": null,
+                    "estimate": "5:00:00"
+                },
+                {
+                    "category_name": "smg2_any%",
+                    "time": null,
+                    "estimate": "3:19:19"
+                },
+                {
+                    "category_name": "smo_any%",
+                    "time": null,
+                    "estimate": "1:04:25"
+                },
+                {
+                    "category_name": "sm3dw_any%",
+                    "time": null,
+                    "estimate": "1:29:41"
+                }
+            ]
+        }
+    ],
+    "post-players": [
+        {
+            "twitch_name": "violetseaside"
+        }
+    ]
+}

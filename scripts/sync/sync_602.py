@@ -62,8 +62,12 @@ def main():
     except parser.ParserError:
         print(f"Error: {date} cannot be parsed as a valid date")
         return
+
+    # Date has already passed, write it and make sure the sync file is empty since we don't want to sync
     if (date < now):
-        raise Exception(f"Error: {date} has already passed")
+        print(f"{date} has already passed")
+        json_out.Export(output_path)
+        return
     
     sheetRecords = getSheetRecords(r.json())
     existingRecords = getExistingRecords(date)
