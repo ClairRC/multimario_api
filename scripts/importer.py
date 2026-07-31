@@ -21,6 +21,7 @@ def main():
         sys.exit(1)
     
     jsonFilePath = sys.argv[1]
+    print(f"Importing {jsonFilePath}...")
     data = {}
 
     # Read json
