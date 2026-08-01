@@ -1,6 +1,7 @@
 package req_handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -13,7 +14,10 @@ import (
 * File for authentication middleware and request handlers
  */
 
+type RequestContextKeys string //Keys for request context
+
 const twitchCallBackURI = "https://multimario.app/auth/twitch/callback"
+const ctxAPIKey RequestContextKeys = "apiKey"
 
 //Middleware that authenticates user api  key
 func (h *ReqHandler) Authenticate(next http.HandlerFunc, level auth.AuthLevel) http.HandlerFunc {
@@ -39,8 +43,11 @@ func (h *ReqHandler) Authenticate(next http.HandlerFunc, level auth.AuthLevel) h
 			return
 		}
 
+		//Pass API key to handler via context
+		ctx := context.WithValue(r.Context(), ctxAPIKey, key)
+
 		//Key is valid, log this access and call the next function the next function
-		next(w, r)
+		next(w, r.WithContext(ctx))
 	}
 }
 

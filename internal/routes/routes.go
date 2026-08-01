@@ -21,8 +21,8 @@ func Register(m *http.ServeMux, h *req_handler.ReqHandler) {
 
 	//Special handlers for the race that is currently happening
 	//Specifically meant to expose useful behavior during races
-	m.HandleFunc("PATCH /currentrace/{player_name}/{category_name}", h.Authenticate(h.UpdatePlayerGameTime, auth.AuthVerified))
-	m.HandleFunc("PATCH /currentrace/{player_name}", h.Authenticate(h.SetPlayerCollectibleCount, auth.AuthVerified))
+	m.HandleFunc("PATCH /currentrace/{category_name}", h.Authenticate(h.UpdatePlayerGameTime, auth.AuthVerified))
+	m.HandleFunc("PATCH /currentrace", h.Authenticate(h.SetPlayerCollectibleCount, auth.AuthVerified))
 	m.HandleFunc("GET /currentrace/runs", h.GetCurrentRaceRuns)
 	m.HandleFunc("GET /currentrace", h.GetCurrentRaceStandings)
 

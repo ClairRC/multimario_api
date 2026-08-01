@@ -267,6 +267,81 @@ func GetPlayerByName(database *sql.DB, name repository.NullableStr) (*Player, er
 	return &Player{Name: repository.MakeNullableStr(pName), TwitchName: repository.MakeNullableStr(twitchName), PlayerID: pID}, nil
 }
 
+//Gets player by their API key
+func GetPlayerByAPIKey(database *sql.DB, apiKey repository.NullableStr) (*Player, error) {
+	//TODO: This could return a stale twitch name if it had been updated, since it doesn't check if the Twitch name is current
+	//This likely won't be an issue in practice but it's worth noting here
+
+	if !apiKey.Valid {
+		return nil, repository.StringIsNullErr
+	}
+
+	//Check database for this Twitch ID
+	
+	//Get player name from:
+	//Player JOIN Socials JOIN API key
+	on := db.GetOnClause(db.TablePlayers, db.TableSocials, db.ColPlayerID, db.ColSocialsPlayerID)
+	table := db.JoinTables(db.TablePlayers, db.TableSocials, on)
+
+	//Join that table with API keys
+	on = db.GetOnClause(db.TableSocials, db.TableAPIKeys, db.ColSocialsPlatformUserID, db.ColAPIKeyTwitchID)
+	table = db.JoinTables(table, db.TableAPIKeys, on)
+
+	//Get columns and API keys
+	cols := []string{
+		db.TablePlayers + "." + db.ColPlayerID,
+		db.TableSocials + "." + db.ColSocialsPlatformUsername,
+		db.TableSocials + "." + db.ColSocialsPlatformUserID,
+		db.ColPlayerName,
+	}
+
+	where := []db.WhereCondition{{
+		ColName: db.ColAPIKeysKey,
+		Op: db.Equals,
+		Value: apiKey.Value,
+	}}
+
+	//Get statement
+	stmt := db.BuildSelectStatement(cols, table, where)
+	res, err := db.ExecuteQueries(database, []db.SQLStatement{stmt})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(res[db.ColPlayerID]) == 0 {
+		return nil, PlayerDoesNotExistErr
+	}
+
+	//Get stored values for this player
+	pName, ok := res[db.ColPlayerName][0].(string)
+	if !ok {
+		return nil, errors.New("player name cannot be parsed as string")
+	}
+
+	twitchID, ok := res[db.ColSocialsPlatformUserID][0].(string)
+	if !ok {
+		return nil, errors.New("player twitch id cannot be parsed as string")
+	}
+
+	twitchName, ok := res[db.ColSocialsPlatformUsername][0].(string)
+	if !ok {
+		//Update this player's twitch name
+		name, err := twitch.Client.GetTwitchNameFromID(twitchID)
+		if err != nil {
+			return nil, errors.New("unable to get twitch name from twitch: " + err.Error())
+		}
+		twitchName = name
+	}
+	
+	pID, ok := res[db.ColPlayerID][0].(int64)
+	if !ok {
+		return nil, errors.New("player id cannot be parsed as int")
+	}
+
+	return &Player{Name: repository.MakeNullableStr(pName), TwitchName: repository.MakeNullableStr(twitchName), PlayerID: pID}, nil
+}
+
+
 //Checks if player already exists
 func PlayerExistsByName(database *sql.DB, name repository.NullableStr) (bool, error) {
 	if !name.Valid {

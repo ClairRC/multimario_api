@@ -18,9 +18,9 @@ import (
 )
 
 /*
-* Edit player's progress for current race
+* Edit player's progress for current race. Gets player name from API key
 *
-* ENDPOINT: PATCH /currentrace/{player_name}
+* ENDPOINT: PATCH /currentrace
 *
 * EXPECTED:
 * {
@@ -45,8 +45,27 @@ func (h *ReqHandler) SetPlayerCollectibleCount(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	//Get path values
-	playerName := repository.MakeNullableStr(r.PathValue("player_name"))
+	//Get player from the API key
+	apiKey := r.Context().Value(ctxAPIKey)
+	if apiKey == nil {
+		writeError(w, http.StatusInternalServerError, "error parsing api key from request") 
+		return
+	}
+
+	//Make sure API key is a string
+	apiKeyStr, ok := apiKey.(string)
+	if !ok {
+		writeError(w, http.StatusInternalServerError, "error parsing api key as string") 
+		return
+	}
+
+	p, err := players.GetPlayerByAPIKey(h.DataBase, repository.MakeNullableStr(apiKeyStr))
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error getting player for this api key: " + err.Error()) 
+		return
+	}
+
+	playerName := p.Name
 
 	//Get request
 	req, err := parseReqJSON(r) //Parse request into map
@@ -90,9 +109,9 @@ func (h *ReqHandler) SetPlayerCollectibleCount(w http.ResponseWriter, r *http.Re
 }
 
 /*
-* Set player's game time for this race
+* Set player's game time for this race. Get player from API key
 *
-* ENDPOINT: PATCH /currentrace/{player_name}/{category_name}
+* ENDPOINT: PATCH /currentrace/{category_name}
 *
 * EXPECTED:
 * {
@@ -116,8 +135,29 @@ func (h *ReqHandler) UpdatePlayerGameTime(w http.ResponseWriter, r *http.Request
 	}
 
 	//Get path values
-	playerName := repository.MakeNullableStr(r.PathValue("player_name"))
 	catName := repository.MakeNullableStr(r.PathValue("category_name"))
+
+	//Get player from the API key
+	apiKey := r.Context().Value(ctxAPIKey)
+	if apiKey == nil {
+		writeError(w, http.StatusInternalServerError, "error parsing api key from request") 
+		return
+	}
+
+	//Make sure API key is a string
+	apiKeyStr, ok := apiKey.(string)
+	if !ok {
+		writeError(w, http.StatusInternalServerError, "error parsing api key as string") 
+		return
+	}
+
+	p, err := players.GetPlayerByAPIKey(h.DataBase, repository.MakeNullableStr(apiKeyStr))
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "error getting player for this api key: " + err.Error()) 
+		return
+	}
+
+	playerName := p.Name
 
 	//Get request
 	req, err := parseReqJSON(r) //Parse request into map
