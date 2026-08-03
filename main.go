@@ -24,9 +24,10 @@ type Settings struct {
 	TwitchClientID string `json:"twitch_client_id"`
 	TwitchClientSecret string `json:"twitch_client_secret"`
 	DBPath string `json:"database_path"`
+	Port string `json:"port"`
 }
 
-const port = ":3000" //Port the server listens on
+var port = ":3000" //Port the server listens on. Defaults to 3000
 
 func main() {
 	//Load settings
@@ -40,6 +41,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	//Set port for the server
+	port = settings.Port
 
 	//Set Twitch parameters
 	err = twitch.SetTwitchParams(settings.TwitchClientID, settings.TwitchClientSecret)
