@@ -113,3 +113,4 @@ Auth is split into tiers so that read-heavy endpoints (used for public stats dis
 ## Known Issues and TODO
 * GET /players matches twitch_name AND player_name, when it should match twitch_name OR player_name.
 * Google Sheets is used as the source of truth for race signups, date, and participant information. This dependency should ideally be flipped in the future so that this database is the main source of truth and the Google Sheets reflects the information within it.
+* Add a separate testing endpoint.
