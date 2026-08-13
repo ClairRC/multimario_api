@@ -406,8 +406,6 @@ func (h *ReqHandler) GetCurrentRaceRuns(w http.ResponseWriter, r *http.Request) 
 	out := make(map[string]any)
 
 	out["success"] = true
-	out["race_id"] = currentRaceID
-	out["runs"] = runRecords
 
 	outRuns := make([]map[string]any, 0)
 
@@ -420,6 +418,9 @@ func (h *ReqHandler) GetCurrentRaceRuns(w http.ResponseWriter, r *http.Request) 
 
 		outRuns = append(outRuns, newRun)
 	}
+
+	out["race_id"] = currentRaceID
+	out["runs"] = outRuns
 
 	//Get metadata
 	meta := getPaginationMetadata(count, r.URL, pageNum, limit)
