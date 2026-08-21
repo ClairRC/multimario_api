@@ -55,6 +55,7 @@ func (h *ReqHandler) AddGameCategory(w http.ResponseWriter, r *http.Request) {
 
 	//Validate collectibles
 	numCollectibles, err := validateNumber(w, req, "num_collectibles", true)
+	if err != nil { return }
 
 	//Check that category doesn't already exist
 	catExists, err := gamecategories.GameCategoryExistsByName(h.DataBase, catName)
@@ -126,10 +127,10 @@ func (h *ReqHandler) EditGameCategory(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err == gamecategories.GameCategoryDoesNotExistErr {
 			writeError(w, http.StatusBadRequest, "game category does not exist")
-			return
 		} else {
 			writeError(w, http.StatusInternalServerError, "unknown error finding game category")
 		}
+		return
 	}
 
 	//Get request

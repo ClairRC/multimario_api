@@ -121,6 +121,7 @@ func (h *ReqHandler) SetPlayerCollectibleCount(w http.ResponseWriter, r *http.Re
 * RETURNS:
 * {
 *	success: true //boolean
+*	time: string //hh:mm:ss format. Newly updated gametime, only if success is true
 *	error: string //Only if success is false
 * }
 *
@@ -231,7 +232,7 @@ func (h *ReqHandler) UpdatePlayerGameTime(w http.ResponseWriter, r *http.Request
 	}
 
 	//Run is updated
-	writeJSON(w, http.StatusOK, map[string]any{"success": true}, nil)
+	writeJSON(w, http.StatusOK, map[string]any{"success": true, "time": run.Time.Value}, nil)
 }
 
 /*
